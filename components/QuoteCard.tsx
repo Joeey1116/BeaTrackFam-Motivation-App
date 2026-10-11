@@ -20,13 +20,13 @@ export const QuoteCard = React.forwardRef<ShotHandle | null, Props>(function Quo
   { quote, shotRef },
   _ref,
 ) {
-  const { t, rtl } = useStrings();
+  const { t } = useStrings();
   const primaryTrack = quote.tracks[0];
   return (
     <ViewShot
       ref={shotRef}
       options={{ format: 'png', quality: 1 }}
-      style={[styles.shot, rtl && styles.rtl]}
+      style={styles.shot}
     >
       <View style={styles.card}>
         <View style={styles.header}>
@@ -45,7 +45,6 @@ export const QuoteCard = React.forwardRef<ShotHandle | null, Props>(function Quo
 
 const styles = StyleSheet.create({
   shot: { width: '100%' },
-  rtl: { direction: 'rtl' },
   card: {
     backgroundColor: '#000000',
     borderColor: '#1f1f1f',
