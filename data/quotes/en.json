@@ -1,0 +1,1845 @@
+{
+  "language": "en",
+  "quotes": [
+    {
+      "id": "mot-001",
+      "text": "You didn't come this far just to come this far. Keep going.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-002",
+      "text": "The only bad day is the one where you quit. Everything else is just a lesson.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-003",
+      "text": "Your breakthrough is always sitting on the other side of the moment you want to give up.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-004",
+      "text": "Stop waiting to feel ready. Ready is a lie. Start messy, start scared, just start.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-005",
+      "text": "Nobody is coming to save you — and that's the best news ever, because it means YOU get to save you.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-006",
+      "text": "One year from now you'll wish you started today. So start today.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-007",
+      "text": "Discipline is choosing what you want most over what you want right now.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-008",
+      "text": "You are allowed to be a work in progress and a masterpiece at the same time.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-009",
+      "text": "The pain of discipline weighs ounces. The pain of regret weighs tons.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-010",
+      "text": "Don't downgrade your dreams to match your reality. Upgrade your effort to match your dreams.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-011",
+      "text": "Small steps every day beat giant leaps once a year. 1000%.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-012",
+      "text": "Your future self is begging you not to quit today.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-013",
+      "text": "It's not about being the best. It's about being better than you were yesterday.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-014",
+      "text": "Fear is just excitement without breath. Breathe, and go.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-015",
+      "text": "You survived 100% of your hardest days so far. Your record is perfect.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-016",
+      "text": "Motivation gets you started. Habit keeps you going. Build the habit.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-017",
+      "text": "Stop comparing your chapter 1 to someone else's chapter 20.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-018",
+      "text": "The comeback is always stronger than the setback. Always.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-019",
+      "text": "You don't need permission to become who you're meant to be.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-020",
+      "text": "Hard days don't last. Strong people do.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "gra-001",
+      "text": "Woke up today. That's already a blessing beyond millions.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-002",
+      "text": "Gratitude turns what you have into more than enough.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-003",
+      "text": "The air in your lungs is a gift someone else is praying for.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-004",
+      "text": "Say thank you like you mean it today. Watch what changes.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-005",
+      "text": "A grateful heart sees blessings a bitter heart misses.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-006",
+      "text": "You have so much to be thankful for — start counting and don't stop.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-007",
+      "text": "Thank God for the doors that closed. They were protecting you.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-008",
+      "text": "Today I'm grateful for the struggle — it built the strength I'm standing on.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-009",
+      "text": "Gratitude is the fastest way to change your whole mood.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-010",
+      "text": "Don't wait for the big win to be thankful. The small blessings are the big ones.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-011",
+      "text": "Someone out there would trade places with you in a heartbeat. Remember that.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-012",
+      "text": "Thank you for the roof, the food, the people who love me. The basics are the blessings.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-013",
+      "text": "Gratitude turns an ordinary Tuesday into a miracle.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-014",
+      "text": "When you can't find something to be grateful for, be grateful you get to look.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-015",
+      "text": "A thankful heart is a magnet for more good things.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-016",
+      "text": "God gave you today. Don't waste it complaining about yesterday.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-017",
+      "text": "Write down three good things before bed. Watch your life shift.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-018",
+      "text": "The more thankful you are, the more you have to be thankful for.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-019",
+      "text": "Gratitude is free and it pays 1000% interest.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-020",
+      "text": "Thank the people who showed up for you. Tell them today, not someday.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "loy-001",
+      "text": "Loyalty isn't a word, it's a lifestyle. Show up for your people.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-002",
+      "text": "Real ones don't switch up when things get hard. Be a real one.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-003",
+      "text": "Check on your strong friends. They're carrying a lot in silence.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-004",
+      "text": "Loyalty above everything — the people who ride for you deserve the same back.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-005",
+      "text": "Your circle is small for a reason. Quality over quantity, always.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-006",
+      "text": "A loyal heart in a disloyal world is worth more than gold.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-007",
+      "text": "Don't forget who was there before the glow-up.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-008",
+      "text": "Ride or die isn't about drama. It's about showing up, every time.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-009",
+      "text": "The ones who clap for you in private are the ones to keep close.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-010",
+      "text": "Loyalty means telling your people the truth, even when it stings.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-011",
+      "text": "Protect your people's name when they're not in the room.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-012",
+      "text": "Day ones over new ones. Remember who believed in you first.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-013",
+      "text": "Loyalty is proven in the hard seasons, not the easy ones.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-014",
+      "text": "Be the friend you wish you had. That's the whole secret.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-015",
+      "text": "Your people are your wealth. Invest in them.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-016",
+      "text": "Never trade a decade of loyalty for a moment of convenience.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-017",
+      "text": "Show love loudly. Life is too short for quiet appreciation.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-018",
+      "text": "Loyal people don't keep score. They just keep showing up.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-019",
+      "text": "If they'd go to war for you, go to war for them.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-020",
+      "text": "Blood makes you related. Loyalty makes you family.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "fai-001",
+      "text": "God didn't bring you this far to leave you now. Trust the plan.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-002",
+      "text": "When you can't see the way, walk by faith anyway.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-003",
+      "text": "God's timing is perfect, even when it feels painfully slow.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-004",
+      "text": "Pray like it depends on God. Work like it depends on you.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-005",
+      "text": "The storm doesn't mean God left. It means He's teaching you to sail.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-006",
+      "text": "Let go and let God. Your hands are too small for this battle anyway.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-007",
+      "text": "Faith is believing the sun will rise even in the darkest night.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-008",
+      "text": "God closes doors no one can open, and opens doors no one can shut.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-009",
+      "text": "You're not behind. You're on God's schedule, and it's flawless.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-010",
+      "text": "Worry is a down payment on a problem you may never have. Pray instead.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-011",
+      "text": "God gives His toughest battles to His strongest soldiers.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-012",
+      "text": "When it's out of your control, it's in God's hands — the safest place.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-013",
+      "text": "Your faith has to be bigger than your fear. Every single day.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-014",
+      "text": "Thank God in advance. The blessing is already on the way.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-015",
+      "text": "God never wastes pain. Every scar becomes a story that saves someone.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-016",
+      "text": "Walk in faith and the path appears beneath your feet.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-017",
+      "text": "Nothing is impossible when God is in it. Nothing.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-018",
+      "text": "Be still and know. The battle is already won.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-019",
+      "text": "God is writing a story with your life that you'll be proud to tell.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-020",
+      "text": "Keep the faith. The breakthrough is closer than you think.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "hus-001",
+      "text": "Your dream doesn't work unless you do. Clock in.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-002",
+      "text": "Nobody will outwork you if you refuse to be outworked.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-003",
+      "text": "Build in silence. Let the results make the noise.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-004",
+      "text": "The grind is ugly. The glow-up is beautiful. Stay in the ugly part.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-005",
+      "text": "You don't need a handout. You need a plan and relentless execution.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-006",
+      "text": "Small business, big dreams, unstoppable work ethic.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-007",
+      "text": "Every empire started as one person who refused to quit.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-008",
+      "text": "Work so hard they think you got lucky.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-009",
+      "text": "Your 9-to-5 pays the bills. Your 5-to-9 builds the dream.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-010",
+      "text": "Consistency beats talent when talent won't show up daily.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-011",
+      "text": "Plant seeds every day. Harvest season is coming.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-012",
+      "text": "Don't chase money. Chase excellence and money follows.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-013",
+      "text": "The hustle is lonely at first. That's how you know it's working.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-014",
+      "text": "Bet on yourself 1000%. You're the safest investment you'll ever make.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-015",
+      "text": "Done is better than perfect. Ship it, then improve it.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-016",
+      "text": "Your competition is sleeping. What are you doing?",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-017",
+      "text": "Sacrifice a few years of comfort for decades of freedom.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-018",
+      "text": "The dream is free. The hustle is sold separately.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-019",
+      "text": "Nobody hands you a business. You build it brick by brick.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-020",
+      "text": "Stay hungry, stay humble, stay working.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "mot-021",
+      "text": "Your only competition is who you were yesterday. Beat them daily.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-022",
+      "text": "Dream big, start small, move fast.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-023",
+      "text": "The best time to start was yesterday. The second best time is right now.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-024",
+      "text": "Doubt kills more dreams than failure ever will.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-025",
+      "text": "You are stronger than your strongest excuse.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-026",
+      "text": "Progress, not perfection. Every single day.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-027",
+      "text": "Winners aren't born. They're built at 5 AM when nobody's watching.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-028",
+      "text": "Turn your can'ts into cans and your dreams into plans.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-029",
+      "text": "Energy flows where focus goes. Focus on the win.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-030",
+      "text": "Be so good they can't ignore you.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-031",
+      "text": "Your mindset is the engine. Fuel it daily.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-032",
+      "text": "Champions are made when no one's clapping.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-033",
+      "text": "Don't wish for it. Work for it.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-034",
+      "text": "The distance between dreams and reality is called action.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-035",
+      "text": "Storms don't last, but the lessons do. Keep sailing.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-036",
+      "text": "Make today so good that yesterday gets jealous.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-037",
+      "text": "Your potential is endless. Your excuses shouldn't be.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-038",
+      "text": "Act like the person you want to become, starting now.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-039",
+      "text": "Big goals need daily steps. Take today's step.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-040",
+      "text": "You're not stuck. You're just getting started.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "gra-021",
+      "text": "Start each day with a grateful heart and watch miracles multiply.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-022",
+      "text": "Gratitude turns a house into a home and a stranger into a friend.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-023",
+      "text": "Count your blessings, not your problems.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-024",
+      "text": "The secret to happiness? Wanting what you already have.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-025",
+      "text": "Every sunrise is proof you get another chance. Be thankful.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-026",
+      "text": "Grateful people are magnetic people.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-027",
+      "text": "Say grace over your life — even the messy parts.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-028",
+      "text": "Thankfulness is the key that unlocks joy's door.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-029",
+      "text": "Appreciate the little things — one day you'll see they were the big things.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-030",
+      "text": "A grateful mind is a peaceful mind.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-031",
+      "text": "Blessings chase the thankful.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-032",
+      "text": "Today, find one thing to thank God for every hour.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-033",
+      "text": "Gratitude makes the ordinary extraordinary.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-034",
+      "text": "Don't let what you want make you forget what you have.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-035",
+      "text": "Thankful hearts attract faithful blessings.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-036",
+      "text": "Gratitude is the memory of the heart.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-037",
+      "text": "Wake up grateful, go to bed grateful, live grateful.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-038",
+      "text": "The happiest people aren't the ones with the most — they're the most thankful for what they have.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-039",
+      "text": "Give thanks in the waiting, not just in the winning.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-040",
+      "text": "Your gratitude list is longer than your wish list. Read it.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "loy-021",
+      "text": "Loyalty is rare. If you find it, protect it with everything.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-022",
+      "text": "Stand by your people publicly, correct them privately.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-023",
+      "text": "True loyalty doesn't need an audience.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-024",
+      "text": "The most valuable currency is trust. Spend it wisely, earn it daily.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-025",
+      "text": "Loyalty isn't proven with words. It's proven with presence.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-026",
+      "text": "Keep your circle tight and your loyalty tighter.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-027",
+      "text": "A loyal friend is worth more than a thousand followers.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-028",
+      "text": "Don't just talk loyalty — live it when it's inconvenient.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-029",
+      "text": "Your people should never have to wonder where you stand.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-030",
+      "text": "Loyalty means answering the 2 AM call.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-031",
+      "text": "Betrayal is cheap. Loyalty is priceless.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-032",
+      "text": "Water the relationships that water you.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-033",
+      "text": "Loyalty over likes. People over platforms.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-034",
+      "text": "The test of loyalty is distance and time. Pass it.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-035",
+      "text": "Be loyal to your values first, then to your people.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-036",
+      "text": "Real loyalty celebrates others' wins like your own.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-037",
+      "text": "Never let success make you forget the ones who held you down.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-038",
+      "text": "Loyalty is a two-way street. Drive it daily.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-039",
+      "text": "Your word is your bond. Keep it unbreakable.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-040",
+      "text": "In a world of options, be someone's constant.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "hus-021",
+      "text": "Hustle in silence, shine in public.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-022",
+      "text": "Your work ethic is your superpower.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-023",
+      "text": "Grind now, glow later.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-024",
+      "text": "No shortcuts. No excuses. Just work.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-025",
+      "text": "The early bird doesn't just get the worm — it builds the nest.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-026",
+      "text": "Sweat equity pays the best dividends.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-027",
+      "text": "Outwork yesterday's you.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-028",
+      "text": "Hustle beats hype every single time.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-029",
+      "text": "Your future is built in the hours nobody sees.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-030",
+      "text": "Stop scrolling, start building.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-031",
+      "text": "The grind respects only consistency.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-032",
+      "text": "Make your hustle holy — pour your heart into the work.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-033",
+      "text": "Small business owner, giant faith, endless grind.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-034",
+      "text": "Revenue follows value. Create value relentlessly.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-035",
+      "text": "Work weekends like your dreams depend on it — they do.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-036",
+      "text": "The hustle never lies. Results always tell the truth.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-037",
+      "text": "Build your dream before someone hires you to build theirs.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-038",
+      "text": "Discipline in the dark brings spotlight in the light.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-039",
+      "text": "Every 'overnight success' was years in the making. Keep making.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-040",
+      "text": "Your grind is your testimony.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "fch-001",
+      "text": "Jesus didn't save you to keep you small. Walk bold in His name.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-002",
+      "text": "When Jesus is your foundation, no storm can shake you.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-003",
+      "text": "Start your day at the feet of Jesus. Everything else falls into place.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-004",
+      "text": "The blood of Jesus already paid for your victory. Walk in it.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-005",
+      "text": "Jesus loves you beyond millions — let that sink in today.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-006",
+      "text": "Cast your cares on Him. Jesus can carry what you can't.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-007",
+      "text": "With Christ, your worst day is still a setup for a testimony.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-008",
+      "text": "Jesus is the same yesterday, today, and forever. Lean on that.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-009",
+      "text": "Let Jesus lead and watch doors fly open.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-010",
+      "text": "Your identity is in Christ, not in your circumstances.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-011",
+      "text": "Pray in Jesus' name and expect heaven to move.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-012",
+      "text": "Jesus turned water to wine — imagine what He'll do with your mess.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-013",
+      "text": "Follow Jesus 1000%. Halfway faith gets halfway results.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-014",
+      "text": "The cross proved it: Jesus will never give up on you.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-015",
+      "text": "When you feel alone, remember: Jesus never leaves.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-016",
+      "text": "Let your light shine for Jesus today. Someone needs to see it.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-017",
+      "text": "Jesus is your peace in the chaos. Breathe Him in.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-018",
+      "text": "Trust Jesus with the pen — He's writing a masterpiece with your life.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-019",
+      "text": "Nothing is wasted in Christ. Every tear waters future joy.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-020",
+      "text": "Jesus called you friend. Walk like royalty today.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fje-001",
+      "text": "Like David facing Goliath — your giant is smaller than your God.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-002",
+      "text": "The God of Abraham, Isaac, and Jacob walks with you today.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-003",
+      "text": "Remember the Exodus: what enslaved you cannot hold you forever.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-004",
+      "text": "Be still and know — the same words that calmed ancient hearts calm yours.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-005",
+      "text": "Shabbat reminds us: rest is holy too. Even warriors rest.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-006",
+      "text": "Like Esther, you were made for such a time as this.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-007",
+      "text": "The Shema begins with listening. Quiet your heart and hear.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-008",
+      "text": "Joseph's pit became his palace. Your lowest place is not your last place.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-009",
+      "text": "Blessed are those who trust — their roots run deep like trees by water.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-010",
+      "text": "Daniel prayed with open windows. Live your faith out loud.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-011",
+      "text": "The Torah teaches: choose life, choose blessing, choose today.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-012",
+      "text": "Like the Israelites at the sea — when there's no way, God makes one.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-013",
+      "text": "Your ancestors survived Pharaoh. You'll survive this week.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-014",
+      "text": "Light the candles of hope — even small flames push back darkness.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-015",
+      "text": "Gam zeh ya'avor — this too shall pass. Hold on.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-016",
+      "text": "God promised Abraham descendants like stars. Your future is that vast.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-017",
+      "text": "Moses was 80 when his mission started. It's never too late.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-018",
+      "text": "Modeh ani — the first words of the Jewish day are thank-you. Start grateful.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-019",
+      "text": "The same God who parted the sea parts your problems.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-020",
+      "text": "Walk humbly, love mercy, do justice — the ancient path still works.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "res-001",
+      "text": "Fall seven times, rise eight. That's the whole formula.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-002",
+      "text": "Your scars are proof you fought and won.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-003",
+      "text": "Rock bottom is just solid ground to push off from.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-004",
+      "text": "Resilience isn't avoiding the fall — it's mastering the rise.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-005",
+      "text": "Every setback is a setup for a stronger comeback.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-006",
+      "text": "You bent, but you didn't break. That's power.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-007",
+      "text": "Tough times reveal tough people. That's you.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-008",
+      "text": "The wound is where the strength enters.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-009",
+      "text": "Keep going. The story isn't over.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-010",
+      "text": "Pressure makes diamonds. You're being polished.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-011",
+      "text": "You've survived every hard day so far. Keep the streak alive.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-012",
+      "text": "Resilience is quiet. It just shows up again tomorrow.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-013",
+      "text": "Cry if you must, then get back up.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-014",
+      "text": "Broken crayons still color. Broken hearts still love.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-015",
+      "text": "Your comeback story is being written right now.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-016",
+      "text": "Don't let a bad chapter ruin the whole book.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-017",
+      "text": "Strength grows in the struggle. You're growing.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-018",
+      "text": "The night is darkest before dawn. Hold on.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-019",
+      "text": "Resilient people don't have easier lives — they have stronger resolve.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-020",
+      "text": "Get up. Dust off. Go again.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-021",
+      "text": "Pain is temporary. Quitting is forever.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-022",
+      "text": "You're not starting over — you're starting wiser.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-023",
+      "text": "The fire didn't destroy you. It refined you.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-024",
+      "text": "Bounce back like you never left.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-025",
+      "text": "Hardship is the tuition for wisdom.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-026",
+      "text": "Your future needs the fighter version of you. Keep fighting.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-027",
+      "text": "One foot in front of the other. That's resilience.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-028",
+      "text": "The strongest steel goes through the hottest fire.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-029",
+      "text": "You've got this — and you've got proof from last time.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-030",
+      "text": "Resilience means feeling it all and moving forward anyway.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-031",
+      "text": "Storms pass. Anchors hold. You're anchored.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-032",
+      "text": "Don't count the falls. Count the rises.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-033",
+      "text": "What tried to break you built you instead.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-034",
+      "text": "Tomorrow needs you. Show up.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-035",
+      "text": "Grit is grace under pressure. You've got both.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-036",
+      "text": "The mountain is tall, but so is your will.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-037",
+      "text": "Every expert was once a beginner who refused to quit.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-038",
+      "text": "Your breaking point is actually your breakthrough point.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-039",
+      "text": "Keep the faith in yourself — you've earned it.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-040",
+      "text": "Rise. Again. Always.",
+      "tracks": [
+        "resilience"
+      ]
+    }
+  ]
+}
