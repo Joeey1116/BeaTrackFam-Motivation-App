@@ -170,7 +170,7 @@ jobs:
             <key>teamID</key>
             <string>${APPLE_TEAM_ID}</string>
             <key>signingStyle</key>
-            <string>manual</string>
+            <string>automatic</string>
             <key>manageAppVersionAndBuildNumber</key>
             <false/>
             <key>compileBitcode</key>
@@ -179,13 +179,6 @@ jobs:
             <false/>
             <key>uploadSymbols</key>
             <true/>
-            <key>provisioningProfiles</key>
-            <dict>
-              <key>com.beatrackfaminc.motivation</key>
-              <string>BeaTrackFam Motivation App Store</string>
-              <key>com.beatrackfaminc.motivation.widgetkit</key>
-              <string>BeaTrackFam Motivation Widgets App Store</string>
-            </dict>
           </dict>
           </plist>
           PLIST

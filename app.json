@@ -77,12 +77,6 @@
           "icon": "./assets/notification-icon.png"
         }
       ],
-      [
-        "expo-widgets",
-        {
-          "enablePushNotifications": false
-        }
-      ],
       "expo-tracking-transparency",
       [
         "expo-build-properties",
