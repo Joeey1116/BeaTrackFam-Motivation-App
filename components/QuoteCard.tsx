@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import ViewShot from 'react-native-view-shot';
+import ViewShot, { type ViewShotRef } from 'react-native-view-shot';
 
-export type ShotHandle = InstanceType<typeof ViewShot>;
+export type ShotHandle = ViewShotRef;
 import { BRAND } from '../lib/brand';
 import { trackName, useStrings } from '../lib/i18n';
 import type { Quote } from '../lib/quotes';
