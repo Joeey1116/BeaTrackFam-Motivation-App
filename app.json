@@ -19,7 +19,7 @@
     },
     "icon": "./assets/icon.png",
     "ios": {
-      "buildNumber": "1",
+      "buildNumber": "2",
       "bundleIdentifier": "com.beatrackfaminc.motivation",
       "deploymentTarget": "16.4",
       "icon": "./assets/icon.png",
@@ -29,7 +29,8 @@
         "NSUserTrackingUsageDescription": "This identifier is only used if you opt into personalized features in the future. The app does not track you across other companies' apps or websites.",
         "UIBackgroundModes": [
           "remote-notification"
-        ]
+        ],
+        "UIDesignRequiresCompatibility": false
       },
       "supportsTablet": true,
       "privacyManifests": {

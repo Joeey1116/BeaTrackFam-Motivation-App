@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useStrings } from '../../lib/i18n';
+import { GlassTabBackground } from '../../components/GlassTabBackground';
 
 const ICONS: Record<string, [string, string]> = {
   index: ['sunny-outline', 'sunny'],
@@ -18,7 +19,8 @@ export default function TabsLayout() {
         const [outline, filled] = ICONS[route.name] ?? ['ellipse-outline', 'ellipse'];
         return {
           headerShown: false,
-          tabBarStyle: { backgroundColor: '#000000', borderTopColor: '#1f1f1f', borderTopWidth: 1 },
+          tabBarBackground: () => <GlassTabBackground />,
+          tabBarStyle: { backgroundColor: 'transparent', borderTopColor: '#1f1f1f', borderTopWidth: 1, position: 'absolute' },
           tabBarActiveTintColor: '#ffffff',
           tabBarInactiveTintColor: '#666666',
           tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
