@@ -14,6 +14,7 @@ const KEYS = {
   GOALS: `${P}/goals`,
   REMINDER_TIME: `${P}/reminder_time`,
   PLAN: `${P}/plan`,
+  THEME: `${P}/theme`,
 } as const;
 
 function dayKey(d = new Date()): string {
@@ -156,4 +157,13 @@ export async function getPlan(): Promise<PlanId> {
 
 export async function setPlan(plan: PlanId): Promise<void> {
   await AsyncStorage.setItem(KEYS.PLAN, plan);
+}
+
+// ---------- Theme ----------
+export async function getThemeId(): Promise<string> {
+  return (await AsyncStorage.getItem(KEYS.THEME)) ?? 'midnight';
+}
+
+export async function setThemeId(id: string): Promise<void> {
+  await AsyncStorage.setItem(KEYS.THEME, id);
 }
