@@ -46,6 +46,20 @@ export default function TabsLayout() {
           md="book"
         />
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="wellness" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>Wellness</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'heart.circle', selected: 'heart.circle.fill' }}
+          md="spa"
+        />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="companion" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>Companion</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'face.smiling', selected: 'face.smiling.fill' }}
+          md="face"
+        />
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t('tabs.settings')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon

@@ -18,6 +18,9 @@ const KEYS = {
   COMPANION: `${P}/companion_enabled`,
   BUDDY: `${P}/buddy_enabled`,
   RITUALS: `${P}/rituals_enabled`,
+  MOOD_HISTORY: `${P}/mood_history`,
+  VENT_ENTRIES: `${P}/vent_entries`,
+  BREATHE_SESSIONS: `${P}/breathe_sessions`,
 } as const;
 
 function dayKey(d = new Date()): string {
@@ -197,4 +200,62 @@ export async function isRitualsEnabled(): Promise<boolean> {
 
 export async function setRitualsEnabled(on: boolean): Promise<void> {
   await AsyncStorage.setItem(KEYS.RITUALS, on ? '1' : '0');
+}
+
+// ---------- Mood history ----------
+export interface MoodEntry {
+  date: string;
+  valence: number;
+  emotions: string[];
+}
+
+export async function getMoodHistory(): Promise<MoodEntry[]> {
+  const raw = await AsyncStorage.getItem(KEYS.MOOD_HISTORY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+export async function saveMood(valence: number, emotions: string[]): Promise<void> {
+  const history = await getMoodHistory();
+  const today = new Date().toISOString().split('T')[0];
+  const filtered = history.filter((h) => h.date !== today);
+  filtered.push({ date: today, valence, emotions });
+  await AsyncStorage.setItem(KEYS.MOOD_HISTORY, JSON.stringify(filtered));
+}
+
+// ---------- Vent entries ----------
+export interface VentEntry {
+  id: string;
+  text: string;
+  date: string;
+}
+
+export async function getVentEntries(): Promise<VentEntry[]> {
+  const raw = await AsyncStorage.getItem(KEYS.VENT_ENTRIES);
+  return raw ? JSON.parse(raw) : [];
+}
+
+export async function saveVent(text: string): Promise<void> {
+  const entries = await getVentEntries();
+  entries.unshift({
+    id: Date.now().toString(),
+    text,
+    date: new Date().toLocaleDateString(),
+  });
+  await AsyncStorage.setItem(KEYS.VENT_ENTRIES, JSON.stringify(entries.slice(0, 100)));
+}
+
+export async function deleteVent(id: string): Promise<void> {
+  const entries = await getVentEntries();
+  await AsyncStorage.setItem(
+    KEYS.VENT_ENTRIES,
+    JSON.stringify(entries.filter((e) => e.id !== id))
+  );
+}
+
+// ---------- Breathe sessions ----------
+export async function logBreatheSession(exerciseId: string, minutes: number): Promise<void> {
+  const raw = await AsyncStorage.getItem(KEYS.BREATHE_SESSIONS);
+  const sessions = raw ? JSON.parse(raw) : [];
+  sessions.push({ date: new Date().toISOString(), exerciseId, minutes });
+  await AsyncStorage.setItem(KEYS.BREATHE_SESSIONS, JSON.stringify(sessions));
 }
