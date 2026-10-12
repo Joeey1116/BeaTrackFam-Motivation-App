@@ -11,6 +11,9 @@ const KEYS = {
   NOTIF_SCHEDULED_THROUGH: `${P}/notif_scheduled_through`,
   TRACKS: `${P}/tracks`,
   NOTIF_ENABLED: `${P}/notif_enabled`,
+  GOALS: `${P}/goals`,
+  REMINDER_TIME: `${P}/reminder_time`,
+  PLAN: `${P}/plan`,
 } as const;
 
 function dayKey(d = new Date()): string {
@@ -119,4 +122,38 @@ export async function isNotifEnabled(): Promise<boolean> {
 
 export async function setNotifEnabled(on: boolean): Promise<void> {
   await AsyncStorage.setItem(KEYS.NOTIF_ENABLED, on ? '1' : '0');
+}
+
+// ---------- Goals ----------
+export async function getGoals(): Promise<string[]> {
+  try {
+    const raw = await AsyncStorage.getItem(KEYS.GOALS);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function setGoals(goals: string[]): Promise<void> {
+  await AsyncStorage.setItem(KEYS.GOALS, JSON.stringify(goals));
+}
+
+// ---------- Reminder time ----------
+export async function getReminderTime(): Promise<string> {
+  return (await AsyncStorage.getItem(KEYS.REMINDER_TIME)) ?? '8am';
+}
+
+export async function setReminderTime(time: string): Promise<void> {
+  await AsyncStorage.setItem(KEYS.REMINDER_TIME, time);
+}
+
+// ---------- Plan (free / premium) ----------
+export type PlanId = 'free' | 'premium';
+export async function getPlan(): Promise<PlanId> {
+  const raw = await AsyncStorage.getItem(KEYS.PLAN);
+  return raw === 'premium' ? 'premium' : 'free';
+}
+
+export async function setPlan(plan: PlanId): Promise<void> {
+  await AsyncStorage.setItem(KEYS.PLAN, plan);
 }

@@ -4,30 +4,100 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../components/Screen';
 import { Glass } from '../components/Glass';
-import { TrackPicker } from '../components/TrackPicker';
-import { BRAND, LANGUAGES, type Language, type TrackId } from '../lib/brand';
-import { setLanguage, t, useStrings } from '../lib/i18n';
-import { setChosenTracks, setNotifEnabled, setOnboarded } from '../lib/storage';
+import { BRAND, LANGUAGES, TRACKS, type Language, type TrackId } from '../lib/brand';
+import { setLanguage, useStrings } from '../lib/i18n';
+import {
+  setChosenTracks,
+  setGoals,
+  setReminderTime,
+  setNotifEnabled,
+  setOnboarded,
+  setPlan,
+} from '../lib/storage';
 import { ensureDailyQuotesScheduled, requestPermission } from '../lib/notifications';
 import { getLanguage } from '../lib/i18n';
 import { getQuoteOfTheDay } from '../lib/quotes';
 import { refreshQuoteLiveActivity } from '../lib/liveActivity';
 
-const STEPS = ['welcome', 'language', 'tracks', 'notifications'] as const;
+const STEPS = [
+  'welcome',
+  'beliefs',
+  'goals',
+  'language',
+  'reminders',
+  'premium',
+  'notifications',
+] as const;
+
+type Step = (typeof STEPS)[number];
+
+const GOALS = [
+  'find-calm',
+  'build-confidence',
+  'improve-focus',
+  'find-happiness',
+  'reduce-stress',
+  'stay-grateful',
+] as const;
+type GoalId = (typeof GOALS)[number];
+
+const REMINDER_OPTIONS = [
+  { id: '6am', label: '6:00 AM' },
+  { id: '7am', label: '7:00 AM' },
+  { id: '8am', label: '8:00 AM' },
+  { id: '9am', label: '9:00 AM' },
+  { id: 'none', label: 'No reminders' },
+] as const;
+
+const TRACK_LABELS: Record<TrackId, string> = {
+  motivation: 'General Motivation',
+  gratitude: 'Gratitude',
+  'faith-christian': 'Christianity',
+  'faith-jewish': 'Judaism',
+  loyalty: 'Loyalty',
+  hustle: 'Hustle',
+  resilience: 'Resilience',
+};
+
+const GOAL_LABELS: Record<GoalId, string> = {
+  'find-calm': 'Find calm',
+  'build-confidence': 'Build confidence',
+  'improve-focus': 'Improve focus',
+  'find-happiness': 'Find happiness',
+  'reduce-stress': 'Reduce stress',
+  'stay-grateful': 'Stay grateful',
+};
 
 export default function Onboarding() {
   const { t: tr, lang } = useStrings();
-  const [step, setStep] = useState(0);
+  const [stepIdx, setStepIdx] = useState(0);
   const [tracks, setTracks] = useState<TrackId[]>(['motivation', 'gratitude', 'resilience']);
-  const [restartNeeded, setRestartNeeded] = useState(false);
+  const [goals, setGoalsState] = useState<GoalId[]>([]);
+  const [reminder, setReminder] = useState<string>('8am');
   const [busy, setBusy] = useState(false);
+
+  const step: Step = STEPS[stepIdx];
+  const isLast = stepIdx === STEPS.length - 1;
+
+  const next = () => {
+    if (!isLast) setStepIdx(stepIdx + 1);
+  };
+  const back = () => {
+    if (stepIdx > 0) setStepIdx(stepIdx - 1);
+  };
+  const skip = () => {
+    // X button — jump straight past premium/notifications to finish
+    finish(false);
+  };
 
   const toggleTrack = (id: TrackId) =>
     setTracks((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
+  const toggleGoal = (id: GoalId) =>
+    setGoalsState((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
   const pickLanguage = async (l: Language) => {
-    const needsRestart = await setLanguage(l);
-    setRestartNeeded(needsRestart);
+    await setLanguage(l);
   };
 
   const finish = async (enableNotif: boolean) => {
@@ -35,7 +105,10 @@ export default function Onboarding() {
     setBusy(true);
     try {
       await setChosenTracks(tracks);
-      if (enableNotif) {
+      await setGoals(goals);
+      await setReminderTime(reminder);
+      await setPlan('free'); // Everyone starts on free; premium is opt-in
+      if (enableNotif && reminder !== 'none') {
         const granted = await requestPermission();
         await setNotifEnabled(granted);
         if (granted) {
@@ -53,18 +126,84 @@ export default function Onboarding() {
     }
   };
 
+  const handlePremiumChoice = (choice: 'trial' | 'skip') => {
+    if (choice === 'trial') {
+      // TODO: Launch subscription purchase flow (StoreKit/Billing)
+      // For now, mark as free — actual purchase comes in subscriptions task
+      setPlan('free');
+    }
+    next(); // Go to notifications step
+  };
+
   return (
     <Screen>
+      {/* Progress + X */}
+      <View style={styles.topBar}>
+        <View style={styles.progressTrack}>
+          <View style={[styles.progressFill, { width: `${((stepIdx + 1) / STEPS.length) * 100}%` }]} />
+        </View>
+        {(step === 'premium' || step === 'notifications') && (
+          <Pressable onPress={skip} style={styles.xButton} hitSlop={12}>
+            <Ionicons name="close" size={24} color="#fff" />
+          </Pressable>
+        )}
+      </View>
+
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
-        {step === 0 && (
+        {step === 'welcome' && (
           <View style={styles.center}>
             <Image source={require('../assets/mark.png')} style={styles.heroMark} />
             <Text style={styles.appName}>{BRAND.SHORT_NAME}</Text>
-            <Text style={styles.tagline}>{tr('onboarding.tagline')}</Text>
+            <Text style={styles.tagline}>{BRAND.TAGLINE}</Text>
+            <Text style={styles.welcomeSub}>
+              Your daily home for motivation, calm, and strength.
+            </Text>
           </View>
         )}
 
-        {step === 1 && (
+        {step === 'beliefs' && (
+          <View style={styles.step}>
+            <Text style={styles.h1}>What speaks to your heart?</Text>
+            <Text style={styles.sub}>Pick the tracks that feel like home. You can change these anytime.</Text>
+            <View style={styles.list}>
+              {TRACKS.map((id) => (
+                <Pressable key={id} onPress={() => toggleTrack(id)}>
+                  <Glass style={[styles.opt, tracks.includes(id) && styles.optActive]}>
+                    <Text style={styles.optText}>{TRACK_LABELS[id]}</Text>
+                    {tracks.includes(id) ? (
+                      <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                    ) : (
+                      <View style={styles.radio} />
+                    )}
+                  </Glass>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {step === 'goals' && (
+          <View style={styles.step}>
+            <Text style={styles.h1}>What do you want from this app?</Text>
+            <Text style={styles.sub}>Select all that apply — we'll shape your experience around them.</Text>
+            <View style={styles.list}>
+              {GOALS.map((id) => (
+                <Pressable key={id} onPress={() => toggleGoal(id)}>
+                  <Glass style={[styles.opt, goals.includes(id) && styles.optActive]}>
+                    <Text style={styles.optText}>{GOAL_LABELS[id]}</Text>
+                    {goals.includes(id) ? (
+                      <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                    ) : (
+                      <View style={styles.radio} />
+                    )}
+                  </Glass>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {step === 'language' && (
           <View style={styles.step}>
             <Text style={styles.h1}>{tr('onboarding.languageTitle')}</Text>
             <Text style={styles.sub}>{tr('onboarding.languageSubtitle')}</Text>
@@ -73,87 +212,326 @@ export default function Onboarding() {
                 <Pressable key={l} onPress={() => pickLanguage(l)}>
                   <Glass style={[styles.opt, lang === l && styles.optActive]}>
                     <Text style={styles.optText}>{tr(`languages.${l}`)}</Text>
-                    {lang === l ? <Ionicons name="checkmark-circle" size={22} color="#fff" /> : null}
+                    {lang === l ? (
+                      <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                    ) : (
+                      <View style={styles.radio} />
+                    )}
                   </Glass>
                 </Pressable>
               ))}
             </View>
-            {restartNeeded ? <Text style={styles.note}>{tr('settings.restartNote')}</Text> : null}
           </View>
         )}
 
-        {step === 2 && (
+        {step === 'reminders' && (
           <View style={styles.step}>
-            <Text style={styles.h1}>{tr('onboarding.tracksTitle')}</Text>
-            <Text style={styles.sub}>{tr('onboarding.tracksSubtitle')}</Text>
-            <TrackPicker selected={tracks} onToggle={toggleTrack} />
-            <Text style={styles.hint}>{tr('onboarding.tracksHint')}</Text>
-          </View>
-        )}
-
-        {step === 3 && (
-          <View style={styles.center}>
-            <View style={styles.bellWrap}>
-              <Ionicons name="notifications" size={48} color="#fff" />
+            <Text style={styles.h1}>When should your quote arrive?</Text>
+            <Text style={styles.sub}>A gentle nudge to start your day right.</Text>
+            <View style={styles.list}>
+              {REMINDER_OPTIONS.map((opt) => (
+                <Pressable key={opt.id} onPress={() => setReminder(opt.id)}>
+                  <Glass style={[styles.opt, reminder === opt.id && styles.optActive]}>
+                    <Text style={styles.optText}>{opt.label}</Text>
+                    {reminder === opt.id ? (
+                      <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                    ) : (
+                      <View style={styles.radio} />
+                    )}
+                  </Glass>
+                </Pressable>
+              ))}
             </View>
-            <Text style={styles.h1}>{tr('onboarding.notifTitle')}</Text>
-            <Text style={styles.subCenter}>{tr('onboarding.notifBody')}</Text>
-            <Pressable
-              style={[styles.primary, busy && styles.disabled]}
-              onPress={() => finish(true)}
-              disabled={busy}
-            >
-              <Text style={styles.primaryText}>{tr('onboarding.allow')}</Text>
-            </Pressable>
-            <Pressable onPress={() => finish(false)} disabled={busy} style={styles.skip}>
-              <Text style={styles.skipText}>{tr('onboarding.skip')}</Text>
-            </Pressable>
           </View>
         )}
 
-        {step < 3 && (
-          <Pressable
-            style={[styles.primary, step === 2 && tracks.length === 0 && styles.disabled]}
-            disabled={step === 2 && tracks.length === 0}
-            onPress={() => setStep(step + 1)}
-          >
-            <Text style={styles.primaryText}>{tr('onboarding.continue')}</Text>
+        {step === 'premium' && (
+          <View style={styles.step}>
+            <View style={styles.premiumCard}>
+              <Ionicons name="sparkles" size={40} color="#FFD700" />
+              <Text style={styles.premiumTitle}>Hustle & Heart Premium</Text>
+              <Text style={styles.premiumSub}>
+                Unlock Live Activities, the full theme collection, exclusive quote packs,
+                widgets, and your own music — all for less than a coffee a month.
+              </Text>
+              <View style={styles.priceRow}>
+                <Text style={styles.price}>$2.99/mo</Text>
+                <Text style={styles.priceAlt}>or $19.99/year</Text>
+              </View>
+              <Text style={styles.trialNote}>14-day free trial. Cancel anytime. You choose — never automatic.</Text>
+              <Pressable
+                style={styles.premiumButton}
+                onPress={() => handlePremiumChoice('trial')}
+              >
+                <Text style={styles.premiumButtonText}>Start 14-Day Free Trial</Text>
+              </Pressable>
+              <Pressable onPress={() => handlePremiumChoice('skip')}>
+                <Text style={styles.skipPremium}>Stay on Free Plan</Text>
+              </Pressable>
+            </View>
+            <Text style={styles.freeNote}>
+              The free plan is complete — daily quotes, all tracks, journal, streaks.
+              Premium is just the extras.
+            </Text>
+          </View>
+        )}
+
+        {step === 'notifications' && (
+          <View style={styles.center}>
+            <Ionicons name="notifications-outline" size={64} color="#fff" />
+            <Text style={styles.h1}>Stay in the flow</Text>
+            <Text style={styles.sub}>
+              Allow notifications so your daily quote and reminders can reach you.
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Bottom actions */}
+      <View style={styles.footer}>
+        {stepIdx > 0 && step !== 'premium' && (
+          <Pressable onPress={back} style={styles.backButton}>
+            <Text style={styles.backText}>Back</Text>
           </Pressable>
         )}
-
-        <View style={styles.dots}>
-          {STEPS.map((_, i) => (
-            <View key={i} style={[styles.dot, i === step && styles.dotActive]} />
-          ))}
-        </View>
-      </ScrollView>
+        {step === 'welcome' && (
+          <Pressable onPress={next} style={styles.primaryButton}>
+            <Text style={styles.primaryText}>Get Started</Text>
+          </Pressable>
+        )}
+        {['beliefs', 'goals', 'language', 'reminders'].includes(step) && (
+          <Pressable
+            onPress={next}
+            style={[styles.primaryButton, step === 'beliefs' && tracks.length === 0 && styles.disabled]}
+            disabled={step === 'beliefs' && tracks.length === 0}
+          >
+            <Text style={styles.primaryText}>Continue</Text>
+          </Pressable>
+        )}
+        {step === 'notifications' && (
+          <View style={styles.notifRow}>
+            <Pressable onPress={() => finish(false)} style={styles.secondaryButton}>
+              <Text style={styles.secondaryText}>Not Now</Text>
+            </Pressable>
+            <Pressable onPress={() => finish(true)} style={styles.primaryButton}>
+              <Text style={styles.primaryText}>Allow</Text>
+            </Pressable>
+          </View>
+        )}
+      </View>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  body: { flexGrow: 1, padding: 24, justifyContent: 'center', gap: 24 },
-  center: { alignItems: 'center', gap: 16 },
-  step: { gap: 12 },
-  heroMark: { width: 110, height: 110 },
-  appName: { color: '#fff', fontSize: 34, fontWeight: '900', letterSpacing: -0.5, textAlign: 'center' },
-  tagline: { color: '#999', fontSize: 16, textAlign: 'center' },
-  h1: { color: '#fff', fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },
-  sub: { color: '#999', fontSize: 15, lineHeight: 22 },
-  subCenter: { color: '#999', fontSize: 15, lineHeight: 22, textAlign: 'center' },
-  list: { gap: 12, marginTop: 8 },
-  opt: { borderRadius: 16, padding: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderWidth: 1, borderColor: '#2a2a2a' },
-  optActive: { borderColor: '#fff' },
-  optText: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  note: { color: '#f5c518', fontSize: 13, marginTop: 4 },
-  hint: { color: '#666', fontSize: 13 },
-  bellWrap: { width: 96, height: 96, borderRadius: 48, backgroundColor: '#1a1a1a', alignItems: 'center', justifyContent: 'center' },
-  primary: { backgroundColor: '#fff', borderRadius: 16, padding: 18, alignItems: 'center', marginTop: 8 },
-  primaryText: { color: '#000', fontSize: 17, fontWeight: '800' },
-  disabled: { opacity: 0.4 },
-  skip: { padding: 12 },
-  skipText: { color: '#999', fontSize: 15, fontWeight: '600' },
-  dots: { flexDirection: 'row', justifyContent: 'center', gap: 8, marginTop: 8 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#333' },
-  dotActive: { backgroundColor: '#fff' },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    gap: 12,
+  },
+  progressTrack: {
+    flex: 1,
+    height: 4,
+    backgroundColor: '#2a2a2a',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 2,
+  },
+  xButton: {
+    padding: 4,
+  },
+  body: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 16,
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  step: {
+    flex: 1,
+  },
+  heroMark: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+  },
+  appName: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#fff',
+    textAlign: 'center',
+  },
+  tagline: {
+    fontSize: 17,
+    color: '#999',
+    textAlign: 'center',
+  },
+  welcomeSub: {
+    fontSize: 15,
+    color: '#777',
+    textAlign: 'center',
+    marginTop: 8,
+    paddingHorizontal: 20,
+  },
+  h1: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  sub: {
+    fontSize: 15,
+    color: '#999',
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  list: {
+    gap: 10,
+  },
+  opt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderRadius: 14,
+  },
+  optActive: {
+    borderWidth: 1.5,
+    borderColor: '#fff',
+  },
+  optText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '500',
+  },
+  radio: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    borderColor: '#555',
+  },
+  premiumCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 20,
+    padding: 24,
+    alignItems: 'center',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  premiumTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#fff',
+  },
+  premiumSub: {
+    fontSize: 15,
+    color: '#aaa',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  priceRow: {
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  price: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#fff',
+  },
+  priceAlt: {
+    fontSize: 15,
+    color: '#888',
+    marginTop: 2,
+  },
+  trialNote: {
+    fontSize: 13,
+    color: '#888',
+    textAlign: 'center',
+  },
+  premiumButton: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    marginTop: 8,
+    width: '100%',
+    alignItems: 'center',
+  },
+  premiumButtonText: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#000',
+  },
+  skipPremium: {
+    fontSize: 15,
+    color: '#888',
+    marginTop: 4,
+    textDecorationLine: 'underline',
+  },
+  freeNote: {
+    fontSize: 13,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 16,
+    lineHeight: 20,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+    paddingTop: 12,
+  },
+  primaryButton: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    paddingVertical: 16,
+    alignItems: 'center',
+    flex: 1,
+  },
+  primaryText: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#000',
+  },
+  disabled: {
+    opacity: 0.4,
+  },
+  backButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+  },
+  backText: {
+    fontSize: 15,
+    color: '#888',
+  },
+  secondaryButton: {
+    borderWidth: 1,
+    borderColor: '#444',
+    borderRadius: 14,
+    paddingVertical: 16,
+    alignItems: 'center',
+    flex: 1,
+  },
+  secondaryText: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  notifRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
 });
