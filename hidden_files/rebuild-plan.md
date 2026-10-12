@@ -53,6 +53,10 @@ Multi-step questionnaire inspired by the Motivation app:
   (separate from gratitude journal)
 - **Breathe**: guided breathing exercises (box breathing, 4-7-8) for stress/anxiety
 - **Morning/Evening ritual**: morning intention + quote; evening gratitude reflection
+- **Living streak companion**: a creature that grows with your streak
+  (seed → sprout → sapling → tree → flourishing), nurtured by daily rituals
+- **AI companion chat**: friendly in-app AI friend for support/conversation
+  (scripted warm responses v1, full LLM phase 2)
 
 ### 4. Music
 - Built-in calming tracks (free, 1–2 ads per session for free users)
