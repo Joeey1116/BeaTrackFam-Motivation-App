@@ -28,6 +28,7 @@ const STEPS = [
   'goals',
   'language',
   'makeItYours',
+  'yourHome',
   'reminders',
   'premium',
   'notifications',
@@ -282,6 +283,55 @@ export default function Onboarding() {
           </View>
         )}
 
+        {step === 'yourHome' && (
+          <View style={styles.step}>
+            <Text style={styles.h1}>This is your home</Text>
+            <Text style={styles.sub}>
+              Not tabs. Rooms. Each one is a space that's yours —
+              walk in whenever you need it.
+            </Text>
+            <View style={styles.list}>
+              <Glass style={styles.roomCard}>
+                <Text style={styles.roomEmoji}>☀️</Text>
+                <View style={styles.optInfo}>
+                  <Text style={styles.optText}>Today</Text>
+                  <Text style={styles.optDesc}>Your living room — daily quote, streak, grounding</Text>
+                </View>
+              </Glass>
+              <Glass style={styles.roomCard}>
+                <Text style={styles.roomEmoji}>📓</Text>
+                <View style={styles.optInfo}>
+                  <Text style={styles.optText}>Journal</Text>
+                  <Text style={styles.optDesc}>Your private study — just for you, nobody else sees it</Text>
+                </View>
+              </Glass>
+              <Glass style={styles.roomCard}>
+                <Text style={styles.roomEmoji}>💭</Text>
+                <View style={styles.optInfo}>
+                  <Text style={styles.optText}>Mood</Text>
+                  <Text style={styles.optDesc}>Your check-in corner — how are you, really?</Text>
+                </View>
+              </Glass>
+              <Glass style={styles.roomCard}>
+                <Text style={styles.roomEmoji}>🌬️</Text>
+                <View style={styles.optInfo}>
+                  <Text style={styles.optText}>Breathe</Text>
+                  <Text style={styles.optDesc}>Your quiet room — calm is always here</Text>
+                </View>
+              </Glass>
+              {wantCompanion && (
+                <Glass style={styles.roomCard}>
+                  <Text style={styles.roomEmoji}>💛</Text>
+                  <View style={styles.optInfo}>
+                    <Text style={styles.optText}>Companion</Text>
+                    <Text style={styles.optDesc}>Where your friend hangs out — always here for you</Text>
+                  </View>
+                </Glass>
+              )}
+            </View>
+          </View>
+        )}
+
         {step === 'reminders' && (
           <View style={styles.step}>
             <Text style={styles.h1}>When should your quote arrive?</Text>
@@ -357,7 +407,7 @@ export default function Onboarding() {
             <Text style={styles.primaryText}>Get Started</Text>
           </Pressable>
         )}
-        {['beliefs', 'goals', 'language', 'makeItYours', 'reminders'].includes(step) && (
+        {['beliefs', 'goals', 'language', 'makeItYours', 'yourHome', 'reminders'].includes(step) && (
           <Pressable
             onPress={next}
             style={[styles.primaryButton, step === 'beliefs' && tracks.length === 0 && styles.disabled]}
@@ -503,6 +553,16 @@ const styles = StyleSheet.create({
   knobOn: {
     backgroundColor: '#000',
     alignSelf: 'flex-end',
+  },
+  roomCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 16,
+    padding: 16,
+    gap: 12,
+  },
+  roomEmoji: {
+    fontSize: 28,
   },
   radio: {
     width: 22,
