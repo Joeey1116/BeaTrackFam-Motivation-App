@@ -9,15 +9,13 @@ interface Track {
   artist: string;
   genre: string;
   duration: string;
+  file: any;
 }
 
 const TRACKS: Track[] = [
-  { id: '1', title: 'Morning Calm', artist: 'Hustle & Heart', genre: 'Ambient', duration: '5:00' },
-  { id: '2', title: 'Peaceful Piano', artist: 'Hustle & Heart', genre: 'Piano', duration: '4:30' },
-  { id: '3', title: 'Forest Rain', artist: 'Hustle & Heart', genre: 'Nature', duration: '6:00' },
-  { id: '4', title: 'Deep Meditation', artist: 'Hustle & Heart', genre: 'Meditation', duration: '10:00' },
-  { id: '5', title: 'Gentle Guitar', artist: 'Hustle & Heart', genre: 'Acoustic', duration: '3:45' },
-  { id: '6', title: 'Night Lo-Fi', artist: 'Hustle & Heart', genre: 'Lo-Fi', duration: '4:15' },
+  { id: '1', title: 'Meditation Impromptu 01', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '5:00', file: require('../assets/music/meditation_01.mp3') },
+  { id: '2', title: 'Meditation Impromptu 02', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '6:00', file: require('../assets/music/Meditation_Impromptu_02.mp3') },
+  { id: '3', title: 'Meditation Impromptu 03', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '6:00', file: require('../assets/music/Meditation_Impromptu_03.mp3') },
 ];
 
 const GENRES = ['All', 'Ambient', 'Piano', 'Nature', 'Meditation', 'Acoustic', 'Lo-Fi'];
@@ -107,6 +105,10 @@ export function MusicPlayer({ isHavenPlus }: Props) {
           <Text style={styles.importText}>Import Your Own Music</Text>
         </Pressable>
       )}
+
+      <Text style={styles.credit}>
+        Music by Kevin MacLeod (incompetech.com){'\n'}Licensed under Creative Commons CC BY 4.0
+      </Text>
     </View>
   );
 }
@@ -216,5 +218,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: '#fff',
+  },
+  credit: {
+    fontSize: 11,
+    color: '#444',
+    textAlign: 'center',
+    marginTop: 16,
+    lineHeight: 16,
   },
 });
