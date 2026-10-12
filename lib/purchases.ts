@@ -1,102 +1,84 @@
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
-import * as InAppPurchases from 'expo-in-app-purchases';
+import { useIAP, type ProductSubscription } from 'react-native-iap';
 
 // Product IDs from App Store Connect (Joey set up 2026-10-12)
-export const HAVEN_PLUS_PRODUCTS = {
-  ios: [
-    'HAVENMONTH299',    // $2.99/month
-    'HAVEN3MONTH799',   // $7.99/3 months
-    'HAVEN6MONTH1499',  // $14.99/6 months
-    'HAVEN1YEAR1999',   // $19.99/year
-  ],
-  android: [
-    // TODO: Joey to provide from Play Console
-    'havenplus.monthly',
-    'havenplus.3month',
-    'havenplus.6month',
-    'havenplus.yearly',
-  ],
-};
+// iOS: HAVENMONTH299, HAVEN3MONTH799, HAVEN6MONTH1499, HAVEN1YEAR1999
+const IOS_SKUS = [
+  'HAVENMONTH299',
+  'HAVEN3MONTH799',
+  'HAVEN6MONTH1499',
+  'HAVEN1YEAR1999',
+];
 
-export interface Product {
-  productId: string;
-  title: string;
-  description: string;
-  price: string;
-}
+// Android: Joey to provide from Play Console after uploading build with billing
+const ANDROID_SKUS = [
+  'havenplus_monthly',
+  'havenplus_3month',
+  'havenplus_6month',
+  'havenplus_yearly',
+];
+
+export const SKUS = Platform.OS === 'ios' ? IOS_SKUS : ANDROID_SKUS;
 
 export function useHavenPlus() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [purchasing, setPurchasing] = useState(false);
+  const {
+    connected,
+    subscriptions,
+    availablePurchases,
+    requestPurchase,
+    finishTransaction,
+    getAvailablePurchases,
+    fetchProducts,
+  } = useIAP();
 
+  // Fetch our subscription products once connected
   useEffect(() => {
-    init();
-    return () => {
-      InAppPurchases.disconnectAsync();
-    };
-  }, []);
-
-  const init = async () => {
-    try {
-      await InAppPurchases.connectAsync();
-      const ids = Platform.OS === 'ios'
-        ? HAVEN_PLUS_PRODUCTS.ios
-        : HAVEN_PLUS_PRODUCTS.android;
-
-      const { responseCode, results } = await InAppPurchases.getProductsAsync(ids);
-
-      if (responseCode === InAppPurchases.IAPResponseCode.OK && results) {
-        setProducts(results.map((p) => ({
-          productId: p.productId,
-          title: p.title,
-          description: p.description || '',
-          price: p.price || '',
-        })));
-      }
-    } catch (e) {
-      console.error('IAP init failed:', e);
-    } finally {
-      setLoading(false);
+    if (connected) {
+      fetchProducts({ skus: SKUS, type: 'subs' }).catch((e) =>
+        console.error('Failed to fetch products:', e)
+      );
     }
+  }, [connected]);
 
-    // Listen for purchase updates
-    InAppPurchases.setPurchaseListener(({ responseCode, results, errorCode }) => {
-      if (responseCode === InAppPurchases.IAPResponseCode.OK) {
-        results?.forEach(async (purchase) => {
-          if (!purchase.acknowledged) {
-            await InAppPurchases.finishTransactionAsync(purchase, true);
-            // TODO: verify receipt with server, update plan to haven-plus
-          }
-        });
-      }
-      setPurchasing(false);
-    });
-  };
-
-  const purchase = async (productId: string) => {
-    setPurchasing(true);
+  const purchase = async (sku: string) => {
     try {
-      await InAppPurchases.purchaseItemAsync(productId);
-    } catch (e) {
-      console.error('Purchase failed:', e);
-      setPurchasing(false);
+      await requestPurchase({
+        request: {
+          apple: { sku },
+          google: { skus: [sku] },
+        },
+        type: 'subs',
+      });
+    } catch (e: any) {
+      if (e?.code !== 'E_USER_CANCELLED') {
+        console.error('Purchase failed:', e);
+      }
     }
   };
 
-  const restore = async () => {
+  const restore = async (): Promise<boolean> => {
     try {
-      const { responseCode, results } = await InAppPurchases.getPurchaseHistoryAsync();
-      if (responseCode === InAppPurchases.IAPResponseCode.OK && results) {
-        // Check if user has active Haven Plus
-        return results.length > 0;
-      }
+      await getAvailablePurchases();
+      return availablePurchases.some((p) => SKUS.includes(p.productId));
     } catch (e) {
       console.error('Restore failed:', e);
+      return false;
     }
-    return false;
   };
 
-  return { products, loading, purchasing, purchase, restore };
+  // Sort subscriptions by price (ascending)
+  const sorted = [...subscriptions].sort((a, b) => {
+    const priceA = a.price || 0;
+    const priceB = b.price || 0;
+    return priceA - priceB;
+  });
+
+  return {
+    subscriptions: sorted as ProductSubscription[],
+    loading: !connected,
+    purchase,
+    restore,
+    finishTransaction,
+  };
 }
