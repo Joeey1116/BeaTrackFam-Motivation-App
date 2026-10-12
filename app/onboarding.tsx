@@ -356,30 +356,45 @@ export default function Onboarding() {
         {step === 'premium' && (
           <View style={styles.step}>
             <View style={styles.premiumCard}>
-              <Ionicons name="sparkles" size={40} color="#FFD700" />
-              <Text style={styles.premiumTitle}>Hustle & Heart Premium</Text>
+              <Text style={styles.havenBadge}>You're on Haven</Text>
+              <Text style={styles.premiumTitle}>Haven Plus</Text>
               <Text style={styles.premiumSub}>
-                Unlock Live Activities, the full theme collection, exclusive quote packs,
-                widgets, and your own music — all for less than a coffee a month.
+                Lock-screen quotes, widgets, every theme, custom backgrounds,
+                your own music, zero ads.
               </Text>
-              <View style={styles.priceRow}>
-                <Text style={styles.price}>$2.99/mo</Text>
-                <Text style={styles.priceAlt}>or $19.99/year</Text>
+              <View style={styles.tierList}>
+                <View style={styles.tier}>
+                  <Text style={styles.tierName}>Monthly</Text>
+                  <Text style={styles.tierPrice}>$2.99/mo</Text>
+                </View>
+                <View style={styles.tier}>
+                  <Text style={styles.tierName}>3 Months</Text>
+                  <Text style={styles.tierPrice}>$7.99</Text>
+                </View>
+                <View style={styles.tier}>
+                  <Text style={styles.tierName}>6 Months</Text>
+                  <Text style={styles.tierPrice}>$14.99</Text>
+                </View>
+                <View style={styles.tier}>
+                  <Text style={styles.tierName}>Yearly</Text>
+                  <Text style={styles.tierPrice}>$19.99</Text>
+                  <Text style={styles.tierSave}>Best value</Text>
+                </View>
               </View>
-              <Text style={styles.trialNote}>14-day free trial. Cancel anytime. You choose — never automatic.</Text>
+              <Text style={styles.trialNote}>14-day free trial on all plans. Cancel anytime in one tap. You choose — never automatic.</Text>
               <Pressable
                 style={styles.premiumButton}
                 onPress={() => handlePremiumChoice('trial')}
               >
-                <Text style={styles.premiumButtonText}>Start 14-Day Free Trial</Text>
+                <Text style={styles.premiumButtonText}>Try Haven Plus Free</Text>
               </Pressable>
               <Pressable onPress={() => handlePremiumChoice('skip')}>
-                <Text style={styles.skipPremium}>Stay on Free Plan</Text>
+                <Text style={styles.skipPremium}>Stay on Haven (Free)</Text>
               </Pressable>
             </View>
             <Text style={styles.freeNote}>
-              The free plan is complete — daily quotes, all tracks, journal, streaks.
-              Premium is just the extras.
+              Haven is complete — daily quotes, all tracks, journal, wellness, companion, music.
+              Haven Plus is just the extras.
             </Text>
           </View>
         )}
@@ -623,6 +638,45 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     color: '#000',
+  },
+  havenBadge: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#4CAF50',
+    backgroundColor: '#1a2a1a',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 12,
+  },
+  tierList: {
+    width: '100%',
+    gap: 8,
+    marginVertical: 16,
+  },
+  tier: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    padding: 14,
+  },
+  tierName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  tierPrice: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  tierSave: {
+    fontSize: 11,
+    color: '#4CAF50',
+    fontWeight: '600',
   },
   skipPremium: {
     fontSize: 15,
