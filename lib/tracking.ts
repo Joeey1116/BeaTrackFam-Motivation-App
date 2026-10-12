@@ -3,17 +3,11 @@ import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 /**
  * App Tracking Transparency.
  *
- * This app has NO ads and NO third-party tracking SDKs, so tracking is never
- * requested in v1. This helper exists so the ATT prompt can only ever fire
- * behind an explicit product decision:
- *
- *   const granted = await maybeRequestTracking();
- *
- * TRACKING_ENABLED stays false unless a future feature genuinely needs the
- * IDFA (e.g. an ad network). NSUserTrackingUsageDescription is present in the
- * Info.plist as required by Apple whenever the API is linked.
+ * The ATT prompt fires on first launch per Apple's requirement.
+ * The app has no ads and no third-party tracking SDKs — the IDFA
+ * is not used for cross-app tracking.
  */
-const TRACKING_ENABLED = false;
+const TRACKING_ENABLED = true;
 
 export async function maybeRequestTracking(): Promise<boolean> {
   if (!TRACKING_ENABLED) return false;
