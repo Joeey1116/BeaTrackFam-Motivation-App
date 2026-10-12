@@ -60,6 +60,13 @@ export default function TabsLayout() {
           md="face"
         />
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="music" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>Music</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'music.note', selected: 'music.note' }}
+          md="music_note"
+        />
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t('tabs.settings')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
