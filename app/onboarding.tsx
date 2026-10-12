@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../components/Screen';
 import { Glass } from '../components/Glass';
-import { BRAND, LANGUAGES, TRACKS, type Language, type TrackId } from '../lib/brand';
+import { BRAND, LANGUAGES, TRACKS, TRACK_LABELS, type Language, type TrackId } from '../lib/brand';
 import { setLanguage, useStrings } from '../lib/i18n';
 import {
   setChosenTracks,
@@ -21,6 +21,7 @@ import { ensureDailyQuotesScheduled, requestPermission } from '../lib/notificati
 import { getLanguage } from '../lib/i18n';
 import { getQuoteOfTheDay } from '../lib/quotes';
 import { refreshQuoteLiveActivity } from '../lib/liveActivity';
+import { useHavenPlus, SKUS } from '../lib/purchases';
 
 const STEPS = [
   'welcome',
@@ -54,15 +55,6 @@ const REMINDER_OPTIONS = [
   { id: 'none', label: 'No reminders' },
 ] as const;
 
-const TRACK_LABELS: Record<TrackId, string> = {
-  motivation: 'General Motivation',
-  gratitude: 'Gratitude',
-  'faith-christian': 'Christianity',
-  'faith-jewish': 'Judaism',
-  loyalty: 'Loyalty',
-  hustle: 'Hustle',
-  resilience: 'Resilience',
-};
 
 const GOAL_LABELS: Record<GoalId, string> = {
   'find-calm': 'Find calm',
@@ -83,6 +75,8 @@ export default function Onboarding() {
   const [wantBuddy, setWantBuddy] = useState(true);
   const [wantRituals, setWantRituals] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [selectedSku, setSelectedSku] = useState<string>(SKUS[0]);
+  const { purchase } = useHavenPlus();
 
   const step: Step = STEPS[stepIdx];
   const isLast = stepIdx === STEPS.length - 1;
@@ -137,10 +131,17 @@ export default function Onboarding() {
     }
   };
 
-  const handlePremiumChoice = (choice: 'trial' | 'skip') => {
+  const handlePremiumChoice = async (choice: 'trial' | 'skip') => {
     if (choice === 'trial') {
-      // TODO: Launch subscription purchase flow (StoreKit/Billing)
-      // For now, mark as free — actual purchase comes in subscriptions task
+      // Trigger the real StoreKit/Billing purchase sheet
+      try {
+        await purchase(selectedSku);
+        setPlan('haven-plus');
+      } catch {
+        // User cancelled — stay on Haven
+        setPlan('haven');
+      }
+    } else {
       setPlan('haven');
     }
     next(); // Go to notifications step
@@ -363,23 +364,22 @@ export default function Onboarding() {
                 your own music, zero ads.
               </Text>
               <View style={styles.tierList}>
-                <View style={styles.tier}>
-                  <Text style={styles.tierName}>Monthly</Text>
-                  <Text style={styles.tierPrice}>$2.99/mo</Text>
-                </View>
-                <View style={styles.tier}>
-                  <Text style={styles.tierName}>3 Months</Text>
-                  <Text style={styles.tierPrice}>$7.99</Text>
-                </View>
-                <View style={styles.tier}>
-                  <Text style={styles.tierName}>6 Months</Text>
-                  <Text style={styles.tierPrice}>$14.99</Text>
-                </View>
-                <View style={styles.tier}>
-                  <Text style={styles.tierName}>Yearly</Text>
-                  <Text style={styles.tierPrice}>$19.99</Text>
-                  <Text style={styles.tierSave}>Best value</Text>
-                </View>
+                {[
+                  { name: 'Monthly', price: '$2.99/mo', sku: SKUS[0] },
+                  { name: '3 Months', price: '$7.99', sku: SKUS[1] },
+                  { name: '6 Months', price: '$14.99', sku: SKUS[2] },
+                  { name: 'Yearly', price: '$19.99', sku: SKUS[3], save: 'Best value' },
+                ].map((tier) => (
+                  <Pressable
+                    key={tier.sku}
+                    onPress={() => setSelectedSku(tier.sku)}
+                    style={[styles.tier, selectedSku === tier.sku && styles.tierSelected]}
+                  >
+                    <Text style={styles.tierName}>{tier.name}</Text>
+                    <Text style={styles.tierPrice}>{tier.price}</Text>
+                    {tier.save && <Text style={styles.tierSave}>{tier.save}</Text>}
+                  </Pressable>
+                ))}
               </View>
               <Text style={styles.trialNote}>14-day free trial on all plans. Cancel anytime in one tap. You choose — never automatic.</Text>
               <Pressable
@@ -662,6 +662,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a1a',
     borderRadius: 12,
     padding: 14,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  tierSelected: {
+    borderColor: '#fff',
+    backgroundColor: '#2a2a2a',
   },
   tierName: {
     fontSize: 15,
@@ -700,13 +706,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 14,
     paddingVertical: 16,
+    paddingHorizontal: 24,
     alignItems: 'center',
-    flex: 1,
+    justifyContent: 'center',
+    minHeight: 56,
   },
   primaryText: {
     fontSize: 17,
     fontWeight: '700',
     color: '#000',
+    textAlign: 'center',
   },
   disabled: {
     opacity: 0.4,

@@ -2,16 +2,19 @@ import { useCallback, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { TAB_BAR_CLEARANCE } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
 import { CompanionChat } from '../../components/CompanionChat';
 import { StreakBuddy } from '../../components/StreakBuddy';
-import { isCompanionEnabled, isStreakBuddyEnabled, getStreak } from '../../lib/storage';
+import { isCompanionEnabled, isStreakBuddyEnabled, getStreak, getUserName } from '../../lib/storage';
 
 /**
  * Companion room — where your friend hangs out.
  * AI chat + streak buddy. Only shown if user opted in during onboarding.
  */
 export default function Companion() {
+  const insets = useSafeAreaInsets();
   const [chatOpen, setChatOpen] = useState(false);
   const [companionOn, setCompanionOn] = useState(true);
   const [buddyOn, setBuddyOn] = useState(true);
@@ -22,7 +25,7 @@ export default function Companion() {
     setCompanionOn(await isCompanionEnabled());
     setBuddyOn(await isStreakBuddyEnabled());
     setStreak(await getStreak());
-    // TODO: load user name from storage when name field is added
+    setUserName((await getUserName()) || undefined);
   }, []);
 
   useFocusEffect(
@@ -47,7 +50,7 @@ export default function Companion() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + TAB_BAR_CLEARANCE }]}>
       <Text style={styles.title}>Companion</Text>
       <Text style={styles.subtitle}>
         Your friend is here. You're not alone. 💛

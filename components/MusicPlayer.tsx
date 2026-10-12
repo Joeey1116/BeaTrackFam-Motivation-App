@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAudioPlayer } from 'expo-audio';
 import { Glass } from './Glass';
 
 interface Track {
@@ -33,19 +35,52 @@ interface Props {
 export function MusicPlayer({ isHavenPlus }: Props) {
   const [genre, setGenre] = useState('All');
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const insets = useSafeAreaInsets();
+  const player = useAudioPlayer(TRACKS[0].file);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      try {
+        player.pause();
+      } catch {
+        // ignore
+      }
+    };
+  }, []);
 
   const filtered = genre === 'All'
     ? TRACKS
     : TRACKS.filter((t) => t.genre === genre);
 
-  const togglePlay = (id: string) => {
-    setPlayingId(playingId === id ? null : id);
-    // TODO: integrate expo-av Audio.Sound for actual playback
-    // TODO: show ad for free users (1-2 per session)
+  const togglePlay = async (id: string) => {
+    try {
+      if (playingId === id) {
+        player.pause();
+        setPlayingId(null);
+        return;
+      }
+      const track = TRACKS.find((t) => t.id === id);
+      if (!track) return;
+      // Swap the audio source if it's a different track, then play
+      if (playingId !== null) {
+        player.replace(track.file);
+      } else {
+        // First play — make sure the right source is loaded
+        const current = TRACKS.find((t) => t.id === playingId);
+        if (!current || current.id !== id) {
+          player.replace(track.file);
+        }
+      }
+      player.play();
+      setPlayingId(id);
+    } catch (e) {
+      console.error('Audio playback failed:', e);
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 120 }]}>
       <Text style={styles.title}>Music</Text>
       <Text style={styles.subtitle}>
         Calming sounds for your home. Pick your vibe.
@@ -100,7 +135,15 @@ export function MusicPlayer({ isHavenPlus }: Props) {
       </ScrollView>
 
       {isHavenPlus && (
-        <Pressable style={styles.importBtn}>
+        <Pressable
+          style={styles.importBtn}
+          onPress={() =>
+            Alert.alert(
+              'Import Your Music',
+              'Import your own calming tracks from your library. Coming in the next update.'
+            )
+          }
+        >
           <Ionicons name="add-circle-outline" size={20} color="#fff" />
           <Text style={styles.importText}>Import Your Own Music</Text>
         </Pressable>

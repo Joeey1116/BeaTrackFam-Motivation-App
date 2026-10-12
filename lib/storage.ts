@@ -21,6 +21,7 @@ const KEYS = {
   MOOD_HISTORY: `${P}/mood_history`,
   VENT_ENTRIES: `${P}/vent_entries`,
   BREATHE_SESSIONS: `${P}/breathe_sessions`,
+  USER_NAME: `${P}/user_name`,
 } as const;
 
 function dayKey(d = new Date()): string {
@@ -152,6 +153,15 @@ export async function getReminderTime(): Promise<string> {
 
 export async function setReminderTime(time: string): Promise<void> {
   await AsyncStorage.setItem(KEYS.REMINDER_TIME, time);
+}
+
+// ---------- User name (for the companion) ----------
+export async function getUserName(): Promise<string> {
+  return (await AsyncStorage.getItem(KEYS.USER_NAME)) ?? '';
+}
+
+export async function setUserName(name: string): Promise<void> {
+  await AsyncStorage.setItem(KEYS.USER_NAME, name);
 }
 
 // ---------- Plan (free / premium) ----------

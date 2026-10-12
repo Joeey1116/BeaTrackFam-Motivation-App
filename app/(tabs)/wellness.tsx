@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { TAB_BAR_CLEARANCE } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
 import { MoodCheckIn } from '../../components/MoodCheckIn';
 import { VentSpace } from '../../components/VentSpace';
@@ -22,6 +24,7 @@ import {
  * Mood check-in, Vent Space, and Breathing exercises.
  */
 export default function Wellness() {
+  const insets = useSafeAreaInsets();
   const [moodModal, setMoodModal] = useState(false);
   const [ventModal, setVentModal] = useState(false);
   const [breatheModal, setBreatheModal] = useState(false);
@@ -63,7 +66,13 @@ export default function Wellness() {
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={[
+        styles.content,
+        { paddingTop: insets.top + 20, paddingBottom: insets.bottom + TAB_BAR_CLEARANCE },
+      ]}
+    >
       <Text style={styles.title}>Wellness</Text>
       <Text style={styles.subtitle}>
         Your quiet room. Check in with yourself, let it out, breathe.

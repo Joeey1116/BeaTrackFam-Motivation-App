@@ -35,6 +35,17 @@ export const TRACKS = [
 
 export type TrackId = (typeof TRACKS)[number];
 
+/** Human-readable track names. */
+export const TRACK_LABELS: Record<TrackId, string> = {
+  motivation: 'General Motivation',
+  gratitude: 'Gratitude',
+  'faith-christian': 'Christianity',
+  'faith-jewish': 'Judaism',
+  loyalty: 'Loyalty',
+  hustle: 'Hustle',
+  resilience: 'Resilience',
+};
+
 /** Languages shipped in v1. Hebrew is RTL. */
 export const LANGUAGES = ['en', 'he', 'es'] as const;
 export type Language = (typeof LANGUAGES)[number];

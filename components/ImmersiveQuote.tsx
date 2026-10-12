@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { trackName } from '../lib/i18n';
 import { getTheme } from '../lib/themes';
@@ -33,13 +34,16 @@ export function ImmersiveQuote({
 }: Props) {
   const theme = getTheme(themeId);
   const primaryTrack = quote.tracks[0];
+  const insets = useSafeAreaInsets();
+  // Floating Liquid Glass tab bar needs generous clearance
+  const TAB_BAR_CLEARANCE = 110;
 
   return (
     <View style={styles.container}>
       <LinearGradient colors={theme.bg} style={StyleSheet.absoluteFill} />
 
       {/* Top: streak + hearts progress */}
-      <View style={styles.topRow}>
+      <View style={[styles.topRow, { paddingTop: insets.top + 12 }]}>
         <View style={styles.streakBadge}>
           <Ionicons name="flame" size={16} color={theme.accent} />
           <Text style={[styles.streakText, { color: theme.text }]}>{streak}</Text>
@@ -62,11 +66,11 @@ export function ImmersiveQuote({
           {trackName(primaryTrack).toUpperCase()}
         </Text>
         <Text style={[styles.quote, { color: theme.text }]}>{quote.text}</Text>
-        <Text style={[styles.brand, { color: theme.muted }]}>HUSTLE & HEART</Text>
+        <Text style={[styles.brand, { color: theme.muted }]}>HUSTLE &amp; HEART</Text>
       </View>
 
-      {/* Bottom: actions */}
-      <View style={styles.actions}>
+      {/* Bottom: actions — clear of the floating tab bar */}
+      <View style={[styles.actions, { paddingBottom: insets.bottom + TAB_BAR_CLEARANCE }]}>
         <Pressable onPress={onShare} style={styles.actionBtn} hitSlop={12}>
           <Ionicons name="share-outline" size={28} color={theme.text} />
         </Pressable>
