@@ -1,40 +1,58 @@
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useStrings } from '../../lib/i18n';
-import { GlassTabBackground } from '../../components/GlassTabBackground';
 
-const ICONS: Record<string, [string, string]> = {
-  index: ['sunny-outline', 'sunny'],
-  browse: ['grid-outline', 'grid'],
-  favorites: ['heart-outline', 'heart'],
-  journal: ['book-outline', 'book'],
-  settings: ['settings-outline', 'settings'],
-};
-
+/**
+ * Bottom navigation is the OS's OWN tab bar (UITabBar on iOS, the
+ * Material navigation bar on Android) — the same as the main BeaTrackFam
+ * app. On iOS 26+ the system draws it as the floating Liquid Glass
+ * capsule, the genuine article rendered by Apple, not an imitation.
+ */
 export default function TabsLayout() {
   const { t } = useStrings();
   return (
-    <Tabs
-      screenOptions={({ route }) => {
-        const [outline, filled] = ICONS[route.name] ?? ['ellipse-outline', 'ellipse'];
-        return {
-          headerShown: false,
-          tabBarBackground: () => <GlassTabBackground />,
-          tabBarStyle: { backgroundColor: 'transparent', borderTopColor: '#1f1f1f', borderTopWidth: 1, position: 'absolute' },
-          tabBarActiveTintColor: '#ffffff',
-          tabBarInactiveTintColor: '#666666',
-          tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
-          tabBarIcon: ({ color, focused, size }) => (
-            <Ionicons name={(focused ? filled : outline) as any} size={size} color={color} />
-          ),
-        };
+    <NativeTabs
+      tintColor="#ffffff"
+      iconColor={{ default: '#666666', selected: '#ffffff' }}
+      labelStyle={{
+        default: { color: '#666666', fontWeight: '500' },
+        selected: { color: '#ffffff', fontWeight: '700' },
       }}
     >
-      <Tabs.Screen name="index" options={{ title: t('tabs.today') }} />
-      <Tabs.Screen name="browse" options={{ title: t('tabs.browse') }} />
-      <Tabs.Screen name="favorites" options={{ title: t('tabs.favorites') }} />
-      <Tabs.Screen name="journal" options={{ title: t('tabs.journal') }} />
-      <Tabs.Screen name="settings" options={{ title: t('tabs.settings') }} />
-    </Tabs>
+      <NativeTabs.Trigger name="index" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>{t('tabs.today')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'sunrise', selected: 'sunrise.fill' }}
+          md="wb_sunny"
+        />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="browse" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>{t('tabs.browse')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }}
+          md="grid_view"
+        />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="favorites" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>{t('tabs.favorites')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'heart', selected: 'heart.fill' }}
+          md="favorite"
+        />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="journal" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>{t('tabs.journal')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'book', selected: 'book.fill' }}
+          md="book"
+        />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="settings" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>{t('tabs.settings')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'gear', selected: 'gear' }}
+          md="settings"
+        />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
