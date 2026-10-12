@@ -13,6 +13,9 @@ import {
   setNotifEnabled,
   setOnboarded,
   setPlan,
+  setCompanionEnabled,
+  setStreakBuddyEnabled,
+  setRitualsEnabled,
 } from '../lib/storage';
 import { ensureDailyQuotesScheduled, requestPermission } from '../lib/notifications';
 import { getLanguage } from '../lib/i18n';
@@ -24,6 +27,7 @@ const STEPS = [
   'beliefs',
   'goals',
   'language',
+  'makeItYours',
   'reminders',
   'premium',
   'notifications',
@@ -74,6 +78,9 @@ export default function Onboarding() {
   const [tracks, setTracks] = useState<TrackId[]>(['motivation', 'gratitude', 'resilience']);
   const [goals, setGoalsState] = useState<GoalId[]>([]);
   const [reminder, setReminder] = useState<string>('8am');
+  const [wantCompanion, setWantCompanion] = useState(true);
+  const [wantBuddy, setWantBuddy] = useState(true);
+  const [wantRituals, setWantRituals] = useState(true);
   const [busy, setBusy] = useState(false);
 
   const step: Step = STEPS[stepIdx];
@@ -108,6 +115,9 @@ export default function Onboarding() {
       await setGoals(goals);
       await setReminderTime(reminder);
       await setPlan('free'); // Everyone starts on free; premium is opt-in
+      await setCompanionEnabled(wantCompanion);
+      await setStreakBuddyEnabled(wantBuddy);
+      await setRitualsEnabled(wantRituals);
       if (enableNotif && reminder !== 'none') {
         const granted = await requestPermission();
         await setNotifEnabled(granted);
@@ -224,6 +234,54 @@ export default function Onboarding() {
           </View>
         )}
 
+        {step === 'makeItYours' && (
+          <View style={styles.step}>
+            <Text style={styles.h1}>Make it yours</Text>
+            <Text style={styles.sub}>
+              How do you want Hustle & Heart to feel? Turn on what speaks to you —
+              the app works beautifully either way.
+            </Text>
+            <View style={styles.list}>
+              <Pressable onPress={() => setWantCompanion(!wantCompanion)}>
+                <Glass style={[styles.opt, wantCompanion && styles.optActive]}>
+                  <View style={styles.optInfo}>
+                    <Text style={styles.optText}>AI Companion</Text>
+                    <Text style={styles.optDesc}>A friendly chat friend who's there when you need to talk</Text>
+                  </View>
+                  <View style={[styles.toggle, wantCompanion && styles.toggleOn]}>
+                    <View style={[styles.knob, wantCompanion && styles.knobOn]} />
+                  </View>
+                </Glass>
+              </Pressable>
+              <Pressable onPress={() => setWantBuddy(!wantBuddy)}>
+                <Glass style={[styles.opt, wantBuddy && styles.optActive]}>
+                  <View style={styles.optInfo}>
+                    <Text style={styles.optText}>Streak Buddy</Text>
+                    <Text style={styles.optDesc}>A little companion that grows as your streak builds</Text>
+                  </View>
+                  <View style={[styles.toggle, wantBuddy && styles.toggleOn]}>
+                    <View style={[styles.knob, wantBuddy && styles.knobOn]} />
+                  </View>
+                </Glass>
+              </Pressable>
+              <Pressable onPress={() => setWantRituals(!wantRituals)}>
+                <Glass style={[styles.opt, wantRituals && styles.optActive]}>
+                  <View style={styles.optInfo}>
+                    <Text style={styles.optText}>Daily Rituals</Text>
+                    <Text style={styles.optDesc}>Morning greeting and evening wind-down</Text>
+                  </View>
+                  <View style={[styles.toggle, wantRituals && styles.toggleOn]}>
+                    <View style={[styles.knob, wantRituals && styles.knobOn]} />
+                  </View>
+                </Glass>
+              </Pressable>
+            </View>
+            <Text style={styles.freeNote}>
+              Not a fan of AI? Turn it off — you'll still get quotes, journal, and streaks.
+            </Text>
+          </View>
+        )}
+
         {step === 'reminders' && (
           <View style={styles.step}>
             <Text style={styles.h1}>When should your quote arrive?</Text>
@@ -299,7 +357,7 @@ export default function Onboarding() {
             <Text style={styles.primaryText}>Get Started</Text>
           </Pressable>
         )}
-        {['beliefs', 'goals', 'language', 'reminders'].includes(step) && (
+        {['beliefs', 'goals', 'language', 'makeItYours', 'reminders'].includes(step) && (
           <Pressable
             onPress={next}
             style={[styles.primaryButton, step === 'beliefs' && tracks.length === 0 && styles.disabled]}
@@ -414,6 +472,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     fontWeight: '500',
+  },
+  optInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+  optDesc: {
+    fontSize: 13,
+    color: '#888',
+    marginTop: 4,
+    lineHeight: 18,
+  },
+  toggle: {
+    width: 50,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#333',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  toggleOn: {
+    backgroundColor: '#fff',
+  },
+  knob: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#666',
+  },
+  knobOn: {
+    backgroundColor: '#000',
+    alignSelf: 'flex-end',
   },
   radio: {
     width: 22,

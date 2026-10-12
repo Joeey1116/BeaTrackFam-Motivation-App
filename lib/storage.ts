@@ -15,6 +15,9 @@ const KEYS = {
   REMINDER_TIME: `${P}/reminder_time`,
   PLAN: `${P}/plan`,
   THEME: `${P}/theme`,
+  COMPANION: `${P}/companion_enabled`,
+  BUDDY: `${P}/buddy_enabled`,
+  RITUALS: `${P}/rituals_enabled`,
 } as const;
 
 function dayKey(d = new Date()): string {
@@ -166,4 +169,32 @@ export async function getThemeId(): Promise<string> {
 
 export async function setThemeId(id: string): Promise<void> {
   await AsyncStorage.setItem(KEYS.THEME, id);
+}
+
+// ---------- Personalization (virtual home features) ----------
+export async function isCompanionEnabled(): Promise<boolean> {
+  const raw = await AsyncStorage.getItem(KEYS.COMPANION);
+  return raw !== '0'; // Default on
+}
+
+export async function setCompanionEnabled(on: boolean): Promise<void> {
+  await AsyncStorage.setItem(KEYS.COMPANION, on ? '1' : '0');
+}
+
+export async function isStreakBuddyEnabled(): Promise<boolean> {
+  const raw = await AsyncStorage.getItem(KEYS.BUDDY);
+  return raw !== '0'; // Default on
+}
+
+export async function setStreakBuddyEnabled(on: boolean): Promise<void> {
+  await AsyncStorage.setItem(KEYS.BUDDY, on ? '1' : '0');
+}
+
+export async function isRitualsEnabled(): Promise<boolean> {
+  const raw = await AsyncStorage.getItem(KEYS.RITUALS);
+  return raw !== '0'; // Default on
+}
+
+export async function setRitualsEnabled(on: boolean): Promise<void> {
+  await AsyncStorage.setItem(KEYS.RITUALS, on ? '1' : '0');
 }
