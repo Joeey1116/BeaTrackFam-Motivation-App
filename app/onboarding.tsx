@@ -115,7 +115,7 @@ export default function Onboarding() {
       await setChosenTracks(tracks);
       await setGoals(goals);
       await setReminderTime(reminder);
-      await setPlan('free'); // Everyone starts on free; premium is opt-in
+      await setPlan('haven'); // Everyone starts on free; premium is opt-in
       await setCompanionEnabled(wantCompanion);
       await setStreakBuddyEnabled(wantBuddy);
       await setRitualsEnabled(wantRituals);
@@ -141,7 +141,7 @@ export default function Onboarding() {
     if (choice === 'trial') {
       // TODO: Launch subscription purchase flow (StoreKit/Billing)
       // For now, mark as free — actual purchase comes in subscriptions task
-      setPlan('free');
+      setPlan('haven');
     }
     next(); // Go to notifications step
   };

@@ -155,10 +155,10 @@ export async function setReminderTime(time: string): Promise<void> {
 }
 
 // ---------- Plan (free / premium) ----------
-export type PlanId = 'free' | 'premium';
+export type PlanId = 'haven' | 'haven-plus';
 export async function getPlan(): Promise<PlanId> {
   const raw = await AsyncStorage.getItem(KEYS.PLAN);
-  return raw === 'premium' ? 'premium' : 'free';
+  return raw === 'haven-plus' ? 'haven-plus' : 'haven';
 }
 
 export async function setPlan(plan: PlanId): Promise<void> {
