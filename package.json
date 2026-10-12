@@ -8,7 +8,6 @@
     "expo": "~57.0.26",
     "expo-apple-authentication": "~57.0.2",
     "expo-auth-session": "~57.0.14",
-    "expo-av": "^16.0.8",
     "expo-blur": "~57.0.3",
     "expo-build-properties": "~57.0.22",
     "expo-constants": "~57.0.20",
@@ -38,7 +37,6 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.0",
-    "patch-package": "^8.0.1",
     "typescript": "~6.0.3"
   },
   "main": "expo-router/entry",
@@ -48,8 +46,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "start": "expo start",
-    "web": "expo start --web",
-    "postinstall": "patch-package"
+    "web": "expo start --web"
   },
   "version": "1.0.0"
 }
