@@ -1,83 +1,55 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useStrings } from '../../lib/i18n';
+import { GlassTabBackground } from '../../components/GlassTabBackground';
+
+const ICONS: Record<string, [string, string]> = {
+  index: ['sunny-outline', 'sunny'],
+  browse: ['grid-outline', 'grid'],
+  favorites: ['heart-outline', 'heart'],
+  companion: ['happy-outline', 'happy'],
+  journal: ['book-outline', 'book'],
+  wellness: ['leaf-outline', 'leaf'],
+  music: ['musical-notes-outline', 'musical-notes'],
+  settings: ['settings-outline', 'settings'],
+};
 
 /**
- * Bottom navigation is the OS's OWN tab bar (UITabBar on iOS, the
- * Material navigation bar on Android) — the same as the main BeaTrackFam
- * app. On iOS 26+ the system draws it as the floating Liquid Glass
- * capsule, the genuine article rendered by Apple, not an imitation.
+ * Bottom navigation is the classic JS tab bar with the GlassTabBackground
+ * (Liquid Glass on iOS 26+, frosted-glass fallback elsewhere).
  *
- * iOS only shows 4 tabs + a "More" overflow, so the first four triggers
- * are the visible ones: Today, Browse, Favorites, Companion. Everything
- * else (Journal, Wellness, Music, Settings) lives under More.
+ * NOTE: expo-router's `unstable-native-tabs` was reverted on Oct 14, 2026 —
+ * the native RNSTabBarController SIGABRTs on iOS 26 TestFlight builds while
+ * mounting, flashing an "Unmatched Route" screen before the process dies.
+ * Do NOT switch back to NativeTabs until that upstream crash is resolved.
  */
 export default function TabsLayout() {
   const { t } = useStrings();
   return (
-    <NativeTabs
-      tintColor="#ffffff"
-      iconColor={{ default: '#666666', selected: '#ffffff' }}
-      labelStyle={{
-        default: { color: '#666666', fontWeight: '500' },
-        selected: { color: '#ffffff', fontWeight: '700' },
+    <Tabs
+      screenOptions={({ route }) => {
+        const [outline, filled] = ICONS[route.name] ?? ['ellipse-outline', 'ellipse'];
+        return {
+          headerShown: false,
+          tabBarBackground: () => <GlassTabBackground />,
+          tabBarStyle: { backgroundColor: 'transparent', borderTopColor: '#1f1f1f', borderTopWidth: 1, position: 'absolute' },
+          tabBarActiveTintColor: '#ffffff',
+          tabBarInactiveTintColor: '#666666',
+          tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+          tabBarIcon: ({ color, focused, size }) => (
+            <Ionicons name={(focused ? filled : outline) as any} size={size} color={color} />
+          ),
+        };
       }}
     >
-      <NativeTabs.Trigger name="index" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t('tabs.today')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'sunrise', selected: 'sunrise.fill' }}
-          md="wb_sunny"
-        />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="browse" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t('tabs.browse')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'square.grid.2x2', selected: 'square.grid.2x2.fill' }}
-          md="grid_view"
-        />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="favorites" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t('tabs.favorites')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'heart', selected: 'heart.fill' }}
-          md="favorite"
-        />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="companion" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t('tabs.companion')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'face.smiling', selected: 'face.smiling.fill' }}
-          md="face"
-        />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="journal" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t('tabs.journal')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'book', selected: 'book.fill' }}
-          md="book"
-        />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="wellness" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t('tabs.wellness')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'heart.circle', selected: 'heart.circle.fill' }}
-          md="spa"
-        />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="music" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t('tabs.music')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'music.note', selected: 'music.note' }}
-          md="music_note"
-        />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="settings" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>{t('tabs.settings')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'gear', selected: 'gear' }}
-          md="settings"
-        />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+      <Tabs.Screen name="index" options={{ title: t('tabs.today') }} />
+      <Tabs.Screen name="browse" options={{ title: t('tabs.browse') }} />
+      <Tabs.Screen name="favorites" options={{ title: t('tabs.favorites') }} />
+      <Tabs.Screen name="companion" options={{ title: t('tabs.companion') }} />
+      <Tabs.Screen name="journal" options={{ title: t('tabs.journal') }} />
+      <Tabs.Screen name="wellness" options={{ title: t('tabs.wellness') }} />
+      <Tabs.Screen name="music" options={{ title: t('tabs.music') }} />
+      <Tabs.Screen name="settings" options={{ title: t('tabs.settings') }} />
+    </Tabs>
   );
 }
