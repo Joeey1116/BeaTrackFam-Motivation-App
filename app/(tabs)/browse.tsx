@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
+import { Colors, Radius, Spacing, Type } from '../../lib/design';
 import { getLanguage, trackDesc, trackName, useStrings } from '../../lib/i18n';
 import { getQuotesByTrack, type Quote } from '../../lib/quotes';
 import { getChosenTracks, getFavorites, toggleFavorite } from '../../lib/storage';
@@ -57,7 +58,7 @@ export default function Browse() {
                 <Ionicons
                   name={favs.includes(q.id) ? 'heart' : 'heart-outline'}
                   size={20}
-                  color={favs.includes(q.id) ? '#ff4d6d' : '#999'}
+                  color={favs.includes(q.id) ? '#ff4d6d' : Colors.textDim}
                 />
               </Pressable>
             </Glass>
@@ -69,17 +70,17 @@ export default function Browse() {
 }
 
 const styles = StyleSheet.create({
-  body: { padding: 20, gap: 16 },
-  h1: { color: '#fff', fontSize: 26, fontWeight: '800' },
-  chips: { gap: 10, paddingVertical: 4 },
-  chip: { backgroundColor: '#1a1a1a', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 10, borderWidth: 1, borderColor: '#2a2a2a' },
-  chipActive: { backgroundColor: '#fff', borderColor: '#fff' },
-  chipText: { color: '#999', fontSize: 14, fontWeight: '700' },
-  chipTextActive: { color: '#000' },
-  desc: { color: '#666', fontSize: 14 },
-  list: { gap: 12 },
-  card: { borderRadius: 18, padding: 18, borderWidth: 1, borderColor: '#2a2a2a', gap: 10 },
-  quote: { color: '#fff', fontSize: 17, fontWeight: '600', lineHeight: 26 },
-  fallback: { color: '#555', fontSize: 11, fontStyle: 'italic' },
-  favRow: { alignSelf: 'flex-end', padding: 4 },
+  body: { padding: Spacing.lg, gap: Spacing.md },
+  h1: { ...Type.display, color: Colors.text },
+  chips: { gap: Spacing.sm, paddingVertical: Spacing.xs },
+  chip: { backgroundColor: Colors.surface, borderRadius: Radius.pill, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderWidth: 1, borderColor: Colors.border },
+  chipActive: { backgroundColor: Colors.button, borderColor: Colors.button },
+  chipText: { ...Type.body, color: Colors.textDim, fontWeight: '700' },
+  chipTextActive: { color: Colors.buttonText },
+  desc: { ...Type.body, color: Colors.textDim },
+  list: { gap: Spacing.sm },
+  card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: Colors.border, gap: Spacing.sm },
+  quote: { color: Colors.text, fontSize: 17, fontWeight: '600', lineHeight: 26 },
+  fallback: { color: Colors.textDim, fontSize: 11, fontStyle: 'italic' },
+  favRow: { alignSelf: 'flex-end', padding: Spacing.xs },
 });

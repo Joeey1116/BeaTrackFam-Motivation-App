@@ -3,8 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { trackName } from '../lib/i18n';
 import { getTheme } from '../lib/themes';
+import { Type } from '../lib/design';
 import type { Quote } from '../lib/quotes';
 
 interface Props {
@@ -42,13 +44,21 @@ export function ImmersiveQuote({
     <View style={styles.container}>
       <LinearGradient colors={theme.bg} style={StyleSheet.absoluteFill} />
 
-      {/* Top: streak + hearts progress */}
+      {/* Top: streak + hearts progress — both tappable */}
       <View style={[styles.topRow, { paddingTop: insets.top + 12 }]}>
-        <View style={styles.streakBadge}>
+        <Pressable
+          onPress={() => router.push('/(tabs)/companion')}
+          style={styles.streakBadge}
+          hitSlop={10}
+        >
           <Ionicons name="flame" size={16} color={theme.accent} />
           <Text style={[styles.streakText, { color: theme.text }]}>{streak}</Text>
-        </View>
-        <View style={styles.heartsRow}>
+        </Pressable>
+        <Pressable
+          onPress={() => router.push('/(tabs)/favorites')}
+          style={styles.heartsRow}
+          hitSlop={10}
+        >
           {[0, 1, 2, 3, 4].map((i) => (
             <Ionicons
               key={i}
@@ -57,7 +67,7 @@ export function ImmersiveQuote({
               color={i < heartsToday ? '#ff4d6d' : theme.muted}
             />
           ))}
-        </View>
+        </Pressable>
       </View>
 
       {/* Center: quote */}
@@ -125,21 +135,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   track: {
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 3,
+    ...Type.eyebrow,
     marginBottom: 20,
   },
   quote: {
-    fontSize: 28,
-    fontWeight: '800',
+    ...Type.display,
     textAlign: 'center',
-    lineHeight: 38,
   },
   brand: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 2,
+    ...Type.eyebrow,
     marginTop: 24,
   },
   actions: {

@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TAB_BAR_CLEARANCE } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
+import { Colors, Radius, Spacing, Type } from '../../lib/design';
 import { CompanionChat } from '../../components/CompanionChat';
 import { StreakBuddy } from '../../components/StreakBuddy';
 import { isCompanionEnabled, isStreakBuddyEnabled, getStreak, getUserName } from '../../lib/storage';
@@ -38,7 +39,7 @@ export default function Companion() {
     return (
       <View style={styles.container}>
         <View style={styles.empty}>
-          <Ionicons name="heart-outline" size={48} color="#444" />
+          <Ionicons name="heart-outline" size={48} color={Colors.border} />
           <Text style={styles.emptyTitle}>Companion is off</Text>
           <Text style={styles.emptyText}>
             You chose a clean experience during onboarding. You can turn on the
@@ -65,14 +66,14 @@ export default function Companion() {
       {companionOn && (
         <Pressable onPress={() => setChatOpen(true)}>
           <Glass style={styles.chatCard}>
-            <Ionicons name="chatbubbles-outline" size={28} color="#fff" />
+            <Ionicons name="chatbubbles-outline" size={28} color={Colors.text} />
             <View style={styles.cardInfo}>
               <Text style={styles.cardTitle}>Talk to me</Text>
               <Text style={styles.cardDesc}>
                 Struggling, celebrating, or just want company — I'm here.
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#666" />
+            <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
           </Glass>
         </Pressable>
       )}
@@ -87,64 +88,59 @@ export default function Companion() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
-    padding: 20,
+    backgroundColor: Colors.background,
+    padding: Spacing.lg,
     paddingTop: 60,
-    gap: 12,
+    gap: Spacing.sm,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#fff',
-    marginBottom: 4,
+    ...Type.display,
+    color: Colors.text,
+    marginBottom: Spacing.xs,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#888',
-    marginBottom: 16,
-    lineHeight: 20,
+    ...Type.body,
+    color: Colors.textDim,
+    marginBottom: Spacing.md,
   },
   buddyCard: {
-    borderRadius: 16,
-    padding: 8,
+    borderRadius: Radius.lg,
+    padding: Spacing.sm,
   },
   chatCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 16,
-    padding: 18,
-    gap: 14,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    gap: Spacing.md,
   },
   cardInfo: {
     flex: 1,
   },
   cardTitle: {
+    color: Colors.text,
     fontSize: 17,
     fontWeight: '700',
-    color: '#fff',
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   cardDesc: {
-    fontSize: 13,
-    color: '#888',
-    lineHeight: 18,
+    ...Type.caption,
+    color: Colors.textDim,
   },
   empty: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
+    gap: Spacing.sm,
     padding: 40,
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#fff',
+    ...Type.section,
+    color: Colors.text,
   },
   emptyText: {
-    fontSize: 14,
-    color: '#888',
+    ...Type.body,
+    color: Colors.textDim,
     textAlign: 'center',
-    lineHeight: 20,
   },
 });

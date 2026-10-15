@@ -6,6 +6,10 @@ import { useStrings } from '../../lib/i18n';
  * Material navigation bar on Android) — the same as the main BeaTrackFam
  * app. On iOS 26+ the system draws it as the floating Liquid Glass
  * capsule, the genuine article rendered by Apple, not an imitation.
+ *
+ * iOS only shows 4 tabs + a "More" overflow, so the first four triggers
+ * are the visible ones: Today, Browse, Favorites, Companion. Everything
+ * else (Journal, Wellness, Music, Settings) lives under More.
  */
 export default function TabsLayout() {
   const { t } = useStrings();
@@ -39,6 +43,13 @@ export default function TabsLayout() {
           md="favorite"
         />
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="companion" disableTransparentOnScrollEdge>
+        <NativeTabs.Trigger.Label>{t('tabs.companion')}</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'face.smiling', selected: 'face.smiling.fill' }}
+          md="face"
+        />
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="journal" disableTransparentOnScrollEdge>
         <NativeTabs.Trigger.Label>{t('tabs.journal')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
@@ -47,21 +58,14 @@ export default function TabsLayout() {
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="wellness" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>Wellness</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('tabs.wellness')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf={{ default: 'heart.circle', selected: 'heart.circle.fill' }}
           md="spa"
         />
       </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="companion" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>Companion</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'face.smiling', selected: 'face.smiling.fill' }}
-          md="face"
-        />
-      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="music" disableTransparentOnScrollEdge>
-        <NativeTabs.Trigger.Label>Music</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>{t('tabs.music')}</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf={{ default: 'music.note', selected: 'music.note' }}
           md="music_note"

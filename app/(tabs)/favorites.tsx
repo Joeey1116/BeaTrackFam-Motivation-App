@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
+import { Colors, Radius, Spacing, Type } from '../../lib/design';
 import { getLanguage, trackName, useStrings } from '../../lib/i18n';
 import { getQuotes, type Quote } from '../../lib/quotes';
 import { getChosenTracks, getFavorites, toggleFavorite } from '../../lib/storage';
@@ -32,7 +33,7 @@ export default function Favorites() {
         <Text style={styles.h1}>{t('favorites.title')}</Text>
         {quotes.length === 0 ? (
           <View style={styles.empty}>
-            <Ionicons name="heart-outline" size={48} color="#333" />
+            <Ionicons name="heart-outline" size={48} color={Colors.border} />
             <Text style={styles.emptyText}>{t('favorites.empty')}</Text>
           </View>
         ) : (
@@ -54,13 +55,13 @@ export default function Favorites() {
 }
 
 const styles = StyleSheet.create({
-  body: { padding: 20, gap: 16, flexGrow: 1 },
-  h1: { color: '#fff', fontSize: 26, fontWeight: '800' },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16, paddingTop: 80 },
-  emptyText: { color: '#666', fontSize: 15, textAlign: 'center', lineHeight: 22, paddingHorizontal: 32 },
-  list: { gap: 12 },
-  card: { borderRadius: 18, padding: 18, borderWidth: 1, borderColor: '#2a2a2a', gap: 8 },
-  track: { color: '#666', fontSize: 11, fontWeight: '700', letterSpacing: 2 },
-  quote: { color: '#fff', fontSize: 17, fontWeight: '600', lineHeight: 26 },
-  favRow: { alignSelf: 'flex-end', padding: 4 },
+  body: { padding: Spacing.lg, gap: Spacing.md, flexGrow: 1 },
+  h1: { ...Type.display, color: Colors.text },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: Spacing.md, paddingTop: 80 },
+  emptyText: { ...Type.title, color: Colors.textDim, fontWeight: '400', textAlign: 'center', lineHeight: 22, paddingHorizontal: Spacing.xl },
+  list: { gap: Spacing.sm },
+  card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: Colors.border, gap: Spacing.sm },
+  track: { ...Type.eyebrow, color: Colors.textDim, letterSpacing: 2 },
+  quote: { color: Colors.text, fontSize: 17, fontWeight: '600', lineHeight: 26 },
+  favRow: { alignSelf: 'flex-end', padding: Spacing.xs },
 });

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import type { ShotHandle } from '../../components/QuoteCard';
 import { ImmersiveQuote } from '../../components/ImmersiveQuote';
@@ -16,6 +17,7 @@ import {
   toggleFavorite,
 } from '../../lib/storage';
 import { refreshQuoteLiveActivity } from '../../lib/liveActivity';
+import { Colors } from '../../lib/design';
 
 export default function Today() {
   const { lang } = useStrings();
@@ -43,6 +45,15 @@ export default function Today() {
     }
   }, []);
 
+  // Theme changes in Settings must reflect on return — reload on every focus.
+  // recordOpen() is idempotent per day, so re-running load() is safe.
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
+
+  // Language switches also rebuild the quote.
   useEffect(() => {
     load();
   }, [load, lang]);
@@ -99,11 +110,11 @@ export default function Today() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: Colors.background,
   },
   loading: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: Colors.background,
   },
   hidden: {
     position: 'absolute',

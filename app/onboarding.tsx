@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../components/Screen';
 import { Glass } from '../components/Glass';
+import { Colors, Radius, Spacing, Type } from '../lib/design';
 import { BRAND, LANGUAGES, TRACKS, TRACK_LABELS, type Language, type TrackId } from '../lib/brand';
 import { setLanguage, useStrings } from '../lib/i18n';
 import {
@@ -21,7 +22,7 @@ import { ensureDailyQuotesScheduled, requestPermission } from '../lib/notificati
 import { getLanguage } from '../lib/i18n';
 import { getQuoteOfTheDay } from '../lib/quotes';
 import { refreshQuoteLiveActivity } from '../lib/liveActivity';
-import { useHavenPlus, SKUS } from '../lib/purchases';
+import { useHavenPlus, SKUS, SKU_NAMES } from '../lib/purchases';
 
 const STEPS = [
   'welcome',
@@ -76,7 +77,28 @@ export default function Onboarding() {
   const [wantRituals, setWantRituals] = useState(true);
   const [busy, setBusy] = useState(false);
   const [selectedSku, setSelectedSku] = useState<string>(SKUS[0]);
-  const { purchase } = useHavenPlus();
+  const { purchase, subscriptions, productsLoading, purchasing } = useHavenPlus();
+
+  // Live StoreKit tiers in SKU order — never hardcoded prices, so they
+  // can't drift from App Store Connect.
+  const liveTiers = SKUS.map((sku) => {
+    const sub = subscriptions.find((s) => s.id === sku);
+    if (!sub) return null;
+    return {
+      sku,
+      name: SKU_NAMES[sku] ?? sub.title,
+      price: sub.displayPrice,
+      save: sku === SKUS[SKUS.length - 1] ? 'Best value' : undefined,
+    };
+  }).filter((t): t is NonNullable<typeof t> => t !== null);
+
+  // If the default-selected SKU has no live product, select the first live tier.
+  useEffect(() => {
+    if (!productsLoading && liveTiers.length > 0 && !liveTiers.some((t) => t.sku === selectedSku)) {
+      setSelectedSku(liveTiers[0].sku);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productsLoading]);
 
   const step: Step = STEPS[stepIdx];
   const isLast = stepIdx === STEPS.length - 1;
@@ -132,17 +154,20 @@ export default function Onboarding() {
   };
 
   const handlePremiumChoice = async (choice: 'trial' | 'skip') => {
+    if (busy) return;
     if (choice === 'trial') {
-      // Trigger the real StoreKit/Billing purchase sheet
+      // purchase() resolves true ONLY on a verified transaction for the
+      // selected SKU (see lib/purchases.ts). Cancel/failure → false, no
+      // grant. The old code granted haven-plus unconditionally.
+      setBusy(true);
       try {
-        await purchase(selectedSku);
-        setPlan('haven-plus');
-      } catch {
-        // User cancelled — stay on Haven
-        setPlan('haven');
+        const ok = await purchase(selectedSku);
+        await setPlan(ok ? 'haven-plus' : 'haven');
+      } finally {
+        setBusy(false);
       }
     } else {
-      setPlan('haven');
+      await setPlan('haven');
     }
     next(); // Go to notifications step
   };
@@ -364,29 +389,33 @@ export default function Onboarding() {
                 your own music, zero ads.
               </Text>
               <View style={styles.tierList}>
-                {[
-                  { name: 'Monthly', price: '$2.99/mo', sku: SKUS[0] },
-                  { name: '3 Months', price: '$7.99', sku: SKUS[1] },
-                  { name: '6 Months', price: '$14.99', sku: SKUS[2] },
-                  { name: 'Yearly', price: '$19.99', sku: SKUS[3], save: 'Best value' },
-                ].map((tier) => (
-                  <Pressable
-                    key={tier.sku}
-                    onPress={() => setSelectedSku(tier.sku)}
-                    style={[styles.tier, selectedSku === tier.sku && styles.tierSelected]}
-                  >
-                    <Text style={styles.tierName}>{tier.name}</Text>
-                    <Text style={styles.tierPrice}>{tier.price}</Text>
-                    {tier.save && <Text style={styles.tierSave}>{tier.save}</Text>}
-                  </Pressable>
-                ))}
+                {productsLoading ? (
+                  <ActivityIndicator size="small" color={Colors.textDim} style={styles.tierLoader} />
+                ) : (
+                  liveTiers.map((tier) => (
+                    <Pressable
+                      key={tier.sku}
+                      onPress={() => setSelectedSku(tier.sku)}
+                      style={[styles.tier, selectedSku === tier.sku && styles.tierSelected]}
+                    >
+                      <Text style={styles.tierName}>{tier.name}</Text>
+                      <Text style={styles.tierPrice}>{tier.price}</Text>
+                      {tier.save && <Text style={styles.tierSave}>{tier.save}</Text>}
+                    </Pressable>
+                  ))
+                )}
               </View>
               <Text style={styles.trialNote}>14-day free trial on all plans. Cancel anytime in one tap. You choose — never automatic.</Text>
               <Pressable
-                style={styles.premiumButton}
+                style={[styles.premiumButton, (busy || purchasing) && styles.disabled]}
                 onPress={() => handlePremiumChoice('trial')}
+                disabled={busy || purchasing}
               >
-                <Text style={styles.premiumButtonText}>Try Haven Plus Free</Text>
+                {purchasing ? (
+                  <ActivityIndicator size="small" color={Colors.buttonText} />
+                ) : (
+                  <Text style={styles.premiumButtonText}>Try Haven Plus Free</Text>
+                )}
               </Pressable>
               <Pressable onPress={() => handlePremiumChoice('skip')}>
                 <Text style={styles.skipPremium}>Stay on Haven (Free)</Text>
@@ -490,9 +519,8 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   appName: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#fff',
+    ...Type.display,
+    color: Colors.text,
     textAlign: 'center',
   },
   tagline: {
@@ -508,16 +536,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   h1: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: '#fff',
-    marginBottom: 8,
+    ...Type.headline,
+    color: Colors.text,
+    marginBottom: Spacing.sm,
   },
   sub: {
-    fontSize: 15,
-    color: '#999',
-    marginBottom: 20,
-    lineHeight: 22,
+    ...Type.body,
+    color: Colors.textMuted,
+    marginBottom: Spacing.md,
   },
   list: {
     gap: 10,
@@ -526,8 +552,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
-    borderRadius: 14,
+    padding: Spacing.md,
+    borderRadius: Radius.lg,
   },
   optActive: {
     borderWidth: 1.5,
@@ -626,8 +652,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   premiumButton: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
+    backgroundColor: Colors.button,
+    borderRadius: Radius.pill,
     paddingVertical: 16,
     paddingHorizontal: 32,
     marginTop: 8,
@@ -637,7 +663,7 @@ const styles = StyleSheet.create({
   premiumButtonText: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#000',
+    color: Colors.buttonText,
   },
   havenBadge: {
     fontSize: 13,
@@ -654,6 +680,9 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 8,
     marginVertical: 16,
+  },
+  tierLoader: {
+    paddingVertical: 24,
   },
   tier: {
     flexDirection: 'row',
@@ -703,8 +732,8 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   primaryButton: {
-    backgroundColor: '#fff',
-    borderRadius: 14,
+    backgroundColor: Colors.button,
+    borderRadius: Radius.pill,
     paddingVertical: 16,
     paddingHorizontal: 24,
     alignItems: 'center',
@@ -714,7 +743,7 @@ const styles = StyleSheet.create({
   primaryText: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#000',
+    color: Colors.buttonText,
     textAlign: 'center',
   },
   disabled: {
@@ -731,8 +760,8 @@ const styles = StyleSheet.create({
   },
   secondaryButton: {
     borderWidth: 1,
-    borderColor: '#444',
-    borderRadius: 14,
+    borderColor: Colors.border,
+    borderRadius: Radius.pill,
     paddingVertical: 16,
     alignItems: 'center',
     flex: 1,

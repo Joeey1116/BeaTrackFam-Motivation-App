@@ -19,7 +19,7 @@
     },
     "icon": "./assets/icon.png",
     "ios": {
-      "buildNumber": "9",
+      "buildNumber": "10",
       "bundleIdentifier": "com.beatrackfaminc.motivation",
       "deploymentTarget": "16.4",
       "icon": "./assets/icon.png",
@@ -94,7 +94,8 @@
           }
         }
       ],
-      "expo-audio"
+      "expo-audio",
+      "./plugins/withNitroIapGradleProps"
     ],
     "scheme": "hustleandheart",
     "slug": "hustle-heart",

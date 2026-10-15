@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TAB_BAR_CLEARANCE } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
+import { Colors, Radius, Spacing, Type } from '../../lib/design';
 import { MoodCheckIn } from '../../components/MoodCheckIn';
 import { VentSpace } from '../../components/VentSpace';
 import { Breathe } from '../../components/Breathe';
@@ -80,7 +81,7 @@ export default function Wellness() {
 
       <Pressable onPress={() => setMoodModal(true)}>
         <Glass style={styles.card}>
-          <Ionicons name="happy-outline" size={28} color="#fff" />
+          <Ionicons name="happy-outline" size={28} color={Colors.text} />
           <View style={styles.cardInfo}>
             <Text style={styles.cardTitle}>Mood Check-In</Text>
             <Text style={styles.cardDesc}>
@@ -89,13 +90,13 @@ export default function Wellness() {
                 : 'How are you feeling right now?'}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Glass>
       </Pressable>
 
       <Pressable onPress={() => setVentModal(true)}>
         <Glass style={styles.card}>
-          <Ionicons name="chatbubble-ellipses-outline" size={28} color="#fff" />
+          <Ionicons name="chatbubble-ellipses-outline" size={28} color={Colors.text} />
           <View style={styles.cardInfo}>
             <Text style={styles.cardTitle}>Vent Space</Text>
             <Text style={styles.cardDesc}>
@@ -104,20 +105,20 @@ export default function Wellness() {
                 : 'Free-write. No judgment, just space.'}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Glass>
       </Pressable>
 
       <Pressable onPress={() => setBreatheModal(true)}>
         <Glass style={styles.card}>
-          <Ionicons name="leaf-outline" size={28} color="#fff" />
+          <Ionicons name="leaf-outline" size={28} color={Colors.text} />
           <View style={styles.cardInfo}>
             <Text style={styles.cardTitle}>Breathe</Text>
             <Text style={styles.cardDesc}>
               Guided breathing for stress, anxiety, calm.
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Glass>
       </Pressable>
 
@@ -144,44 +145,41 @@ export default function Wellness() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: Colors.background,
   },
   content: {
-    padding: 20,
+    padding: Spacing.lg,
     paddingTop: 60,
-    gap: 12,
+    gap: Spacing.sm,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#fff',
-    marginBottom: 4,
+    ...Type.display,
+    color: Colors.text,
+    marginBottom: Spacing.xs,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#888',
-    marginBottom: 16,
-    lineHeight: 20,
+    ...Type.body,
+    color: Colors.textDim,
+    marginBottom: Spacing.md,
   },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 16,
-    padding: 18,
-    gap: 14,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    gap: Spacing.md,
   },
   cardInfo: {
     flex: 1,
   },
   cardTitle: {
+    color: Colors.text,
     fontSize: 17,
     fontWeight: '700',
-    color: '#fff',
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   cardDesc: {
-    fontSize: 13,
-    color: '#888',
-    lineHeight: 18,
+    ...Type.caption,
+    color: Colors.textDim,
   },
 });

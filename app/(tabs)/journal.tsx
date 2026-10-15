@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
+import { Colors, Radius, Spacing, Type } from '../../lib/design';
 import { useStrings } from '../../lib/i18n';
 import { getGratitude, setGratitude } from '../../lib/storage';
 
@@ -40,7 +41,7 @@ export default function Journal() {
             value={text}
             onChangeText={onChange}
             placeholder={t('journal.placeholder')}
-            placeholderTextColor="#555"
+            placeholderTextColor={Colors.textDim}
             multiline
             textAlignVertical="top"
             maxLength={280}
@@ -55,21 +56,21 @@ export default function Journal() {
 }
 
 const styles = StyleSheet.create({
-  body: { padding: 20, gap: 12 },
-  h1: { color: '#fff', fontSize: 26, fontWeight: '800' },
-  date: { color: '#666', fontSize: 14 },
-  card: { borderRadius: 20, padding: 20, borderWidth: 1, borderColor: '#2a2a2a', gap: 14, marginTop: 8 },
-  promptRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  prompt: { color: '#fff', fontSize: 17, fontWeight: '700', flex: 1 },
+  body: { padding: Spacing.lg, gap: Spacing.sm },
+  h1: { ...Type.display, color: Colors.text },
+  date: { ...Type.body, color: Colors.textDim },
+  card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: Colors.border, gap: Spacing.md, marginTop: Spacing.sm },
+  promptRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  prompt: { color: Colors.text, fontSize: 17, fontWeight: '700', flex: 1 },
   input: {
-    color: '#fff',
+    color: Colors.text,
     fontSize: 17,
     lineHeight: 26,
     minHeight: 140,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    borderRadius: 14,
-    padding: 14,
+    backgroundColor: Colors.input,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
   },
   rtl: { textAlign: 'right', writingDirection: 'rtl' },
-  saved: { color: '#4caf50', fontSize: 13, fontWeight: '600' },
+  saved: { ...Type.caption, color: Colors.success, fontWeight: '600' },
 });

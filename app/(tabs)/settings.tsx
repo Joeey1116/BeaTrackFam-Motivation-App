@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Linking,
   Pressable,
@@ -14,6 +15,7 @@ import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Glass } from '../../components/Glass';
+import { Colors, Radius, Spacing, Type } from '../../lib/design';
 import { getPlan, isCompanionEnabled, isStreakBuddyEnabled, isRitualsEnabled,
   setCompanionEnabled, setStreakBuddyEnabled, setRitualsEnabled,
   isNotifEnabled, setNotifEnabled, getUserName, setUserName,
@@ -21,7 +23,7 @@ import { getPlan, isCompanionEnabled, isStreakBuddyEnabled, isRitualsEnabled,
 import { useStrings, setLanguage } from '../../lib/i18n';
 import { TRACKS, TRACK_LABELS, BRAND, type TrackId } from '../../lib/brand';
 import { THEMES } from '../../lib/themes';
-import { useHavenPlus, SKUS } from '../../lib/purchases';
+import { useHavenPlus, SKU_NAMES } from '../../lib/purchases';
 
 const PRIVACY_URL = 'https://beatrackfam.info/pages/hustle-heart-motivation-app-privacy-policy';
 const TERMS_URL = 'https://beatrackfam.info/pages/terms-of-service';
@@ -33,7 +35,7 @@ const REVIEW_URL = 'https://apps.apple.com/app/id6821567537?action=write-review'
  */
 export default function Settings() {
   const { t, lang } = useStrings();
-  const { purchase, restore } = useHavenPlus();
+  const { purchase, restore, subscriptions, productsLoading } = useHavenPlus();
   const [plan, setPlanState] = useState<'haven' | 'haven-plus'>('haven');
   const [companion, setCompanion] = useState(true);
   const [buddy, setBuddy] = useState(true);
@@ -80,24 +82,56 @@ export default function Settings() {
   };
 
   const upgradeToPlus = () => {
+    // Never open the paywall on a cold StoreKit fetch — that was the
+    // "takes forever" sheet. Products are prefetched at app launch.
+    if (productsLoading || subscriptions.length === 0) {
+      Alert.alert(
+        'One moment',
+        'Loading Haven Plus plans…',
+        [{ text: 'OK', style: 'cancel' }]
+      );
+      return;
+    }
     Alert.alert(
       'Haven Plus',
       'Lock-screen quotes, widgets, every theme, custom backgrounds, your own music, zero ads.\n\n14-day free trial on all plans — you choose, never automatic.',
       [
-        { text: 'Monthly $2.99', onPress: () => purchase(SKUS[0]) },
-        { text: '3 Months $7.99', onPress: () => purchase(SKUS[1]) },
-        { text: '6 Months $14.99', onPress: () => purchase(SKUS[2]) },
-        { text: 'Yearly $19.99', onPress: () => purchase(SKUS[3]) },
+        // Live StoreKit prices — never hardcoded, so they can't drift.
+        ...subscriptions.map((sub) => ({
+          text: `${SKU_NAMES[sub.id] ?? sub.title} ${sub.displayPrice}`,
+          onPress: () => handlePurchase(sub.id),
+        })),
         { text: 'Restore Purchase', onPress: handleRestore },
         { text: 'Not Now', style: 'cancel' },
       ]
     );
   };
 
+  const handlePurchase = async (sku: string) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      // purchase() resolves true ONLY on a verified transaction for this
+      // SKU (see lib/purchases.ts). Cancel/failure → false, no grant.
+      const ok = await purchase(sku);
+      if (ok) {
+        await load();
+        Alert.alert(
+          'Welcome to Haven Plus 💛',
+          'Your subscription is active. Enjoy everything.'
+        );
+      }
+      // Cancelled or failed → stay silent; the store sheet already said so.
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const handleRestore = async () => {
     if (busy) return;
     setBusy(true);
     try {
+      // restore() grants haven-plus itself on success (lib/purchases.ts).
       const ok = await restore();
       Alert.alert(
         ok ? 'Restored' : 'No Purchase Found',
@@ -179,8 +213,8 @@ export default function Settings() {
         ? 'Make your home yours.'
         : 'Haven includes 3 themes. Haven Plus unlocks them all.',
       [
-        ...THEMES.map((theme, i) => {
-          const locked = !isPlus && i >= 3;
+        ...THEMES.map((theme) => {
+          const locked = !isPlus && theme.premium;
           return {
             text: `${current === theme.id ? '✓ ' : ''}${locked ? '🔒 ' : ''}${theme.name}`,
             onPress: async () => {
@@ -283,10 +317,16 @@ export default function Settings() {
             <Text style={styles.rowDesc}>
               {plan === 'haven-plus'
                 ? 'You\'re on Haven Plus. Thank you 💛 Tap to manage.'
-                : 'You\'re on the free Haven plan. Tap to see Haven Plus.'}
+                : productsLoading
+                  ? 'Loading plans…'
+                  : 'You\'re on the free Haven plan. Tap to see Haven Plus.'}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          {productsLoading && plan !== 'haven-plus' ? (
+            <ActivityIndicator size="small" color={Colors.textDim} />
+          ) : (
+            <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          )}
         </Pressable>
         {plan === 'haven-plus' && (
           <Pressable onPress={manageSubscription} style={styles.row}>
@@ -294,7 +334,7 @@ export default function Settings() {
               <Text style={styles.rowTitle}>Manage Subscription</Text>
               <Text style={styles.rowDesc}>Cancel or change — as easy as signing up.</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#666" />
+            <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
           </Pressable>
         )}
         {plan !== 'haven-plus' && (
@@ -303,7 +343,7 @@ export default function Settings() {
               <Text style={styles.rowTitle}>Restore Purchase</Text>
               <Text style={styles.rowDesc}>Already subscribed? Restore it here.</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#666" />
+            <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
           </Pressable>
         )}
       </Glass>
@@ -318,14 +358,14 @@ export default function Settings() {
               {userName ? `Hi, ${userName}!` : 'So your companion knows what to call you'}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={editBeliefs}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Beliefs</Text>
             <Text style={styles.rowDesc}>Faith and topic tracks</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
       </Glass>
 
@@ -365,14 +405,14 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Language</Text>
             <Text style={styles.rowDesc}>English, עברית, Español</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={editThemes}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Themes</Text>
             <Text style={styles.rowDesc}>Make your home yours</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
       </Glass>
 
@@ -384,7 +424,7 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Sign In</Text>
             <Text style={styles.rowDesc}>Sync across devices (optional)</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
       </Glass>
 
@@ -396,14 +436,14 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Share Hustle & Heart</Text>
             <Text style={styles.rowDesc}>Tell someone who needs this</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={leaveReview}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Leave a Review</Text>
             <Text style={styles.rowDesc}>It means the world to us</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
       </Glass>
 
@@ -418,7 +458,7 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Instagram</Text>
             <Text style={styles.rowDesc}>@beatrackfam</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
       </Glass>
 
@@ -430,21 +470,21 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Why We Built This</Text>
             <Text style={styles.rowDesc}>Our story</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={supportResources}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Support Resources</Text>
             <Text style={styles.rowDesc}>988, Crisis Text Line, DV Hotline — always here</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={contactUs}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Contact Us</Text>
             <Text style={styles.rowDesc}>contact@beatrackfam.info</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
       </Glass>
 
@@ -455,13 +495,13 @@ export default function Settings() {
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Privacy Policy</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={() => Linking.openURL(TERMS_URL)}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Terms of Service</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#666" />
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
       </Glass>
 
@@ -475,59 +515,53 @@ export default function Settings() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: Colors.background,
   },
   content: {
-    padding: 20,
+    padding: Spacing.md,
     paddingTop: 60,
     paddingBottom: 40,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#fff',
-    marginBottom: 20,
+    ...Type.display,
+    color: Colors.text,
+    marginBottom: Spacing.md,
   },
   section: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#666',
-    letterSpacing: 1,
-    marginTop: 20,
-    marginBottom: 8,
-    marginLeft: 4,
+    ...Type.eyebrow,
+    color: Colors.textDim,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
+    marginLeft: Spacing.xs,
   },
   group: {
-    borderRadius: 16,
+    borderRadius: Radius.lg,
     overflow: 'hidden',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    gap: 12,
+    padding: Spacing.md,
+    gap: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: Colors.border,
   },
   rowInfo: {
     flex: 1,
   },
   rowTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
+    ...Type.title,
+    color: Colors.text,
     marginBottom: 2,
   },
   rowDesc: {
-    fontSize: 13,
-    color: '#888',
-    lineHeight: 18,
+    ...Type.caption,
+    color: Colors.textMuted,
   },
   footer: {
-    fontSize: 12,
-    color: '#444',
+    ...Type.caption,
+    color: Colors.textDim,
     textAlign: 'center',
-    marginTop: 32,
-    lineHeight: 20,
+    marginTop: Spacing.xl,
   },
 });

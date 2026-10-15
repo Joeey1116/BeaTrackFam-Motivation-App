@@ -7,6 +7,17 @@ import { getChosenTracks, hasOnboarded, recordOpen } from '../lib/storage';
 import { getQuoteOfTheDay } from '../lib/quotes';
 import { refreshQuoteLiveActivity } from '../lib/liveActivity';
 import { maybeRequestTracking } from '../lib/tracking';
+import { useHavenPlus } from '../lib/purchases';
+
+/**
+ * Mounts the IAP hook at launch: prefetches StoreKit products so the
+ * paywall never opens on a cold fetch, and attaches the global purchase
+ * listener so entitlements grant correctly. Renders nothing.
+ */
+function PurchaseBootstrap() {
+  useHavenPlus();
+  return null;
+}
 
 export default function RootLayout() {
   const [ready, setReady] = useState(false);
@@ -32,6 +43,7 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="light" />
+      <PurchaseBootstrap />
       <Stack
         screenOptions={{
           headerShown: false,

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { MusicPlayer } from '../../components/MusicPlayer';
+import { Colors } from '../../lib/design';
 import { getPlan } from '../../lib/storage';
 
 /**
@@ -22,7 +23,7 @@ export default function Music() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
+    <View style={{ flex: 1, backgroundColor: Colors.background }}>
       <MusicPlayer isHavenPlus={isHavenPlus} />
     </View>
   );
