@@ -12,7 +12,7 @@ interface Props {
 
 // Google OAuth client ID (from Google Cloud Console). Set in Supabase
 // Dashboard → Authentication → Providers → Google with the matching secret.
-const GOOGLE_CLIENT_ID = ''; // TODO: Joey — paste your Google iOS client ID here
+const GOOGLE_CLIENT_ID = '584493036670-ioeipe5lqocjiu64udhb15m0bm1po78u.apps.googleusercontent.com';
 
 const googleDiscovery = {
   authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
