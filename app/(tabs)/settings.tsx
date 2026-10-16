@@ -11,7 +11,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Glass } from '../../components/Glass';
@@ -24,6 +24,7 @@ import { useStrings, setLanguage } from '../../lib/i18n';
 import { TRACKS, TRACK_LABELS, BRAND, type TrackId } from '../../lib/brand';
 import { THEMES } from '../../lib/themes';
 import { useHavenPlus, SKU_NAMES } from '../../lib/purchases';
+import { MusicPlayer } from '../../components/MusicPlayer';
 
 const PRIVACY_URL = 'https://beatrackfam.info/pages/hustle-heart-motivation-app-privacy-policy';
 const TERMS_URL = 'https://beatrackfam.info/pages/terms-of-service';
@@ -146,96 +147,23 @@ export default function Settings() {
   };
 
   const editName = () => {
-    Alert.prompt(
-      'Your Name',
-      'So your companion knows what to call you.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Save',
-          onPress: async (name?: string) => {
-            const clean = (name ?? '').trim().slice(0, 40);
-            await setUserName(clean);
-            setUserNameState(clean);
-          },
-        },
-      ],
-      'plain-text',
-      userName
-    );
+    router.push('/settings/name');
   };
 
-  const editBeliefs = async () => {
-    const chosen = await getChosenTracks();
-    Alert.alert(
-      'Faith & Topic Tracks',
-      'Pick the tracks that feel like home. Tap to toggle.',
-      [
-        ...TRACKS.map((id: TrackId) => ({
-          text: `${chosen.includes(id) ? '✓ ' : ''}${TRACK_LABELS[id]}`,
-          onPress: async () => {
-            const next = chosen.includes(id)
-              ? chosen.filter((x) => x !== id)
-              : [...chosen, id];
-            // Keep at least one track
-            if (next.length === 0) return;
-            await setChosenTracks(next);
-          },
-        })),
-        { text: 'Done', style: 'cancel' },
-      ]
-    );
+  const editBeliefs = () => {
+    router.push('/settings/tracks');
   };
 
   const editLanguage = () => {
-    const names: Record<string, string> = { en: 'English', he: 'עברית', es: 'Español' };
-    Alert.alert(
-      'Language',
-      'Choose your language.',
-      [
-        ...(['en', 'he', 'es'] as const).map((l) => ({
-          text: `${lang === l ? '✓ ' : ''}${names[l]}`,
-          onPress: async () => {
-            await setLanguage(l);
-          },
-        })),
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+    router.push('/settings/language');
   };
 
-  const editThemes = async () => {
-    const current = await getThemeId();
-    const isPlus = plan === 'haven-plus';
-    Alert.alert(
-      'Themes',
-      isPlus
-        ? 'Make your home yours.'
-        : 'Haven includes 3 themes. Haven Plus unlocks them all.',
-      [
-        ...THEMES.map((theme) => {
-          const locked = !isPlus && theme.premium;
-          return {
-            text: `${current === theme.id ? '✓ ' : ''}${locked ? '🔒 ' : ''}${theme.name}`,
-            onPress: async () => {
-              if (locked) {
-                upgradeToPlus();
-                return;
-              }
-              await setThemeId(theme.id);
-            },
-          };
-        }),
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+  const editThemes = () => {
+    router.push('/settings/themes');
   };
 
   const openSignIn = () => {
-    Alert.alert(
-      'Sign In (Optional)',
-      'Sign in to sync your quotes, journal, and streak across devices. Coming in the next update — your data stays safe on this device for now.'
-    );
+    router.push('/settings/signin');
   };
 
   const shareApp = async () => {
@@ -445,6 +373,12 @@ export default function Settings() {
           </View>
           <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
+      </Glass>
+
+      {/* MUSIC */}
+      <Text style={styles.section}>MUSIC</Text>
+      <Glass style={styles.group}>
+        <MusicPlayer isHavenPlus={plan === 'haven-plus'} />
       </Glass>
 
       {/* FOLLOW US */}

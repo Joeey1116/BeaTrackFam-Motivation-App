@@ -3,6 +3,9 @@ import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAudioPlayer } from 'expo-audio';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Glass } from './Glass';
 
 interface Track {
@@ -11,14 +14,58 @@ interface Track {
   artist: string;
   genre: string;
   duration: string;
-  file: any;
+  file: any; // require() for bundled, { uri } for imported
+  imported?: boolean;
 }
 
-const TRACKS: Track[] = [
+const BUNDLED_TRACKS: Track[] = [
   { id: '1', title: 'Meditation Impromptu 01', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '5:00', file: require('../assets/music/meditation_01.mp3') },
   { id: '2', title: 'Meditation Impromptu 02', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '6:00', file: require('../assets/music/Meditation_Impromptu_02.mp3') },
   { id: '3', title: 'Meditation Impromptu 03', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '6:00', file: require('../assets/music/Meditation_Impromptu_03.mp3') },
 ];
+
+const IMPORTED_KEY = '@hustle-heart.imported-tracks';
+
+interface ImportedTrack {
+  id: string;
+  title: string;
+  uri: string;
+}
+
+async function loadImportedTracks(): Promise<Track[]> {
+  try {
+    const raw = await AsyncStorage.getItem(IMPORTED_KEY);
+    if (!raw) return [];
+    const list: ImportedTrack[] = JSON.parse(raw);
+    // Drop any whose file no longer exists.
+    const valid: Track[] = [];
+    for (const t of list) {
+      const info = await FileSystem.getInfoAsync(t.uri);
+      if (info.exists) {
+        valid.push({
+          id: t.id,
+          title: t.title,
+          artist: 'Your library',
+          genre: 'Imported',
+          duration: '',
+          file: { uri: t.uri },
+          imported: true,
+        });
+      }
+    }
+    return valid;
+  } catch {
+    return [];
+  }
+}
+
+async function saveImportedTracks(tracks: ImportedTrack[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(IMPORTED_KEY, JSON.stringify(tracks));
+  } catch {
+    // Storage unavailable — import still works for this session.
+  }
+}
 
 const GENRES = ['All', 'Ambient', 'Piano', 'Nature', 'Meditation', 'Acoustic', 'Lo-Fi'];
 
@@ -30,13 +77,21 @@ interface Props {
 /**
  * Music room — calming tracks by genre.
  * Free (Haven): built-in tracks with occasional ads.
- * Haven Plus: no ads + import own library (coming soon).
+ * Haven Plus: no ads + import your own tracks from your device.
  */
 export function MusicPlayer({ isHavenPlus }: Props) {
   const [genre, setGenre] = useState('All');
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [tracks, setTracks] = useState<Track[]>(BUNDLED_TRACKS);
   const insets = useSafeAreaInsets();
-  const player = useAudioPlayer(TRACKS[0].file);
+  const player = useAudioPlayer(BUNDLED_TRACKS[0].file);
+
+  // Load imported tracks on mount.
+  useEffect(() => {
+    loadImportedTracks().then((imported) => {
+      if (imported.length > 0) setTracks([...BUNDLED_TRACKS, ...imported]);
+    });
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -50,8 +105,8 @@ export function MusicPlayer({ isHavenPlus }: Props) {
   }, []);
 
   const filtered = genre === 'All'
-    ? TRACKS
-    : TRACKS.filter((t) => t.genre === genre);
+    ? tracks
+    : tracks.filter((t) => t.genre === genre);
 
   const togglePlay = async (id: string) => {
     try {
@@ -60,23 +115,85 @@ export function MusicPlayer({ isHavenPlus }: Props) {
         setPlayingId(null);
         return;
       }
-      const track = TRACKS.find((t) => t.id === id);
+      const track = tracks.find((t) => t.id === id);
       if (!track) return;
-      // Swap the audio source if it's a different track, then play
-      if (playingId !== null) {
-        player.replace(track.file);
-      } else {
-        // First play — make sure the right source is loaded
-        const current = TRACKS.find((t) => t.id === playingId);
-        if (!current || current.id !== id) {
-          player.replace(track.file);
-        }
-      }
+      player.replace(track.file);
       player.play();
       setPlayingId(id);
     } catch (e) {
       console.error('Audio playback failed:', e);
     }
+  };
+
+  const importTrack = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'audio/*',
+        copyToCacheDirectory: true,
+      });
+      if (result.canceled || !result.assets?.[0]) return;
+      const asset = result.assets[0];
+
+      // Copy into the app's document directory so it survives cache clears.
+      const destUri = `${FileSystem.Paths.document.uri}music-${Date.now()}-${asset.name}`;
+      await FileSystem.copyAsync({ from: asset.uri, to: destUri });
+
+      const imported: ImportedTrack = {
+        id: `imported-${Date.now()}`,
+        title: asset.name.replace(/\.[^.]+$/, ''),
+        uri: destUri,
+      };
+
+      // Persist the list.
+      const raw = await AsyncStorage.getItem(IMPORTED_KEY);
+      const list: ImportedTrack[] = raw ? JSON.parse(raw) : [];
+      list.push(imported);
+      await saveImportedTracks(list);
+
+      const newTrack: Track = {
+        id: imported.id,
+        title: imported.title,
+        artist: 'Your library',
+        genre: 'Imported',
+        duration: '',
+        file: { uri: imported.uri },
+        imported: true,
+      };
+      setTracks((prev) => [...prev, newTrack]);
+      Alert.alert('Added', `"${imported.title}" is now in your music.`);
+    } catch (e) {
+      console.error('Import failed:', e);
+      Alert.alert('Could not import', 'That file could not be added. Try another audio file.');
+    }
+  };
+
+  const removeImported = (id: string) => {
+    Alert.alert('Remove track?', 'This deletes the imported file from the app.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Remove',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const track = tracks.find((t) => t.id === id);
+            if (track?.imported && track.file?.uri) {
+              await FileSystem.deleteAsync(track.file.uri, { idempotent: true });
+            }
+            const raw = await AsyncStorage.getItem(IMPORTED_KEY);
+            const list: ImportedTrack[] = raw ? JSON.parse(raw) : [];
+            await saveImportedTracks(list.filter((t) => t.id !== id));
+            setTracks((prev) => prev.filter((t) => t.id !== id));
+            if (playingId === id) {
+              player.pause();
+              setPlayingId(null);
+            }
+          } catch {
+            // Best effort — track is gone from the list regardless.
+            setTracks((prev) => prev.filter((t) => t.id !== id));
+          }
+        },
+      },
+    ]);
   };
 
   return (
@@ -111,7 +228,11 @@ export function MusicPlayer({ isHavenPlus }: Props) {
 
       <ScrollView style={styles.tracks}>
         {filtered.map((track) => (
-          <Pressable key={track.id} onPress={() => togglePlay(track.id)}>
+          <Pressable
+            key={track.id}
+            onPress={() => togglePlay(track.id)}
+            onLongPress={track.imported ? () => removeImported(track.id) : undefined}
+          >
             <Glass style={styles.track}>
               <Pressable style={styles.playBtn} onPress={() => togglePlay(track.id)}>
                 <Ionicons
@@ -123,7 +244,7 @@ export function MusicPlayer({ isHavenPlus }: Props) {
               <View style={styles.trackInfo}>
                 <Text style={styles.trackTitle}>{track.title}</Text>
                 <Text style={styles.trackMeta}>
-                  {track.artist} · {track.genre} · {track.duration}
+                  {track.artist}{track.genre ? ` · ${track.genre}` : ''}{track.duration ? ` · ${track.duration}` : ''}
                 </Text>
               </View>
               {playingId === track.id && (
@@ -135,15 +256,7 @@ export function MusicPlayer({ isHavenPlus }: Props) {
       </ScrollView>
 
       {isHavenPlus && (
-        <Pressable
-          style={styles.importBtn}
-          onPress={() =>
-            Alert.alert(
-              'Import Your Music',
-              'Import your own calming tracks from your library. Coming in the next update.'
-            )
-          }
-        >
+        <Pressable style={styles.importBtn} onPress={importTrack}>
           <Ionicons name="add-circle-outline" size={20} color="#fff" />
           <Text style={styles.importText}>Import Your Own Music</Text>
         </Pressable>

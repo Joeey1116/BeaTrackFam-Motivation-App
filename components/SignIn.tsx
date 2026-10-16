@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import * as AuthSession from 'expo-auth-session';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
@@ -8,6 +9,16 @@ interface Props {
   onSuccess: () => void;
   onSkip: () => void;
 }
+
+// Google OAuth client ID (from Google Cloud Console). Set in Supabase
+// Dashboard → Authentication → Providers → Google with the matching secret.
+const GOOGLE_CLIENT_ID = ''; // TODO: Joey — paste your Google iOS client ID here
+
+const googleDiscovery = {
+  authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
+  tokenEndpoint: 'https://oauth2.googleapis.com/token',
+  revocationEndpoint: 'https://oauth2.googleapis.com/revoke',
+};
 
 /**
  * Optional sign-in — Sign in with Apple + Google.
@@ -52,9 +63,48 @@ export function SignIn({ onSuccess, onSkip }: Props) {
   };
 
   const signInWithGoogle = async () => {
-    // TODO: Implement with expo-auth-session + Supabase
-    Alert.alert('Coming soon', 'Google sign-in is coming soon.');
+    if (!isSupabaseConfigured() || !supabase) {
+      Alert.alert('Not configured', 'Sign-in is not set up yet.');
+      return;
+    }
+    if (!GOOGLE_CLIENT_ID) {
+      Alert.alert('Not configured', 'Google sign-in is not set up yet.');
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const redirectUri = AuthSession.makeRedirectUri({ scheme: 'hustleandheart' });
+      const request = new AuthSession.AuthRequest({
+        clientId: GOOGLE_CLIENT_ID,
+        redirectUri,
+        scopes: ['openid', 'profile', 'email'],
+        responseType: AuthSession.ResponseType.IdToken,
+      });
+      const result = await request.promptAsync(googleDiscovery);
+
+      if (result.type !== 'success' || !result.params.id_token) {
+        if (result.type !== 'dismiss' && result.type !== 'cancel') {
+          throw new Error('Google sign-in did not complete.');
+        }
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithIdToken({
+        provider: 'google',
+        token: result.params.id_token,
+      });
+
+      if (error) throw error;
+      onSuccess();
+    } catch (e: any) {
+      Alert.alert('Sign-in failed', e.message || 'Please try again.');
+    } finally {
+      setBusy(false);
+    }
   };
+
+  const showGoogleButton = GOOGLE_CLIENT_ID.length > 0;
 
   return (
     <View style={styles.container}>
@@ -75,14 +125,16 @@ export function SignIn({ onSuccess, onSkip }: Props) {
         />
       )}
 
-      <Pressable
-        onPress={signInWithGoogle}
-        style={[styles.googleBtn, busy && styles.disabled]}
-        disabled={busy}
-      >
-        <Ionicons name="logo-google" size={20} color="#fff" />
-        <Text style={styles.googleText}>Sign in with Google</Text>
-      </Pressable>
+      {showGoogleButton && (
+        <Pressable
+          onPress={signInWithGoogle}
+          style={[styles.googleBtn, busy && styles.disabled]}
+          disabled={busy}
+        >
+          <Ionicons name="logo-google" size={20} color="#fff" />
+          <Text style={styles.googleText}>Sign in with Google</Text>
+        </Pressable>
+      )}
 
       <Pressable onPress={onSkip} style={styles.skipBtn}>
         <Text style={styles.skipText}>Skip — I'll stay offline</Text>
