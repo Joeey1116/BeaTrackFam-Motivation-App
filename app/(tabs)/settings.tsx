@@ -15,6 +15,7 @@ import { useFocusEffect, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Glass } from '../../components/Glass';
+import { isSupabaseConfigured } from '../../lib/supabase';
 import { Colors, Radius, Spacing, Type } from '../../lib/design';
 import { getPlan, isCompanionEnabled, isStreakBuddyEnabled, isRitualsEnabled,
   setCompanionEnabled, setStreakBuddyEnabled, setRitualsEnabled,
@@ -344,17 +345,22 @@ export default function Settings() {
         </Pressable>
       </Glass>
 
-      {/* ACCOUNT */}
-      <Text style={styles.section}>ACCOUNT</Text>
-      <Glass style={styles.group}>
-        <Pressable style={styles.row} onPress={openSignIn}>
-          <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Sign In</Text>
-            <Text style={styles.rowDesc}>Sync across devices (optional)</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
-        </Pressable>
-      </Glass>
+      {/* ACCOUNT — only show Sign In when the backend is configured.
+          Otherwise reviewers see a broken "not configured" popup. */}
+      {isSupabaseConfigured() && (
+        <>
+          <Text style={styles.section}>ACCOUNT</Text>
+          <Glass style={styles.group}>
+            <Pressable style={styles.row} onPress={openSignIn}>
+              <View style={styles.rowInfo}>
+                <Text style={styles.rowTitle}>Sign In</Text>
+                <Text style={styles.rowDesc}>Sync across devices (optional)</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+            </Pressable>
+          </Glass>
+        </>
+      )}
 
       {/* SUPPORT US */}
       <Text style={styles.section}>SUPPORT US</Text>
