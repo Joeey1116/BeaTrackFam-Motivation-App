@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
-  onSave: (valence: number, emotions: string[], note?: string) => void;
+  onSave: (valence: number, emotions: string[], note?: string) => void | Promise<void>;
   onClose: () => void;
+  /** Today's already-saved check-in, if any — the form opens prefilled
+   *  with it so a saved check-in is visibly remembered, not blank. */
+  initial?: { valence: number; emotions: string[] } | null;
 }
 
 const EMOTIONS = [
@@ -24,10 +27,11 @@ const CRISIS_KEYWORDS = [
  * Slider from Very Unpleasant (-1) to Very Pleasant (+1), emotion picker.
  * Detects crisis language and surfaces resources immediately.
  */
-export function MoodCheckIn({ onSave, onClose }: Props) {
-  const [valence, setValence] = useState(0);
-  const [selected, setSelected] = useState<string[]>([]);
+export function MoodCheckIn({ onSave, onClose, initial }: Props) {
+  const [valence, setValence] = useState(initial?.valence ?? 0);
+  const [selected, setSelected] = useState<string[]>(initial?.emotions ?? []);
   const [showCrisis, setShowCrisis] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const toggleEmotion = (e: string) => {
     setSelected((prev) =>
@@ -43,9 +47,18 @@ export function MoodCheckIn({ onSave, onClose }: Props) {
     return 'Very Pleasant';
   };
 
-  const handleSave = () => {
-    onSave(valence, selected);
-    onClose();
+  const handleSave = async () => {
+    if (saving) return;
+    setSaving(true);
+    try {
+      // Await the write BEFORE closing: in build 18 the sheet closed
+      // instantly whether or not the save landed, so a failed/slow write
+      // looked exactly like a successful one — "doesn't save".
+      await onSave(valence, selected);
+    } finally {
+      setSaving(false);
+      onClose();
+    }
   };
 
   if (showCrisis) {
@@ -76,6 +89,12 @@ export function MoodCheckIn({ onSave, onClose }: Props) {
 
   return (
     <View style={styles.container}>
+      {/* Scrollable: on shorter screens the fixed layout pushed Save
+          below the fold of the pageSheet with no way to reach it. */}
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
       <View style={styles.header}>
         <Text style={styles.title}>How are you feeling?</Text>
         <Pressable onPress={onClose} hitSlop={12}>
@@ -121,9 +140,12 @@ export function MoodCheckIn({ onSave, onClose }: Props) {
         <Text style={styles.crisisLink}>Need support right now? Tap here.</Text>
       </Pressable>
 
-      <Pressable onPress={handleSave} style={styles.saveBtn}>
-        <Text style={styles.saveText}>Save Check-In</Text>
+      <Pressable onPress={handleSave} style={styles.saveBtn} disabled={saving}>
+        <Text style={styles.saveText}>
+          {saving ? 'Saving…' : initial ? 'Update Check-In' : 'Save Check-In'}
+        </Text>
       </Pressable>
+      </ScrollView>
     </View>
   );
 }
@@ -137,7 +159,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
+  },
+  scrollContent: {
     padding: 20,
+    paddingBottom: 40,
   },
   header: {
     flexDirection: 'row',

@@ -28,6 +28,11 @@ function dayKey(d = new Date()): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+/** Local calendar-day key (YYYY-MM-DD) — the one true "today" for storage. */
+export function todayKey(): string {
+  return dayKey();
+}
+
 // ---------- Favorites ----------
 export async function getFavorites(): Promise<string[]> {
   try {
@@ -220,13 +225,21 @@ export interface MoodEntry {
 }
 
 export async function getMoodHistory(): Promise<MoodEntry[]> {
-  const raw = await AsyncStorage.getItem(KEYS.MOOD_HISTORY);
-  return raw ? JSON.parse(raw) : [];
+  try {
+    const raw = await AsyncStorage.getItem(KEYS.MOOD_HISTORY);
+    return raw ? (JSON.parse(raw) as MoodEntry[]) : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function saveMood(valence: number, emotions: string[]): Promise<void> {
   const history = await getMoodHistory();
-  const today = new Date().toISOString().split('T')[0];
+  // Local day key, NOT toISOString() (UTC): an evening check-in after
+  // 8 PM ET was stored under TOMORROW's date, and two check-ins on the
+  // same local day could land on different stored dates (build 19 fix —
+  // the check-in looked like it "didn't save").
+  const today = dayKey();
   const filtered = history.filter((h) => h.date !== today);
   filtered.push({ date: today, valence, emotions });
   await AsyncStorage.setItem(KEYS.MOOD_HISTORY, JSON.stringify(filtered));

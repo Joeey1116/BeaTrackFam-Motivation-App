@@ -11,6 +11,7 @@ import {
   setGratitude,
   getMoodHistory,
   saveMood,
+  todayKey,
   getVentEntries,
   saveVent,
   deleteVent,
@@ -59,9 +60,10 @@ export default function Journal() {
     { weekday: 'long', month: 'long', day: 'numeric' },
   );
 
-  const todayMood = moodHistory.find(
-    (m) => m.date === new Date().toISOString().split('T')[0]
-  );
+  // Local day key — must match saveMood's key exactly (build 19: both
+  // sides previously used UTC via toISOString, so evening check-ins
+  // rolled to tomorrow's date).
+  const todayMood = moodHistory.find((m) => m.date === todayKey());
 
   const wellnessCards = [
     {
@@ -133,9 +135,14 @@ export default function Journal() {
 
       <Modal visible={moodModal} animationType="slide" presentationStyle="pageSheet">
         <MoodCheckIn
+          initial={
+            todayMood
+              ? { valence: todayMood.valence, emotions: todayMood.emotions }
+              : null
+          }
           onSave={async (valence, emotions) => {
             await saveMood(valence, emotions);
-            loadWellness();
+            await loadWellness();
           }}
           onClose={() => setMoodModal(false)}
         />
