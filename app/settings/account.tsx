@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -14,6 +14,8 @@ import type { Session } from '@supabase/supabase-js';
 import { Screen } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
 import { Colors, Radius, Spacing, Type } from '../../lib/design';
+import type { ThemePalette } from '../../lib/themes';
+import { useTheme } from '../../lib/themeContext';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
 import { clearAllLocalData } from '../../lib/storage';
 import { readImportedList, stopPlayback } from '../../lib/music';
@@ -29,6 +31,8 @@ import { readImportedList, stopPlayback } from '../../lib/music';
  * returns the app to its first-run start.
  */
 export default function AccountScreen() {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const configured = isSupabaseConfigured();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(configured);
@@ -150,7 +154,7 @@ export default function AccountScreen() {
         <Text style={styles.h1}>Account</Text>
 
         {loading ? (
-          <ActivityIndicator color={Colors.textDim} style={styles.spinner} />
+          <ActivityIndicator color={palette.textDim} style={styles.spinner} />
         ) : !configured ? (
           <>
             <Text style={styles.sub}>
@@ -225,43 +229,45 @@ export default function AccountScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  body: { padding: Spacing.lg, gap: Spacing.md, flexGrow: 1 },
-  backRow: { paddingVertical: Spacing.xs },
-  back: { color: Colors.textDim, fontSize: 17, fontWeight: '600' },
-  h1: { ...Type.display, color: Colors.text },
-  sub: { ...Type.body, color: Colors.textMuted },
-  spinner: { marginTop: Spacing.xl },
-  card: { borderRadius: Radius.lg, padding: Spacing.md, gap: Spacing.xs },
-  cardLabel: { ...Type.eyebrow, color: Colors.textDim },
-  cardTitle: { ...Type.title, color: Colors.text },
-  cardBody: { ...Type.caption, color: Colors.textMuted },
-  primaryBtn: {
-    backgroundColor: Colors.button,
-    borderRadius: Radius.md,
-    paddingVertical: Spacing.md,
-    alignItems: 'center',
-    marginTop: Spacing.sm,
-  },
-  primaryBtnText: { ...Type.title, color: Colors.buttonText },
-  secondaryBtn: {
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: Radius.md,
-    paddingVertical: Spacing.md,
-    alignItems: 'center',
-  },
-  secondaryBtnText: { ...Type.title, color: Colors.text },
-  dangerZone: { marginTop: Spacing.xl, gap: Spacing.sm },
-  dangerTitle: { ...Type.eyebrow, color: Colors.danger },
-  dangerBtn: {
-    borderWidth: 1,
-    borderColor: Colors.danger,
-    borderRadius: Radius.md,
-    paddingVertical: Spacing.md,
-    alignItems: 'center',
-  },
-  dangerBtnText: { ...Type.title, color: Colors.danger },
-  dangerNote: { ...Type.caption, color: Colors.textDim },
-  disabled: { opacity: 0.5 },
-});
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
+    body: { padding: Spacing.lg, gap: Spacing.md, flexGrow: 1 },
+    backRow: { paddingVertical: Spacing.xs },
+    back: { color: p.textDim, fontSize: 17, fontWeight: '600' },
+    h1: { ...Type.display, color: p.text },
+    sub: { ...Type.body, color: p.textMuted },
+    spinner: { marginTop: Spacing.xl },
+    card: { borderRadius: Radius.lg, padding: Spacing.md, gap: Spacing.xs },
+    cardLabel: { ...Type.eyebrow, color: p.textDim },
+    cardTitle: { ...Type.title, color: p.text },
+    cardBody: { ...Type.caption, color: p.textMuted },
+    primaryBtn: {
+      backgroundColor: p.button,
+      borderRadius: Radius.md,
+      paddingVertical: Spacing.md,
+      alignItems: 'center',
+      marginTop: Spacing.sm,
+    },
+    primaryBtnText: { ...Type.title, color: p.buttonText },
+    secondaryBtn: {
+      borderWidth: 1,
+      borderColor: p.border,
+      borderRadius: Radius.md,
+      paddingVertical: Spacing.md,
+      alignItems: 'center',
+    },
+    secondaryBtnText: { ...Type.title, color: p.text },
+    dangerZone: { marginTop: Spacing.xl, gap: Spacing.sm },
+    dangerTitle: { ...Type.eyebrow, color: Colors.danger },
+    dangerBtn: {
+      borderWidth: 1,
+      borderColor: Colors.danger,
+      borderRadius: Radius.md,
+      paddingVertical: Spacing.md,
+      alignItems: 'center',
+    },
+    dangerBtnText: { ...Type.title, color: Colors.danger },
+    dangerNote: { ...Type.caption, color: p.textDim },
+    disabled: { opacity: 0.5 },
+  });
+}

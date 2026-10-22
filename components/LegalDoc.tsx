@@ -1,8 +1,11 @@
+import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Screen } from './Screen';
-import { Colors, Spacing, Type } from '../lib/design';
+import { Spacing, Type } from '../lib/design';
 import type { LegalSection } from '../lib/legal';
+import type { ThemePalette } from '../lib/themes';
+import { useTheme } from '../lib/themeContext';
 
 interface Props {
   title: string;
@@ -16,6 +19,9 @@ interface Props {
  * policy/terms read as part of the app, not a web page.
  */
 export function LegalDoc({ title, updated, sections }: Props) {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
+
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
@@ -35,13 +41,15 @@ export function LegalDoc({ title, updated, sections }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  body: { padding: Spacing.lg, gap: Spacing.md, flexGrow: 1 },
-  backRow: { paddingVertical: Spacing.xs },
-  back: { color: Colors.textDim, fontSize: 17, fontWeight: '600' },
-  h1: { ...Type.display, color: Colors.text },
-  updated: { ...Type.caption, color: Colors.textDim, marginTop: -Spacing.sm },
-  section: { gap: Spacing.xs },
-  heading: { ...Type.section, color: Colors.text, marginTop: Spacing.sm },
-  text: { ...Type.body, color: Colors.textMuted },
-});
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
+    body: { padding: Spacing.lg, gap: Spacing.md, flexGrow: 1 },
+    backRow: { paddingVertical: Spacing.xs },
+    back: { color: p.textDim, fontSize: 17, fontWeight: '600' },
+    h1: { ...Type.display, color: p.text },
+    updated: { ...Type.caption, color: p.textDim, marginTop: -Spacing.sm },
+    section: { gap: Spacing.xs },
+    heading: { ...Type.section, color: p.text, marginTop: Spacing.sm },
+    text: { ...Type.body, color: p.textMuted },
+  });
+}

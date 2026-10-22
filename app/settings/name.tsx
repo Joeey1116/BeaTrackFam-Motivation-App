@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { Screen } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
-import { Colors, Radius, Spacing, Type } from '../../lib/design';
+import { Radius, Spacing, Type } from '../../lib/design';
+import type { ThemePalette } from '../../lib/themes';
+import { useTheme } from '../../lib/themeContext';
 import { getUserName, setUserName } from '../../lib/storage';
 
 /**
@@ -11,6 +13,8 @@ import { getUserName, setUserName } from '../../lib/storage';
  * Save → confirm + go back. Cancel → just go back.
  */
 export default function NameScreen() {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [name, setName] = useState('');
 
   useEffect(() => {
@@ -39,7 +43,7 @@ export default function NameScreen() {
             value={name}
             onChangeText={setName}
             placeholder="What should we call you?"
-            placeholderTextColor={Colors.textDim}
+            placeholderTextColor={palette.textDim}
             maxLength={40}
             autoFocus
           />
@@ -57,18 +61,20 @@ export default function NameScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  body: { padding: Spacing.lg, gap: Spacing.md, flex: 1 },
-  backRow: { paddingVertical: Spacing.xs },
-  back: { color: Colors.textDim, fontSize: 17, fontWeight: '600' },
-  h1: { ...Type.display, color: Colors.text },
-  sub: { ...Type.body, color: Colors.textDim },
-  card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: Colors.border },
-  input: { color: Colors.text, fontSize: 18, paddingVertical: Spacing.sm },
-  buttons: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.sm },
-  btn: { flex: 1, borderRadius: Radius.lg, paddingVertical: Spacing.md, alignItems: 'center' },
-  cancelBtn: { backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.border },
-  cancelText: { color: Colors.text, fontSize: 17, fontWeight: '600' },
-  saveBtn: { backgroundColor: Colors.button },
-  saveText: { color: Colors.buttonText, fontSize: 17, fontWeight: '700' },
-});
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
+    body: { padding: Spacing.lg, gap: Spacing.md, flex: 1 },
+    backRow: { paddingVertical: Spacing.xs },
+    back: { color: p.textDim, fontSize: 17, fontWeight: '600' },
+    h1: { ...Type.display, color: p.text },
+    sub: { ...Type.body, color: p.textDim },
+    card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: p.border },
+    input: { color: p.text, fontSize: 18, paddingVertical: Spacing.sm },
+    buttons: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.sm },
+    btn: { flex: 1, borderRadius: Radius.lg, paddingVertical: Spacing.md, alignItems: 'center' },
+    cancelBtn: { backgroundColor: p.surface, borderWidth: 1, borderColor: p.border },
+    cancelText: { color: p.text, fontSize: 17, fontWeight: '600' },
+    saveBtn: { backgroundColor: p.button },
+    saveText: { color: p.buttonText, fontSize: 17, fontWeight: '700' },
+  });
+}

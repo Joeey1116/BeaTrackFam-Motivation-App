@@ -1,7 +1,10 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Screen } from '../../components/Screen';
-import { Colors, Spacing, Type } from '../../lib/design';
+import { Spacing, Type } from '../../lib/design';
+import type { ThemePalette } from '../../lib/themes';
+import { useTheme } from '../../lib/themeContext';
 import { SignIn } from '../../components/SignIn';
 
 /**
@@ -9,6 +12,9 @@ import { SignIn } from '../../components/SignIn';
  * Uses the real SignIn component (Apple + Google).
  */
 export default function SignInScreen() {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
+
   return (
     <Screen>
       <View style={styles.body}>
@@ -23,9 +29,11 @@ export default function SignInScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  body: { padding: Spacing.lg, gap: Spacing.md, flex: 1 },
-  backRow: { paddingVertical: Spacing.xs },
-  back: { color: Colors.textDim, fontSize: 17, fontWeight: '600' },
-  content: { flex: 1 },
-});
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
+    body: { padding: Spacing.lg, gap: Spacing.md, flex: 1 },
+    backRow: { paddingVertical: Spacing.xs },
+    back: { color: p.textDim, fontSize: 17, fontWeight: '600' },
+    content: { flex: 1 },
+  });
+}
