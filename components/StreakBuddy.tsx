@@ -1,4 +1,7 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '../lib/themeContext';
+import type { ThemePalette } from '../lib/themes';
 
 interface Props {
   streak: number;
@@ -11,6 +14,8 @@ interface Props {
  * Never dies, never guilts. Just waits for you.
  */
 export function StreakBuddy({ streak, plantType = 'sprout' }: Props) {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const stage = getStage(streak);
   const emoji = getEmoji(stage, plantType);
   const message = getMessage(stage, streak);
@@ -67,7 +72,8 @@ function getMessage(stage: string, streak: number): string {
   return 'Flourishing — just like you.';
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   container: {
     alignItems: 'center',
     padding: 20,
@@ -79,17 +85,18 @@ const styles = StyleSheet.create({
   stage: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#fff',
+    color: p.text,
   },
   message: {
     fontSize: 14,
-    color: '#888',
+    color: p.textDim,
     textAlign: 'center',
     lineHeight: 20,
   },
   streak: {
     fontSize: 13,
-    color: '#555',
+    color: p.textDim,
     fontWeight: '600',
   },
-});
+  });
+}

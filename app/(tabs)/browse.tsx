@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
-import { Colors, Radius, Spacing, Type } from '../../lib/design';
+import { Radius, Spacing, Type } from '../../lib/design';
+import { useTheme } from '../../lib/themeContext';
+import type { ThemePalette } from '../../lib/themes';
 import { getLanguage, trackDesc, trackName, useStrings } from '../../lib/i18n';
 import { getQuotes, getQuotesByTrack, type Quote } from '../../lib/quotes';
 import { getChosenTracks, getFavorites, toggleFavorite } from '../../lib/storage';
@@ -13,6 +15,8 @@ type Segment = 'browse' | 'saved';
 
 export default function Browse() {
   const { t, lang } = useStrings();
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [segment, setSegment] = useState<Segment>('browse');
   const [tracks, setTracks] = useState<TrackId[]>([]);
   const [active, setActive] = useState<TrackId | null>(null);
@@ -60,7 +64,7 @@ export default function Browse() {
         <Ionicons
           name={favs.includes(q.id) ? 'heart' : 'heart-outline'}
           size={20}
-          color={favs.includes(q.id) ? '#ff4d6d' : Colors.textDim}
+          color={favs.includes(q.id) ? '#ff4d6d' : palette.textDim}
         />
       </Pressable>
     </Glass>
@@ -99,7 +103,7 @@ export default function Browse() {
           </>
         ) : savedQuotes.length === 0 ? (
           <View style={styles.empty}>
-            <Ionicons name="heart-outline" size={48} color={Colors.border} />
+            <Ionicons name="heart-outline" size={48} color={palette.border} />
             <Text style={styles.emptyText}>{t('favorites.empty')}</Text>
           </View>
         ) : (
@@ -112,26 +116,28 @@ export default function Browse() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   body: { padding: Spacing.lg, gap: Spacing.md },
-  h1: { ...Type.display, color: Colors.text },
-  segments: { flexDirection: 'row', backgroundColor: Colors.surface, borderRadius: Radius.pill, padding: 4, gap: 4 },
+  h1: { ...Type.display, color: p.text },
+  segments: { flexDirection: 'row', backgroundColor: p.surface, borderRadius: Radius.pill, padding: 4, gap: 4 },
   segment: { flex: 1, borderRadius: Radius.pill, paddingVertical: Spacing.sm, alignItems: 'center' },
-  segmentActive: { backgroundColor: Colors.button },
-  segmentText: { ...Type.body, color: Colors.textDim, fontWeight: '700' },
-  segmentTextActive: { color: Colors.buttonText },
+  segmentActive: { backgroundColor: p.button },
+  segmentText: { ...Type.body, color: p.textDim, fontWeight: '700' },
+  segmentTextActive: { color: p.buttonText },
   chips: { gap: Spacing.sm, paddingVertical: Spacing.xs },
-  chip: { backgroundColor: Colors.surface, borderRadius: Radius.pill, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderWidth: 1, borderColor: Colors.border },
-  chipActive: { backgroundColor: Colors.button, borderColor: Colors.button },
-  chipText: { ...Type.body, color: Colors.textDim, fontWeight: '700' },
-  chipTextActive: { color: Colors.buttonText },
-  desc: { ...Type.body, color: Colors.textDim },
+  chip: { backgroundColor: p.surface, borderRadius: Radius.pill, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderWidth: 1, borderColor: p.border },
+  chipActive: { backgroundColor: p.button, borderColor: p.button },
+  chipText: { ...Type.body, color: p.textDim, fontWeight: '700' },
+  chipTextActive: { color: p.buttonText },
+  desc: { ...Type.body, color: p.textDim },
   list: { gap: Spacing.sm },
-  card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: Colors.border, gap: Spacing.sm },
-  quote: { color: Colors.text, fontSize: 17, fontWeight: '600', lineHeight: 26 },
-  fallback: { color: Colors.textDim, fontSize: 11, fontStyle: 'italic' },
+  card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: p.border, gap: Spacing.sm },
+  quote: { color: p.text, fontSize: 17, fontWeight: '600', lineHeight: 26 },
+  fallback: { color: p.textDim, fontSize: 11, fontStyle: 'italic' },
   favRow: { alignSelf: 'flex-end', padding: Spacing.xs },
   empty: { alignItems: 'center', justifyContent: 'center', gap: Spacing.md, paddingTop: 60 },
-  emptyText: { ...Type.title, color: Colors.textDim, fontWeight: '400', textAlign: 'center', lineHeight: 22, paddingHorizontal: Spacing.xl },
-  track: { ...Type.eyebrow, color: Colors.textDim, letterSpacing: 2 },
-});
+  emptyText: { ...Type.title, color: p.textDim, fontWeight: '400', textAlign: 'center', lineHeight: 22, paddingHorizontal: Spacing.xl },
+  track: { ...Type.eyebrow, color: p.textDim, letterSpacing: 2 },
+  });
+}

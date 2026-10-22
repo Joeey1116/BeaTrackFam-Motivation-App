@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import {
   FlatList,
   Keyboard,
@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../lib/themeContext';
+import type { ThemePalette } from '../lib/themes';
 import { containsCrisisLanguage } from './MoodCheckIn';
 
 interface Message {
@@ -31,6 +33,8 @@ interface Props {
  * Never forces hotlines — just makes them available.
  */
 export function CompanionChat({ userName, onClose }: Props) {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '0',
@@ -107,7 +111,7 @@ export function CompanionChat({ userName, onClose }: Props) {
           <Text style={styles.subtitle}>Always here for you 💛</Text>
         </View>
         <Pressable onPress={onClose} hitSlop={12}>
-          <Ionicons name="close" size={24} color="#fff" />
+          <Ionicons name="close" size={24} color={palette.text} />
         </Pressable>
       </View>
 
@@ -149,12 +153,12 @@ export function CompanionChat({ userName, onClose }: Props) {
           value={input}
           onChangeText={setInput}
           placeholder="Talk to me..."
-          placeholderTextColor="#555"
+          placeholderTextColor={palette.textDim}
           multiline
           onSubmitEditing={send}
         />
         <Pressable onPress={send} style={styles.sendBtn}>
-          <Ionicons name="send" size={20} color="#000" />
+          <Ionicons name="send" size={20} color={palette.buttonText} />
         </Pressable>
       </View>
     </View>
@@ -258,10 +262,11 @@ function getResponse(text: string, userName?: string, turn = 0): string {
   return defaults[turn % defaults.length];
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: p.background,
   },
   header: {
     flexDirection: 'row',
@@ -270,16 +275,16 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a1a',
+    borderBottomColor: p.border,
   },
   title: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
   },
   subtitle: {
     fontSize: 13,
-    color: '#888',
+    color: p.textDim,
     marginTop: 2,
   },
   list: {
@@ -295,12 +300,12 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   userBubble: {
-    backgroundColor: '#fff',
+    backgroundColor: p.button,
     alignSelf: 'flex-end',
     borderBottomRightRadius: 4,
   },
   aiBubble: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: p.surface,
     alignSelf: 'flex-start',
     borderBottomLeftRadius: 4,
   },
@@ -313,14 +318,14 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   userText: {
-    color: '#000',
+    color: p.buttonText,
   },
   aiText: {
-    color: '#fff',
+    color: p.text,
   },
   disclaimer: {
     fontSize: 11,
-    color: '#444',
+    color: p.textDim,
     textAlign: 'center',
     paddingVertical: 8,
   },
@@ -330,24 +335,25 @@ const styles = StyleSheet.create({
     padding: 12,
     gap: 8,
     borderTopWidth: 1,
-    borderTopColor: '#1a1a1a',
+    borderTopColor: p.border,
   },
   input: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: p.surface,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 15,
-    color: '#fff',
+    color: p.text,
     maxHeight: 100,
   },
   sendBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#fff',
+    backgroundColor: p.button,
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+  });
+}

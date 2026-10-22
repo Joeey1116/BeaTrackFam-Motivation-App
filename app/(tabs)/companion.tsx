@@ -1,11 +1,14 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TAB_BAR_CLEARANCE } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
-import { Colors, Radius, Spacing, Type } from '../../lib/design';
+import { Radius, Spacing, Type } from '../../lib/design';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../lib/themeContext';
+import type { ThemePalette } from '../../lib/themes';
 import { CompanionChat } from '../../components/CompanionChat';
 import { StreakBuddy } from '../../components/StreakBuddy';
 import { isCompanionEnabled, isStreakBuddyEnabled, getStreak, getUserName } from '../../lib/storage';
@@ -16,6 +19,8 @@ import { isCompanionEnabled, isStreakBuddyEnabled, getStreak, getUserName } from
  */
 export default function Companion() {
   const insets = useSafeAreaInsets();
+  const { theme, palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [chatOpen, setChatOpen] = useState(false);
   const [companionOn, setCompanionOn] = useState(true);
   const [buddyOn, setBuddyOn] = useState(true);
@@ -38,8 +43,9 @@ export default function Companion() {
   if (!companionOn && !buddyOn) {
     return (
       <View style={styles.container}>
+        <LinearGradient colors={theme.bg} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
         <View style={styles.empty}>
-          <Ionicons name="heart-outline" size={48} color={Colors.border} />
+          <Ionicons name="heart-outline" size={48} color={palette.border} />
           <Text style={styles.emptyTitle}>Companion is off</Text>
           <Text style={styles.emptyText}>
             You chose a clean experience during onboarding. You can turn on the
@@ -52,6 +58,7 @@ export default function Companion() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + TAB_BAR_CLEARANCE }]}>
+      <LinearGradient colors={theme.bg} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
       <Text style={styles.title}>Companion</Text>
       <Text style={styles.subtitle}>
         Your friend is here. You're not alone. 💛
@@ -66,14 +73,14 @@ export default function Companion() {
       {companionOn && (
         <Pressable onPress={() => setChatOpen(true)}>
           <Glass style={styles.chatCard}>
-            <Ionicons name="chatbubbles-outline" size={28} color={Colors.text} />
+            <Ionicons name="chatbubbles-outline" size={28} color={palette.text} />
             <View style={styles.cardInfo}>
               <Text style={styles.cardTitle}>Talk to me</Text>
               <Text style={styles.cardDesc}>
                 Struggling, celebrating, or just want company — I'm here.
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+            <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
           </Glass>
         </Pressable>
       )}
@@ -85,22 +92,23 @@ export default function Companion() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: p.background,
     padding: Spacing.lg,
     paddingTop: 60,
     gap: Spacing.sm,
   },
   title: {
     ...Type.display,
-    color: Colors.text,
+    color: p.text,
     marginBottom: Spacing.xs,
   },
   subtitle: {
     ...Type.body,
-    color: Colors.textDim,
+    color: p.textDim,
     marginBottom: Spacing.md,
   },
   buddyCard: {
@@ -118,14 +126,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    color: Colors.text,
+    color: p.text,
     fontSize: 17,
     fontWeight: '700',
     marginBottom: Spacing.xs,
   },
   cardDesc: {
     ...Type.caption,
-    color: Colors.textDim,
+    color: p.textDim,
   },
   empty: {
     flex: 1,
@@ -136,11 +144,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Type.section,
-    color: Colors.text,
+    color: p.text,
   },
   emptyText: {
     ...Type.body,
-    color: Colors.textDim,
+    color: p.textDim,
     textAlign: 'center',
   },
-});
+  });
+}

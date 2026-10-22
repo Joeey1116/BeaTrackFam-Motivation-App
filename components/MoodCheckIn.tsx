@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../lib/themeContext';
+import type { ThemePalette } from '../lib/themes';
 
 interface Props {
   onSave: (valence: number, emotions: string[], note?: string) => void | Promise<void>;
@@ -28,6 +30,8 @@ const CRISIS_KEYWORDS = [
  * Detects crisis language and surfaces resources immediately.
  */
 export function MoodCheckIn({ onSave, onClose, initial }: Props) {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [valence, setValence] = useState(initial?.valence ?? 0);
   const [selected, setSelected] = useState<string[]>(initial?.emotions ?? []);
   const [showCrisis, setShowCrisis] = useState(false);
@@ -98,11 +102,11 @@ export function MoodCheckIn({ onSave, onClose, initial }: Props) {
       <View style={styles.header}>
         <Text style={styles.title}>How are you feeling?</Text>
         <Pressable onPress={onClose} hitSlop={12}>
-          <Ionicons name="close" size={24} color="#fff" />
+          <Ionicons name="close" size={24} color={palette.text} />
         </Pressable>
       </View>
 
-      <Text style={[styles.valenceLabel, { color: valence < 0 ? '#ff8a8a' : valence > 0 ? '#8affa0' : '#fff' }]}>
+      <Text style={[styles.valenceLabel, { color: valence < 0 ? '#ff8a8a' : valence > 0 ? '#8affa0' : palette.text }]}>
         {getValenceLabel()}
       </Text>
 
@@ -112,9 +116,9 @@ export function MoodCheckIn({ onSave, onClose, initial }: Props) {
         maximumValue={1}
         value={valence}
         onValueChange={setValence}
-        minimumTrackTintColor="#666"
-        maximumTrackTintColor="#333"
-        thumbTintColor="#fff"
+        minimumTrackTintColor={palette.textDim}
+        maximumTrackTintColor={palette.border}
+        thumbTintColor={palette.text}
       />
       <View style={styles.sliderLabels}>
         <Text style={styles.sliderLabel}>Very Unpleasant</Text>
@@ -155,10 +159,11 @@ export function containsCrisisLanguage(text: string): boolean {
   return CRISIS_KEYWORDS.some((kw) => lower.includes(kw));
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: p.background,
   },
   scrollContent: {
     padding: 20,
@@ -173,7 +178,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
   },
   valenceLabel: {
     fontSize: 20,
@@ -192,12 +197,12 @@ const styles = StyleSheet.create({
   },
   sliderLabel: {
     fontSize: 12,
-    color: '#666',
+    color: p.textDim,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: p.text,
     marginBottom: 12,
   },
   emotionGrid: {
@@ -208,21 +213,21 @@ const styles = StyleSheet.create({
   },
   emotionChip: {
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: p.border,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },
   emotionChipActive: {
-    backgroundColor: '#fff',
-    borderColor: '#fff',
+    backgroundColor: p.button,
+    borderColor: p.button,
   },
   emotionText: {
     fontSize: 14,
-    color: '#aaa',
+    color: p.textMuted,
   },
   emotionTextActive: {
-    color: '#000',
+    color: p.buttonText,
     fontWeight: '600',
   },
   crisisLink: {
@@ -233,7 +238,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   saveBtn: {
-    backgroundColor: '#fff',
+    backgroundColor: p.button,
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
@@ -241,7 +246,7 @@ const styles = StyleSheet.create({
   saveText: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#000',
+    color: p.buttonText,
   },
   crisisCard: {
     flex: 1,
@@ -253,17 +258,17 @@ const styles = StyleSheet.create({
   crisisTitle: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
     textAlign: 'center',
   },
   crisisText: {
     fontSize: 16,
-    color: '#aaa',
+    color: p.textMuted,
     textAlign: 'center',
     marginBottom: 8,
   },
   crisisBtn: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: p.surface,
     borderWidth: 1,
     borderColor: '#ff4d6d',
     borderRadius: 12,
@@ -274,11 +279,12 @@ const styles = StyleSheet.create({
   crisisBtnText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#fff',
+    color: p.text,
   },
   backLink: {
     fontSize: 14,
-    color: '#888',
+    color: p.textDim,
     marginTop: 12,
   },
-});
+  });
+}

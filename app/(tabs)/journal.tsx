@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../../components/Screen';
 import { Glass } from '../../components/Glass';
 import { Colors, Radius, Spacing, Type } from '../../lib/design';
+import { useTheme } from '../../lib/themeContext';
+import type { ThemePalette } from '../../lib/themes';
 import { useStrings } from '../../lib/i18n';
 import {
   getGratitude,
@@ -25,6 +27,8 @@ import { Breathe } from '../../components/Breathe';
 
 export default function Journal() {
   const { t, lang, rtl } = useStrings();
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [text, setText] = useState('');
   const [savedTick, setSavedTick] = useState(0);
 
@@ -108,7 +112,7 @@ export default function Journal() {
             value={text}
             onChangeText={onChange}
             placeholder={t('journal.placeholder')}
-            placeholderTextColor={Colors.textDim}
+            placeholderTextColor={palette.textDim}
             multiline
             textAlignVertical="top"
             maxLength={280}
@@ -122,12 +126,12 @@ export default function Journal() {
         {wellnessCards.map((c) => (
           <Pressable key={c.key} onPress={c.onPress}>
             <Glass style={styles.card}>
-              <Ionicons name={c.icon} size={28} color={Colors.text} />
+              <Ionicons name={c.icon} size={28} color={palette.text} />
               <View style={styles.cardInfo}>
                 <Text style={styles.cardTitle}>{c.title}</Text>
                 <Text style={styles.cardDesc}>{c.desc}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+              <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
             </Glass>
           </Pressable>
         ))}
@@ -175,26 +179,28 @@ export default function Journal() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   body: { padding: Spacing.lg, gap: Spacing.sm },
-  h1: { ...Type.display, color: Colors.text },
-  date: { ...Type.body, color: Colors.textDim },
-  card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: Colors.border, gap: Spacing.md, marginTop: Spacing.sm },
+  h1: { ...Type.display, color: p.text },
+  date: { ...Type.body, color: p.textDim },
+  card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: p.border, gap: Spacing.md, marginTop: Spacing.sm },
   promptRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  prompt: { color: Colors.text, fontSize: 17, fontWeight: '700', flex: 1 },
+  prompt: { color: p.text, fontSize: 17, fontWeight: '700', flex: 1 },
   input: {
-    color: Colors.text,
+    color: p.text,
     fontSize: 17,
     lineHeight: 26,
     minHeight: 140,
-    backgroundColor: Colors.input,
+    backgroundColor: p.input,
     borderRadius: Radius.md,
     padding: Spacing.md,
   },
   rtl: { textAlign: 'right', writingDirection: 'rtl' },
   saved: { ...Type.caption, color: Colors.success, fontWeight: '600' },
-  sectionTitle: { ...Type.title, color: Colors.text, fontWeight: '800', marginTop: Spacing.md },
+  sectionTitle: { ...Type.title, color: p.text, fontWeight: '800', marginTop: Spacing.md },
   cardInfo: { flex: 1 },
-  cardTitle: { color: Colors.text, fontSize: 17, fontWeight: '700', marginBottom: Spacing.xs },
-  cardDesc: { ...Type.caption, color: Colors.textDim },
-});
+  cardTitle: { color: p.text, fontSize: 17, fontWeight: '700', marginBottom: Spacing.xs },
+  cardDesc: { ...Type.caption, color: p.textDim },
+  });
+}

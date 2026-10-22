@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -17,7 +17,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Glass } from '../../components/Glass';
 import Constants from 'expo-constants';
 import { supabase } from '../../lib/supabase';
-import { Colors, Radius, Spacing, Type } from '../../lib/design';
+import { Radius, Spacing, Type } from '../../lib/design';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../lib/themeContext';
+import type { ThemePalette } from '../../lib/themes';
 import { getPlan, isCompanionEnabled, isStreakBuddyEnabled, isRitualsEnabled,
   setCompanionEnabled, setStreakBuddyEnabled, setRitualsEnabled,
   isNotifEnabled, setNotifEnabled, getUserName, setUserName,
@@ -34,6 +37,8 @@ const REVIEW_URL = 'https://apps.apple.com/app/id6821567537?action=write-review'
  */
 export default function Settings() {
   const { t, lang } = useStrings();
+  const { theme, palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const { purchase, restore, subscriptions, productsLoading } = useHavenPlus();
   const [plan, setPlanState] = useState<'haven' | 'haven-plus'>('haven');
   const [companion, setCompanion] = useState(true);
@@ -227,7 +232,9 @@ export default function Settings() {
   };
 
   return (
-    <ScrollView
+    <View style={styles.wrapper}>
+      <LinearGradient colors={theme.bg} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
+      <ScrollView
       style={styles.container}
       contentContainerStyle={[
         styles.content,
@@ -256,9 +263,9 @@ export default function Settings() {
             </Text>
           </View>
           {productsLoading && plan !== 'haven-plus' ? (
-            <ActivityIndicator size="small" color={Colors.textDim} />
+            <ActivityIndicator size="small" color={palette.textDim} />
           ) : (
-            <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+            <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
           )}
         </Pressable>
         {plan === 'haven-plus' && (
@@ -267,7 +274,7 @@ export default function Settings() {
               <Text style={styles.rowTitle}>Manage Subscription</Text>
               <Text style={styles.rowDesc}>Cancel or change — as easy as signing up.</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+            <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
           </Pressable>
         )}
         {plan !== 'haven-plus' && (
@@ -276,7 +283,7 @@ export default function Settings() {
               <Text style={styles.rowTitle}>Restore Purchase</Text>
               <Text style={styles.rowDesc}>Already subscribed? Restore it here.</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+            <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
           </Pressable>
         )}
       </Glass>
@@ -291,14 +298,14 @@ export default function Settings() {
               {userName ? `Hi, ${userName}!` : 'So your companion knows what to call you'}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={editBeliefs}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Beliefs</Text>
             <Text style={styles.rowDesc}>Faith and topic tracks</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
@@ -338,14 +345,14 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Language</Text>
             <Text style={styles.rowDesc}>English, עברית, Español</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={editThemes}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Themes</Text>
             <Text style={styles.rowDesc}>Make your home yours</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
@@ -365,7 +372,7 @@ export default function Settings() {
                 : 'Sign in, sign out, delete account (optional)'}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
@@ -377,14 +384,14 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Share Hustle & Heart</Text>
             <Text style={styles.rowDesc}>Tell someone who needs this</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={leaveReview}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Leave a Review</Text>
             <Text style={styles.rowDesc}>It means the world to us</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
@@ -399,7 +406,7 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Instagram</Text>
             <Text style={styles.rowDesc}>@beatrackfam</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
@@ -411,21 +418,21 @@ export default function Settings() {
             <Text style={styles.rowTitle}>Why We Built This</Text>
             <Text style={styles.rowDesc}>Our story</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={supportResources}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Support Resources</Text>
             <Text style={styles.rowDesc}>988, Crisis Text Line, DV Hotline — always here</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={contactUs}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Contact Us</Text>
             <Text style={styles.rowDesc}>contact@beatrackfam.info</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
@@ -436,13 +443,13 @@ export default function Settings() {
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Privacy Policy</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={() => router.push('/settings/terms')}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Terms of Service</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+          <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
@@ -451,14 +458,19 @@ export default function Settings() {
         {Constants.nativeBuildVersion ? ` (${Constants.nativeBuildVersion})` : ''}
         {'\n'}You're not alone. You're loved. 💛
       </Text>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: p.background,
+  },
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   content: {
     padding: Spacing.md,
@@ -467,12 +479,12 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Type.display,
-    color: Colors.text,
+    color: p.text,
     marginBottom: Spacing.md,
   },
   section: {
     ...Type.eyebrow,
-    color: Colors.textDim,
+    color: p.textDim,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
     marginLeft: Spacing.xs,
@@ -487,24 +499,25 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     gap: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: p.border,
   },
   rowInfo: {
     flex: 1,
   },
   rowTitle: {
     ...Type.title,
-    color: Colors.text,
+    color: p.text,
     marginBottom: 2,
   },
   rowDesc: {
     ...Type.caption,
-    color: Colors.textMuted,
+    color: p.textMuted,
   },
   footer: {
     ...Type.caption,
-    color: Colors.textDim,
+    color: p.textDim,
     textAlign: 'center',
     marginTop: Spacing.xl,
   },
-});
+  });
+}

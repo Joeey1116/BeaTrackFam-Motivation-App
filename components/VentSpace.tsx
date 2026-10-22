@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../lib/themeContext';
+import type { ThemePalette } from '../lib/themes';
 import { containsCrisisLanguage } from './MoodCheckIn';
 
 interface VentEntry {
@@ -22,6 +24,8 @@ interface Props {
  * Crisis language detection surfaces resources quietly (not forced).
  */
 export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [text, setText] = useState('');
   const [showCrisisHint, setShowCrisisHint] = useState(false);
 
@@ -44,7 +48,7 @@ export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
       <View style={styles.header}>
         <Text style={styles.title}>Vent Space</Text>
         <Pressable onPress={onClose} hitSlop={12}>
-          <Ionicons name="close" size={24} color="#fff" />
+          <Ionicons name="close" size={24} color={palette.text} />
         </Pressable>
       </View>
 
@@ -56,7 +60,7 @@ export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
         style={styles.input}
         multiline
         placeholder="What's on your mind? Let it out..."
-        placeholderTextColor="#555"
+        placeholderTextColor={palette.textDim}
         value={text}
         onChangeText={setText}
         textAlignVertical="top"
@@ -89,7 +93,7 @@ export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
             <Text style={styles.entryDate}>{e.date}</Text>
             <Text style={styles.entryText} numberOfLines={3}>{e.text}</Text>
             <Pressable onPress={() => onDelete(e.id)} hitSlop={8}>
-              <Ionicons name="trash-outline" size={18} color="#666" />
+              <Ionicons name="trash-outline" size={18} color={palette.textDim} />
             </Pressable>
           </View>
         ))}
@@ -98,10 +102,11 @@ export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: p.background,
     padding: 20,
   },
   header: {
@@ -113,22 +118,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
   },
   subtitle: {
     fontSize: 14,
-    color: '#888',
+    color: p.textDim,
     marginBottom: 16,
     lineHeight: 20,
   },
   input: {
-    backgroundColor: '#111',
+    backgroundColor: p.input,
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: p.border,
     borderRadius: 14,
     padding: 16,
     fontSize: 16,
-    color: '#fff',
+    color: p.text,
     minHeight: 140,
     maxHeight: 200,
     marginBottom: 12,
@@ -149,7 +154,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   saveBtn: {
-    backgroundColor: '#fff',
+    backgroundColor: p.button,
     borderRadius: 14,
     paddingVertical: 16,
     alignItems: 'center',
@@ -161,12 +166,12 @@ const styles = StyleSheet.create({
   saveText: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#000',
+    color: p.buttonText,
   },
   historyTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: p.text,
     marginBottom: 12,
   },
   history: {
@@ -174,13 +179,13 @@ const styles = StyleSheet.create({
   },
   empty: {
     fontSize: 14,
-    color: '#555',
+    color: p.textDim,
     textAlign: 'center',
     marginTop: 20,
     lineHeight: 20,
   },
   entry: {
-    backgroundColor: '#111',
+    backgroundColor: p.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 10,
@@ -190,13 +195,14 @@ const styles = StyleSheet.create({
   },
   entryDate: {
     fontSize: 11,
-    color: '#555',
+    color: p.textDim,
     marginBottom: 4,
   },
   entryText: {
     fontSize: 14,
-    color: '#ccc',
+    color: p.textMuted,
     flex: 1,
     lineHeight: 20,
   },
-});
+  });
+}

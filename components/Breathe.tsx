@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../lib/themeContext';
+import type { ThemePalette } from '../lib/themes';
 
 interface Props {
   onComplete: (exerciseId: string, minutes: number) => void;
@@ -43,6 +45,8 @@ const EXERCISES: Exercise[] = [
  * Completing a session logs mindful minutes (future HealthKit write).
  */
 export function Breathe({ onComplete, onClose }: Props) {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [selected, setSelected] = useState<Exercise | null>(null);
   const [phase, setPhase] = useState<'inhale' | 'hold' | 'exhale' | 'done'>('inhale');
   const [cycle, setCycle] = useState(1);
@@ -110,7 +114,7 @@ export function Breathe({ onComplete, onClose }: Props) {
         <View style={styles.header}>
           <Text style={styles.title}>Breathe</Text>
           <Pressable onPress={onClose} hitSlop={12}>
-            <Ionicons name="close" size={24} color="#fff" />
+            <Ionicons name="close" size={24} color={palette.text} />
           </Pressable>
         </View>
         <Text style={styles.subtitle}>
@@ -141,13 +145,13 @@ export function Breathe({ onComplete, onClose }: Props) {
       <View style={styles.header}>
         <Text style={styles.title}>{selected.name}</Text>
         <Pressable onPress={() => { setRunning(false); setSelected(null); scale.setValue(1); }} hitSlop={12}>
-          <Ionicons name="close" size={24} color="#fff" />
+          <Ionicons name="close" size={24} color={palette.text} />
         </Pressable>
       </View>
 
       {phase === 'done' ? (
         <View style={styles.doneWrap}>
-          <Ionicons name="checkmark-circle" size={64} color="#fff" />
+          <Ionicons name="checkmark-circle" size={64} color={palette.text} />
           <Text style={styles.doneTitle}>Beautiful.</Text>
           <Text style={styles.doneText}>
             You just gave yourself a moment of calm. That's strength.
@@ -176,10 +180,11 @@ export function Breathe({ onComplete, onClose }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: p.background,
     padding: 20,
   },
   header: {
@@ -191,18 +196,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
   },
   subtitle: {
     fontSize: 14,
-    color: '#888',
+    color: p.textDim,
     marginBottom: 20,
     lineHeight: 20,
   },
   card: {
-    backgroundColor: '#111',
+    backgroundColor: p.surface,
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: p.border,
     borderRadius: 16,
     padding: 18,
     marginBottom: 12,
@@ -210,18 +215,18 @@ const styles = StyleSheet.create({
   cardName: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#fff',
+    color: p.text,
     marginBottom: 6,
   },
   cardDesc: {
     fontSize: 14,
-    color: '#888',
+    color: p.textDim,
     marginBottom: 8,
     lineHeight: 20,
   },
   cardMeta: {
     fontSize: 12,
-    color: '#555',
+    color: p.textDim,
   },
   breatheWrap: {
     flex: 1,
@@ -231,22 +236,22 @@ const styles = StyleSheet.create({
   },
   cycleText: {
     fontSize: 14,
-    color: '#666',
+    color: p.textDim,
   },
   circle: {
     width: 200,
     height: 200,
     borderRadius: 100,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: p.surface,
     borderWidth: 2,
-    borderColor: '#333',
+    borderColor: p.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   phaseText: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#fff',
+    color: p.text,
   },
   stopBtn: {
     paddingVertical: 12,
@@ -254,7 +259,7 @@ const styles = StyleSheet.create({
   },
   stopText: {
     fontSize: 14,
-    color: '#666',
+    color: p.textDim,
   },
   doneWrap: {
     flex: 1,
@@ -266,16 +271,16 @@ const styles = StyleSheet.create({
   doneTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
   },
   doneText: {
     fontSize: 16,
-    color: '#888',
+    color: p.textDim,
     textAlign: 'center',
     lineHeight: 24,
   },
   doneBtn: {
-    backgroundColor: '#fff',
+    backgroundColor: p.button,
     borderRadius: 14,
     paddingVertical: 14,
     paddingHorizontal: 48,
@@ -284,6 +289,7 @@ const styles = StyleSheet.create({
   doneBtnText: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#000',
+    color: p.buttonText,
   },
-});
+  });
+}
