@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
-import { Colors, Radius, Spacing, Type } from '../lib/design';
+import { Radius, Spacing, Type } from '../lib/design';
+import type { ThemePalette } from '../lib/themes';
+import { useTheme } from '../lib/themeContext';
 import {
   BUNDLED_TRACKS,
   loadImportedTracks,
@@ -29,6 +31,8 @@ interface Props {
  * screen or backgrounding the app does NOT stop the music.
  */
 export function MusicPlayer({ isHavenPlus }: Props) {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [genre, setGenre] = useState('All');
   const [tracks, setTracks] = useState<Track[]>(BUNDLED_TRACKS);
   const { playingId, togglePlay } = useMusicPlayback();
@@ -118,7 +122,7 @@ export function MusicPlayer({ isHavenPlus }: Props) {
 
       {!isHavenPlus && (
         <View style={styles.adNote}>
-          <Ionicons name="information-circle-outline" size={16} color={Colors.textDim} />
+          <Ionicons name="information-circle-outline" size={16} color={palette.textDim} />
           <Text style={styles.adNoteText}>
             Free tracks include occasional ads. Haven Plus removes them.
           </Text>
@@ -155,7 +159,7 @@ export function MusicPlayer({ isHavenPlus }: Props) {
               style={[styles.track, isPlaying && styles.trackPlaying]}
             >
               <View style={styles.playBtn}>
-                <Ionicons name={isPlaying ? 'pause' : 'play'} size={20} color={Colors.buttonText} />
+                <Ionicons name={isPlaying ? 'pause' : 'play'} size={20} color={palette.buttonText} />
               </View>
               <View style={styles.trackInfo}>
                 <Text style={styles.trackTitle} numberOfLines={1}>
@@ -168,7 +172,7 @@ export function MusicPlayer({ isHavenPlus }: Props) {
                 </Text>
               </View>
               {isPlaying && (
-                <Ionicons name="musical-notes" size={20} color={Colors.text} />
+                <Ionicons name="musical-notes" size={20} color={palette.text} />
               )}
             </Pressable>
           );
@@ -180,7 +184,7 @@ export function MusicPlayer({ isHavenPlus }: Props) {
 
       {isHavenPlus && (
         <Pressable style={styles.importBtn} onPress={importTrack}>
-          <Ionicons name="add-circle-outline" size={20} color={Colors.text} />
+          <Ionicons name="add-circle-outline" size={20} color={palette.text} />
           <Text style={styles.importText}>Import Your Own Music</Text>
         </Pressable>
       )}
@@ -192,72 +196,74 @@ export function MusicPlayer({ isHavenPlus }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   container: { flex: 1, gap: Spacing.sm },
-  subtitle: { ...Type.body, color: Colors.textMuted },
+  subtitle: { ...Type.body, color: p.textMuted },
   adNote: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.surface,
+    backgroundColor: p.surface,
     borderRadius: Radius.md,
     padding: Spacing.sm + 2,
   },
-  adNoteText: { ...Type.caption, color: Colors.textDim, flex: 1 },
+  adNoteText: { ...Type.caption, color: p.textDim, flex: 1 },
   genres: { flexGrow: 0 },
   genresContent: { paddingVertical: Spacing.xs, alignItems: 'center' },
   genreChip: {
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: p.border,
     borderRadius: Radius.pill,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     marginRight: Spacing.sm,
   },
-  genreChipActive: { backgroundColor: Colors.button, borderColor: Colors.button },
-  genreText: { fontSize: 14, color: Colors.textDim },
-  genreTextActive: { color: Colors.buttonText, fontWeight: '600' },
+  genreChipActive: { backgroundColor: p.button, borderColor: p.button },
+  genreText: { fontSize: 14, color: p.textDim },
+  genreTextActive: { color: p.buttonText, fontWeight: '600' },
   tracks: { flex: 1 },
   track: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
+    backgroundColor: p.surface,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: p.border,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
     gap: Spacing.md,
   },
-  trackPlaying: { borderColor: Colors.text },
+  trackPlaying: { borderColor: p.text },
   playBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.button,
+    backgroundColor: p.button,
     alignItems: 'center',
     justifyContent: 'center',
   },
   trackInfo: { flex: 1 },
-  trackTitle: { ...Type.title, color: Colors.text, marginBottom: 2 },
-  trackMeta: { ...Type.caption, color: Colors.textDim },
-  empty: { ...Type.body, color: Colors.textDim, textAlign: 'center', marginTop: Spacing.lg },
+  trackTitle: { ...Type.title, color: p.text, marginBottom: 2 },
+  trackMeta: { ...Type.caption, color: p.textDim },
+  empty: { ...Type.body, color: p.textDim, textAlign: 'center', marginTop: Spacing.lg },
   importBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.surfaceRaised,
+    backgroundColor: p.surfaceRaised,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: p.border,
     borderRadius: Radius.lg,
     paddingVertical: Spacing.md,
   },
-  importText: { ...Type.title, color: Colors.text },
+  importText: { ...Type.title, color: p.text },
   credit: {
     fontSize: 11,
-    color: Colors.textDim,
+    color: p.textDim,
     textAlign: 'center',
     lineHeight: 16,
   },
-});
+  });
+}

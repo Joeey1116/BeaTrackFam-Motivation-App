@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Screen } from '../components/Screen';
 import { Glass } from '../components/Glass';
-import { Colors, Radius, Spacing, Type } from '../lib/design';
+import { Radius, Spacing, Type } from '../lib/design';
+import type { ThemePalette } from '../lib/themes';
+import { useTheme } from '../lib/themeContext';
 import { BRAND, LANGUAGES, TRACKS, TRACK_LABELS, type Language, type TrackId } from '../lib/brand';
 import { setLanguage, useStrings } from '../lib/i18n';
 import {
@@ -68,6 +70,8 @@ const GOAL_LABELS: Record<GoalId, string> = {
 
 export default function Onboarding() {
   const { t: tr, lang } = useStrings();
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [stepIdx, setStepIdx] = useState(0);
   const [tracks, setTracks] = useState<TrackId[]>(['motivation', 'gratitude', 'resilience']);
   const [goals, setGoalsState] = useState<GoalId[]>([]);
@@ -181,7 +185,7 @@ export default function Onboarding() {
         </View>
         {(step === 'premium' || step === 'notifications') && (
           <Pressable onPress={skip} style={styles.xButton} hitSlop={12}>
-            <Ionicons name="close" size={24} color="#fff" />
+            <Ionicons name="close" size={24} color={palette.text} />
           </Pressable>
         )}
       </View>
@@ -208,7 +212,7 @@ export default function Onboarding() {
                   <Glass style={[styles.opt, tracks.includes(id) && styles.optActive]}>
                     <Text style={styles.optText}>{TRACK_LABELS[id]}</Text>
                     {tracks.includes(id) ? (
-                      <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                      <Ionicons name="checkmark-circle" size={22} color={palette.text} />
                     ) : (
                       <View style={styles.radio} />
                     )}
@@ -229,7 +233,7 @@ export default function Onboarding() {
                   <Glass style={[styles.opt, goals.includes(id) && styles.optActive]}>
                     <Text style={styles.optText}>{GOAL_LABELS[id]}</Text>
                     {goals.includes(id) ? (
-                      <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                      <Ionicons name="checkmark-circle" size={22} color={palette.text} />
                     ) : (
                       <View style={styles.radio} />
                     )}
@@ -250,7 +254,7 @@ export default function Onboarding() {
                   <Glass style={[styles.opt, lang === l && styles.optActive]}>
                     <Text style={styles.optText}>{tr(`languages.${l}`)}</Text>
                     {lang === l ? (
-                      <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                      <Ionicons name="checkmark-circle" size={22} color={palette.text} />
                     ) : (
                       <View style={styles.radio} />
                     )}
@@ -368,7 +372,7 @@ export default function Onboarding() {
                   <Glass style={[styles.opt, reminder === opt.id && styles.optActive]}>
                     <Text style={styles.optText}>{opt.label}</Text>
                     {reminder === opt.id ? (
-                      <Ionicons name="checkmark-circle" size={22} color="#fff" />
+                      <Ionicons name="checkmark-circle" size={22} color={palette.text} />
                     ) : (
                       <View style={styles.radio} />
                     )}
@@ -390,7 +394,7 @@ export default function Onboarding() {
               </Text>
               <View style={styles.tierList}>
                 {productsLoading ? (
-                  <ActivityIndicator size="small" color={Colors.textDim} style={styles.tierLoader} />
+                  <ActivityIndicator size="small" color={palette.textDim} style={styles.tierLoader} />
                 ) : (
                   liveTiers.map((tier) => (
                     <Pressable
@@ -412,7 +416,7 @@ export default function Onboarding() {
                 disabled={busy || purchasing}
               >
                 {purchasing ? (
-                  <ActivityIndicator size="small" color={Colors.buttonText} />
+                  <ActivityIndicator size="small" color={palette.buttonText} />
                 ) : (
                   <Text style={styles.premiumButtonText}>Try Haven Plus Free</Text>
                 )}
@@ -430,7 +434,7 @@ export default function Onboarding() {
 
         {step === 'notifications' && (
           <View style={styles.center}>
-            <Ionicons name="notifications-outline" size={64} color="#fff" />
+            <Ionicons name="notifications-outline" size={64} color={palette.text} />
             <Text style={styles.h1}>Stay in the flow</Text>
             <Text style={styles.sub}>
               Allow notifications so your daily quote and reminders can reach you.
@@ -475,7 +479,8 @@ export default function Onboarding() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -486,13 +491,13 @@ const styles = StyleSheet.create({
   progressTrack: {
     flex: 1,
     height: 4,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: p.border,
     borderRadius: 2,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: p.button,
     borderRadius: 2,
   },
   xButton: {
@@ -520,29 +525,29 @@ const styles = StyleSheet.create({
   },
   appName: {
     ...Type.display,
-    color: Colors.text,
+    color: p.text,
     textAlign: 'center',
   },
   tagline: {
     fontSize: 17,
-    color: '#999',
+    color: p.textDim,
     textAlign: 'center',
   },
   welcomeSub: {
     fontSize: 15,
-    color: '#777',
+    color: p.textDim,
     textAlign: 'center',
     marginTop: 8,
     paddingHorizontal: 20,
   },
   h1: {
     ...Type.headline,
-    color: Colors.text,
+    color: p.text,
     marginBottom: Spacing.sm,
   },
   sub: {
     ...Type.body,
-    color: Colors.textMuted,
+    color: p.textMuted,
     marginBottom: Spacing.md,
   },
   list: {
@@ -557,11 +562,11 @@ const styles = StyleSheet.create({
   },
   optActive: {
     borderWidth: 1.5,
-    borderColor: '#fff',
+    borderColor: p.text,
   },
   optText: {
     fontSize: 16,
-    color: '#fff',
+    color: p.text,
     fontWeight: '500',
   },
   optInfo: {
@@ -570,7 +575,7 @@ const styles = StyleSheet.create({
   },
   optDesc: {
     fontSize: 13,
-    color: '#888',
+    color: p.textDim,
     marginTop: 4,
     lineHeight: 18,
   },
@@ -578,21 +583,21 @@ const styles = StyleSheet.create({
     width: 50,
     height: 30,
     borderRadius: 15,
-    backgroundColor: '#333',
+    backgroundColor: p.border,
     justifyContent: 'center',
     paddingHorizontal: 3,
   },
   toggleOn: {
-    backgroundColor: '#fff',
+    backgroundColor: p.button,
   },
   knob: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#666',
+    backgroundColor: p.textDim,
   },
   knobOn: {
-    backgroundColor: '#000',
+    backgroundColor: p.buttonText,
     alignSelf: 'flex-end',
   },
   roomCard: {
@@ -610,25 +615,25 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 1.5,
-    borderColor: '#555',
+    borderColor: p.textDim,
   },
   premiumCard: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: p.surface,
     borderRadius: 20,
     padding: 24,
     alignItems: 'center',
     gap: 12,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: p.border,
   },
   premiumTitle: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
   },
   premiumSub: {
     fontSize: 15,
-    color: '#aaa',
+    color: p.textMuted,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -639,20 +644,20 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
   },
   priceAlt: {
     fontSize: 15,
-    color: '#888',
+    color: p.textDim,
     marginTop: 2,
   },
   trialNote: {
     fontSize: 13,
-    color: '#888',
+    color: p.textDim,
     textAlign: 'center',
   },
   premiumButton: {
-    backgroundColor: Colors.button,
+    backgroundColor: p.button,
     borderRadius: Radius.pill,
     paddingVertical: 16,
     paddingHorizontal: 32,
@@ -663,7 +668,7 @@ const styles = StyleSheet.create({
   premiumButtonText: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.buttonText,
+    color: p.buttonText,
   },
   havenBadge: {
     fontSize: 13,
@@ -688,25 +693,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: p.surface,
     borderRadius: 12,
     padding: 14,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   tierSelected: {
-    borderColor: '#fff',
-    backgroundColor: '#2a2a2a',
+    borderColor: p.text,
+    backgroundColor: p.surfaceRaised,
   },
   tierName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#fff',
+    color: p.text,
   },
   tierPrice: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#fff',
+    color: p.text,
   },
   tierSave: {
     fontSize: 11,
@@ -715,13 +720,13 @@ const styles = StyleSheet.create({
   },
   skipPremium: {
     fontSize: 15,
-    color: '#888',
+    color: p.textDim,
     marginTop: 4,
     textDecorationLine: 'underline',
   },
   freeNote: {
     fontSize: 13,
-    color: '#666',
+    color: p.textDim,
     textAlign: 'center',
     marginTop: 16,
     lineHeight: 20,
@@ -732,7 +737,7 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   primaryButton: {
-    backgroundColor: Colors.button,
+    backgroundColor: p.button,
     borderRadius: Radius.pill,
     paddingVertical: 16,
     paddingHorizontal: 24,
@@ -743,7 +748,7 @@ const styles = StyleSheet.create({
   primaryText: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.buttonText,
+    color: p.buttonText,
     textAlign: 'center',
   },
   disabled: {
@@ -756,11 +761,11 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 15,
-    color: '#888',
+    color: p.textDim,
   },
   secondaryButton: {
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: p.border,
     borderRadius: Radius.pill,
     paddingVertical: 16,
     alignItems: 'center',
@@ -769,10 +774,11 @@ const styles = StyleSheet.create({
   secondaryText: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#fff',
+    color: p.text,
   },
   notifRow: {
     flexDirection: 'row',
     gap: 12,
   },
-});
+  });
+}

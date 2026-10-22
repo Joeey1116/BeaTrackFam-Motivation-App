@@ -1,9 +1,11 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Screen } from '../components/Screen';
 import { MusicPlayer } from '../components/MusicPlayer';
-import { Colors, Spacing, Type } from '../lib/design';
+import { Spacing, Type } from '../lib/design';
+import type { ThemePalette } from '../lib/themes';
+import { useTheme } from '../lib/themeContext';
 import { getPlan } from '../lib/storage';
 
 /**
@@ -12,6 +14,8 @@ import { getPlan } from '../lib/storage';
  * when you leave this screen or background the app (see lib/music.ts).
  */
 export default function MusicScreen() {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [isPlus, setIsPlus] = useState(false);
 
   useFocusEffect(
@@ -33,9 +37,11 @@ export default function MusicScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  body: { padding: Spacing.lg, gap: Spacing.sm, flex: 1 },
-  backRow: { paddingVertical: Spacing.xs },
-  back: { color: Colors.textDim, fontSize: 17, fontWeight: '600' },
-  h1: { ...Type.display, color: Colors.text },
-});
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
+    body: { padding: Spacing.lg, gap: Spacing.sm, flex: 1 },
+    backRow: { paddingVertical: Spacing.xs },
+    back: { color: p.textDim, fontSize: 17, fontWeight: '600' },
+    h1: { ...Type.display, color: p.text },
+  });
+}

@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as AuthSession from 'expo-auth-session';
 import * as Crypto from 'expo-crypto';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import type { ThemePalette } from '../lib/themes';
+import { useTheme } from '../lib/themeContext';
 
 interface Props {
   onSuccess: () => void;
@@ -38,6 +40,8 @@ const googleDiscovery = {
  * App works fully without an account. Sign-in enables sync.
  */
 export function SignIn({ onSuccess, onSkip }: Props) {
+  const { palette } = useTheme();
+  const styles = useMemo(() => createStyles(palette), [palette]);
   const [busy, setBusy] = useState(false);
 
   const signInWithApple = async () => {
@@ -172,7 +176,7 @@ export function SignIn({ onSuccess, onSkip }: Props) {
 
   return (
     <View style={styles.container}>
-      <Ionicons name="cloud-upload-outline" size={48} color="#fff" />
+      <Ionicons name="cloud-upload-outline" size={48} color={palette.text} />
       <Text style={styles.title}>Keep your data safe</Text>
       <Text style={styles.subtitle}>
         Sign in to sync your journal, favorites, and streaks across devices.
@@ -195,7 +199,7 @@ export function SignIn({ onSuccess, onSkip }: Props) {
           style={[styles.googleBtn, busy && styles.disabled]}
           disabled={busy}
         >
-          <Ionicons name="logo-google" size={20} color="#fff" />
+          <Ionicons name="logo-google" size={20} color={palette.text} />
           <Text style={styles.googleText}>Sign in with Google</Text>
         </Pressable>
       )}
@@ -211,10 +215,11 @@ export function SignIn({ onSuccess, onSkip }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(p: ThemePalette) {
+  return StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: p.background,
     padding: 24,
     alignItems: 'center',
     justifyContent: 'center',
@@ -223,12 +228,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#fff',
+    color: p.text,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 15,
-    color: '#888',
+    color: p.textDim,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 8,
@@ -245,14 +250,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     borderRadius: 14,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: p.surface,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: p.border,
   },
   googleText: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#fff',
+    color: p.text,
   },
   disabled: {
     opacity: 0.5,
@@ -262,14 +267,15 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 15,
-    color: '#888',
+    color: p.textDim,
     textDecorationLine: 'underline',
   },
   note: {
     fontSize: 12,
-    color: '#555',
+    color: p.textDim,
     textAlign: 'center',
     marginTop: 16,
     lineHeight: 18,
   },
-});
+  });
+}
