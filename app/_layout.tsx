@@ -8,6 +8,7 @@ import { getQuoteOfTheDay } from '../lib/quotes';
 import { refreshQuoteLiveActivity } from '../lib/liveActivity';
 import { maybeRequestTracking } from '../lib/tracking';
 import { useHavenPlus } from '../lib/purchases';
+import { ensureBackgroundAudio } from '../lib/audio';
 
 /**
  * Mounts the IAP hook at launch: prefetches StoreKit products so the
@@ -25,6 +26,8 @@ export default function RootLayout() {
   useEffect(() => {
     (async () => {
       initNotificationHandler();
+      // Music must keep playing with the app backgrounded (build 18).
+      await ensureBackgroundAudio();
       const lang = await initLanguage();
       await recordOpen();
       await maybeRequestTracking();

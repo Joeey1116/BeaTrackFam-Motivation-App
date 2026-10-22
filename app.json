@@ -7,7 +7,7 @@
       },
       "package": "com.beatrackfaminc.motivation",
       "permissions": [],
-      "versionCode": 3,
+      "versionCode": 4,
       "blockedPermissions": [
         "com.google.android.gms.permission.AD_ID"
       ]
@@ -19,7 +19,7 @@
     },
     "icon": "./assets/icon.png",
     "ios": {
-      "buildNumber": "17",
+      "buildNumber": "18",
       "bundleIdentifier": "com.beatrackfaminc.motivation",
       "deploymentTarget": "16.4",
       "icon": "./assets/icon.png",
@@ -28,7 +28,8 @@
         "NSSupportsLiveActivities": true,
         "NSUserTrackingUsageDescription": "This identifier is only used if you opt into personalized features in the future. The app does not track you across other companies' apps or websites.",
         "UIBackgroundModes": [
-          "remote-notification"
+          "remote-notification",
+          "audio"
         ],
         "UIDesignRequiresCompatibility": false
       },
@@ -94,7 +95,14 @@
           }
         }
       ],
-      "expo-audio",
+      [
+        "expo-audio",
+        {
+          "enableBackgroundPlayback": true,
+          "enableBackgroundRecording": false,
+          "recordAudioAndroid": false
+        }
+      ],
       "./plugins/withNitroIapGradleProps"
     ],
     "scheme": "hustleandheart",

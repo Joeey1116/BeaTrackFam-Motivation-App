@@ -1,90 +1,37 @@
 import { useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAudioPlayer } from 'expo-audio';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Glass } from './Glass';
-
-interface Track {
-  id: string;
-  title: string;
-  artist: string;
-  genre: string;
-  duration: string;
-  file: any; // require() for bundled, { uri } for imported
-  imported?: boolean;
-}
-
-const BUNDLED_TRACKS: Track[] = [
-  { id: '1', title: 'Meditation Impromptu 01', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '5:00', file: require('../assets/music/meditation_01.mp3') },
-  { id: '2', title: 'Meditation Impromptu 02', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '6:00', file: require('../assets/music/Meditation_Impromptu_02.mp3') },
-  { id: '3', title: 'Meditation Impromptu 03', artist: 'Kevin MacLeod', genre: 'Meditation', duration: '6:00', file: require('../assets/music/Meditation_Impromptu_03.mp3') },
-];
-
-const IMPORTED_KEY = '@hustle-heart.imported-tracks';
-
-interface ImportedTrack {
-  id: string;
-  title: string;
-  uri: string;
-}
-
-async function loadImportedTracks(): Promise<Track[]> {
-  try {
-    const raw = await AsyncStorage.getItem(IMPORTED_KEY);
-    if (!raw) return [];
-    const list: ImportedTrack[] = JSON.parse(raw);
-    // Drop any whose file no longer exists.
-    const valid: Track[] = [];
-    for (const t of list) {
-      const info = await FileSystem.getInfoAsync(t.uri);
-      if (info.exists) {
-        valid.push({
-          id: t.id,
-          title: t.title,
-          artist: 'Your library',
-          genre: 'Imported',
-          duration: '',
-          file: { uri: t.uri },
-          imported: true,
-        });
-      }
-    }
-    return valid;
-  } catch {
-    return [];
-  }
-}
-
-async function saveImportedTracks(tracks: ImportedTrack[]): Promise<void> {
-  try {
-    await AsyncStorage.setItem(IMPORTED_KEY, JSON.stringify(tracks));
-  } catch {
-    // Storage unavailable — import still works for this session.
-  }
-}
+import { Colors, Radius, Spacing, Type } from '../lib/design';
+import {
+  BUNDLED_TRACKS,
+  loadImportedTracks,
+  readImportedList,
+  saveImportedTracks,
+  stopIfPlaying,
+  useMusicPlayback,
+  type Track,
+} from '../lib/music';
 
 const GENRES = ['All', 'Ambient', 'Piano', 'Nature', 'Meditation', 'Acoustic', 'Lo-Fi'];
 
 interface Props {
   isHavenPlus: boolean;
-  onClose?: () => void;
 }
 
 /**
  * Music room — calming tracks by genre.
  * Free (Haven): built-in tracks with occasional ads.
  * Haven Plus: no ads + import your own tracks from your device.
+ *
+ * Playback lives in lib/music.ts (one app-wide player): leaving this
+ * screen or backgrounding the app does NOT stop the music.
  */
 export function MusicPlayer({ isHavenPlus }: Props) {
   const [genre, setGenre] = useState('All');
-  const [playingId, setPlayingId] = useState<string | null>(null);
   const [tracks, setTracks] = useState<Track[]>(BUNDLED_TRACKS);
-  const insets = useSafeAreaInsets();
-  const player = useAudioPlayer(BUNDLED_TRACKS[0].file);
+  const { playingId, togglePlay } = useMusicPlayback();
 
   // Load imported tracks on mount.
   useEffect(() => {
@@ -93,37 +40,8 @@ export function MusicPlayer({ isHavenPlus }: Props) {
     });
   }, []);
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      try {
-        player.pause();
-      } catch {
-        // ignore
-      }
-    };
-  }, []);
-
-  const filtered = genre === 'All'
-    ? tracks
-    : tracks.filter((t) => t.genre === genre);
-
-  const togglePlay = async (id: string) => {
-    try {
-      if (playingId === id) {
-        player.pause();
-        setPlayingId(null);
-        return;
-      }
-      const track = tracks.find((t) => t.id === id);
-      if (!track) return;
-      player.replace(track.file);
-      player.play();
-      setPlayingId(id);
-    } catch (e) {
-      console.error('Audio playback failed:', e);
-    }
-  };
+  const filtered =
+    genre === 'All' ? tracks : tracks.filter((t) => t.genre === genre);
 
   const importTrack = async () => {
     try {
@@ -138,15 +56,13 @@ export function MusicPlayer({ isHavenPlus }: Props) {
       const destUri = `${FileSystem.Paths.document.uri}music-${Date.now()}-${asset.name}`;
       await FileSystem.copyAsync({ from: asset.uri, to: destUri });
 
-      const imported: ImportedTrack = {
+      const imported = {
         id: `imported-${Date.now()}`,
         title: asset.name.replace(/\.[^.]+$/, ''),
         uri: destUri,
       };
 
-      // Persist the list.
-      const raw = await AsyncStorage.getItem(IMPORTED_KEY);
-      const list: ImportedTrack[] = raw ? JSON.parse(raw) : [];
+      const list = await readImportedList();
       list.push(imported);
       await saveImportedTracks(list);
 
@@ -179,16 +95,13 @@ export function MusicPlayer({ isHavenPlus }: Props) {
             if (track?.imported && track.file?.uri) {
               await FileSystem.deleteAsync(track.file.uri, { idempotent: true });
             }
-            const raw = await AsyncStorage.getItem(IMPORTED_KEY);
-            const list: ImportedTrack[] = raw ? JSON.parse(raw) : [];
+            const list = await readImportedList();
             await saveImportedTracks(list.filter((t) => t.id !== id));
+            stopIfPlaying(id);
             setTracks((prev) => prev.filter((t) => t.id !== id));
-            if (playingId === id) {
-              player.pause();
-              setPlayingId(null);
-            }
           } catch {
             // Best effort — track is gone from the list regardless.
+            stopIfPlaying(id);
             setTracks((prev) => prev.filter((t) => t.id !== id));
           }
         },
@@ -197,22 +110,27 @@ export function MusicPlayer({ isHavenPlus }: Props) {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 120 }]}>
-      <Text style={styles.title}>Music</Text>
+    <View style={styles.container}>
       <Text style={styles.subtitle}>
-        Calming sounds for your home. Pick your vibe.
+        Calming sounds for your home. Pick your vibe — music keeps playing
+        when you leave this screen.
       </Text>
 
       {!isHavenPlus && (
         <View style={styles.adNote}>
-          <Ionicons name="information-circle-outline" size={16} color="#888" />
+          <Ionicons name="information-circle-outline" size={16} color={Colors.textDim} />
           <Text style={styles.adNoteText}>
             Free tracks include occasional ads. Haven Plus removes them.
           </Text>
         </View>
       )}
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.genres}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.genres}
+        contentContainerStyle={styles.genresContent}
+      >
         {GENRES.map((g) => (
           <Pressable
             key={g}
@@ -226,38 +144,43 @@ export function MusicPlayer({ isHavenPlus }: Props) {
         ))}
       </ScrollView>
 
-      <ScrollView style={styles.tracks}>
-        {filtered.map((track) => (
-          <Pressable
-            key={track.id}
-            onPress={() => togglePlay(track.id)}
-            onLongPress={track.imported ? () => removeImported(track.id) : undefined}
-          >
-            <Glass style={styles.track}>
-              <Pressable style={styles.playBtn} onPress={() => togglePlay(track.id)}>
-                <Ionicons
-                  name={playingId === track.id ? 'pause' : 'play'}
-                  size={20}
-                  color="#000"
-                />
-              </Pressable>
+      <ScrollView style={styles.tracks} showsVerticalScrollIndicator={false}>
+        {filtered.map((track) => {
+          const isPlaying = playingId === track.id;
+          return (
+            <Pressable
+              key={track.id}
+              onPress={() => togglePlay(track)}
+              onLongPress={track.imported ? () => removeImported(track.id) : undefined}
+              style={[styles.track, isPlaying && styles.trackPlaying]}
+            >
+              <View style={styles.playBtn}>
+                <Ionicons name={isPlaying ? 'pause' : 'play'} size={20} color={Colors.buttonText} />
+              </View>
               <View style={styles.trackInfo}>
-                <Text style={styles.trackTitle}>{track.title}</Text>
-                <Text style={styles.trackMeta}>
-                  {track.artist}{track.genre ? ` · ${track.genre}` : ''}{track.duration ? ` · ${track.duration}` : ''}
+                <Text style={styles.trackTitle} numberOfLines={1}>
+                  {track.title}
+                </Text>
+                <Text style={styles.trackMeta} numberOfLines={1}>
+                  {track.artist}
+                  {track.genre ? ` · ${track.genre}` : ''}
+                  {track.duration ? ` · ${track.duration}` : ''}
                 </Text>
               </View>
-              {playingId === track.id && (
-                <Ionicons name="musical-notes" size={20} color="#fff" />
+              {isPlaying && (
+                <Ionicons name="musical-notes" size={20} color={Colors.text} />
               )}
-            </Glass>
-          </Pressable>
-        ))}
+            </Pressable>
+          );
+        })}
+        {filtered.length === 0 && (
+          <Text style={styles.empty}>No tracks in this genre yet.</Text>
+        )}
       </ScrollView>
 
       {isHavenPlus && (
         <Pressable style={styles.importBtn} onPress={importTrack}>
-          <Ionicons name="add-circle-outline" size={20} color="#fff" />
+          <Ionicons name="add-circle-outline" size={20} color={Colors.text} />
           <Text style={styles.importText}>Import Your Own Music</Text>
         </Pressable>
       )}
@@ -270,116 +193,71 @@ export function MusicPlayer({ isHavenPlus }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-    padding: 20,
-    paddingTop: 60,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: '#fff',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#888',
-    marginBottom: 12,
-    lineHeight: 20,
-  },
+  container: { flex: 1, gap: Spacing.sm },
+  subtitle: { ...Type.body, color: Colors.textMuted },
   adNote: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#111',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 12,
+    gap: Spacing.sm,
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.md,
+    padding: Spacing.sm + 2,
   },
-  adNoteText: {
-    fontSize: 12,
-    color: '#888',
-    flex: 1,
-  },
-  genres: {
-    marginBottom: 16,
-    maxHeight: 40,
-  },
+  adNoteText: { ...Type.caption, color: Colors.textDim, flex: 1 },
+  genres: { flexGrow: 0 },
+  genresContent: { paddingVertical: Spacing.xs, alignItems: 'center' },
   genreChip: {
     borderWidth: 1,
-    borderColor: '#333',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 8,
+    borderColor: Colors.border,
+    borderRadius: Radius.pill,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    marginRight: Spacing.sm,
   },
-  genreChipActive: {
-    backgroundColor: '#fff',
-    borderColor: '#fff',
-  },
-  genreText: {
-    fontSize: 14,
-    color: '#888',
-  },
-  genreTextActive: {
-    color: '#000',
-    fontWeight: '600',
-  },
-  tracks: {
-    flex: 1,
-  },
+  genreChipActive: { backgroundColor: Colors.button, borderColor: Colors.button },
+  genreText: { fontSize: 14, color: Colors.textDim },
+  genreTextActive: { color: Colors.buttonText, fontWeight: '600' },
+  tracks: { flex: 1 },
   track: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 10,
-    gap: 12,
+    backgroundColor: Colors.surface,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    gap: Spacing.md,
   },
+  trackPlaying: { borderColor: Colors.text },
   playBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.button,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  trackInfo: {
-    flex: 1,
-  },
-  trackTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 2,
-  },
-  trackMeta: {
-    fontSize: 12,
-    color: '#666',
-  },
+  trackInfo: { flex: 1 },
+  trackTitle: { ...Type.title, color: Colors.text, marginBottom: 2 },
+  trackMeta: { ...Type.caption, color: Colors.textDim },
+  empty: { ...Type.body, color: Colors.textDim, textAlign: 'center', marginTop: Spacing.lg },
   importBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#1a1a1a',
+    gap: Spacing.sm,
+    backgroundColor: Colors.surfaceRaised,
     borderWidth: 1,
-    borderColor: '#333',
-    borderRadius: 14,
-    paddingVertical: 14,
-    marginTop: 12,
+    borderColor: Colors.border,
+    borderRadius: Radius.lg,
+    paddingVertical: Spacing.md,
   },
-  importText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#fff',
-  },
+  importText: { ...Type.title, color: Colors.text },
   credit: {
     fontSize: 11,
-    color: '#444',
+    color: Colors.textDim,
     textAlign: 'center',
-    marginTop: 16,
     lineHeight: 16,
   },
 });

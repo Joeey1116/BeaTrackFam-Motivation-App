@@ -15,7 +15,8 @@ import { useFocusEffect, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Glass } from '../../components/Glass';
-import { isSupabaseConfigured } from '../../lib/supabase';
+import Constants from 'expo-constants';
+import { supabase } from '../../lib/supabase';
 import { Colors, Radius, Spacing, Type } from '../../lib/design';
 import { getPlan, isCompanionEnabled, isStreakBuddyEnabled, isRitualsEnabled,
   setCompanionEnabled, setStreakBuddyEnabled, setRitualsEnabled,
@@ -23,12 +24,8 @@ import { getPlan, isCompanionEnabled, isStreakBuddyEnabled, isRitualsEnabled,
   getChosenTracks, setChosenTracks, getThemeId, setThemeId } from '../../lib/storage';
 import { useStrings, setLanguage } from '../../lib/i18n';
 import { TRACKS, TRACK_LABELS, BRAND, type TrackId } from '../../lib/brand';
-import { THEMES } from '../../lib/themes';
 import { useHavenPlus, SKU_NAMES } from '../../lib/purchases';
-import { MusicPlayer } from '../../components/MusicPlayer';
 
-const PRIVACY_URL = 'https://beatrackfam.info/pages/hustle-heart-motivation-app-privacy-policy';
-const TERMS_URL = 'https://beatrackfam.info/pages/terms-of-service';
 const REVIEW_URL = 'https://apps.apple.com/app/id6821567537?action=write-review';
 
 /**
@@ -44,6 +41,7 @@ export default function Settings() {
   const [rituals, setRituals] = useState(true);
   const [notifOn, setNotifOn] = useState(false);
   const [userName, setUserNameState] = useState('');
+  const [accountEmail, setAccountEmail] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const insets = useSafeAreaInsets();
 
@@ -55,6 +53,12 @@ export default function Settings() {
     setRituals(await isRitualsEnabled());
     setNotifOn(await isNotifEnabled());
     setUserNameState(await getUserName());
+    if (supabase) {
+      const { data } = await supabase.auth.getSession();
+      setAccountEmail(data.session?.user?.email ?? null);
+    } else {
+      setAccountEmail(null);
+    }
   }, []);
 
   useFocusEffect(
@@ -163,8 +167,8 @@ export default function Settings() {
     router.push('/settings/themes');
   };
 
-  const openSignIn = () => {
-    router.push('/settings/signin');
+  const openAccount = () => {
+    router.push('/settings/account');
   };
 
   const shareApp = async () => {
@@ -345,22 +349,25 @@ export default function Settings() {
         </Pressable>
       </Glass>
 
-      {/* ACCOUNT — only show Sign In when the backend is configured.
-          Otherwise reviewers see a broken "not configured" popup. */}
-      {isSupabaseConfigured() && (
-        <>
-          <Text style={styles.section}>ACCOUNT</Text>
-          <Glass style={styles.group}>
-            <Pressable style={styles.row} onPress={openSignIn}>
-              <View style={styles.rowInfo}>
-                <Text style={styles.rowTitle}>Sign In</Text>
-                <Text style={styles.rowDesc}>Sync across devices (optional)</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
-            </Pressable>
-          </Glass>
-        </>
-      )}
+      {/* ACCOUNT — always visible (build 18 fix: it used to vanish
+          entirely whenever the backend wasn't configured). The account
+          screen itself handles signed-out / signed-in / not-configured
+          states; Delete Account lives there and only shows when the
+          user is actually signed in. */}
+      <Text style={styles.section}>ACCOUNT</Text>
+      <Glass style={styles.group}>
+        <Pressable style={styles.row} onPress={openAccount}>
+          <View style={styles.rowInfo}>
+            <Text style={styles.rowTitle}>Account</Text>
+            <Text style={styles.rowDesc}>
+              {accountEmail
+                ? `Signed in as ${accountEmail}`
+                : 'Sign in, sign out, delete account (optional)'}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
+        </Pressable>
+      </Glass>
 
       {/* SUPPORT US */}
       <Text style={styles.section}>SUPPORT US</Text>
@@ -379,12 +386,6 @@ export default function Settings() {
           </View>
           <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
-      </Glass>
-
-      {/* MUSIC */}
-      <Text style={styles.section}>MUSIC</Text>
-      <Glass style={styles.group}>
-        <MusicPlayer isHavenPlus={plan === 'haven-plus'} />
       </Glass>
 
       {/* FOLLOW US */}
@@ -431,13 +432,13 @@ export default function Settings() {
       {/* OTHER */}
       <Text style={styles.section}>OTHER</Text>
       <Glass style={styles.group}>
-        <Pressable style={styles.row} onPress={() => Linking.openURL(PRIVACY_URL)}>
+        <Pressable style={styles.row} onPress={() => router.push('/settings/privacy')}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Privacy Policy</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={Colors.textDim} />
         </Pressable>
-        <Pressable style={styles.row} onPress={() => Linking.openURL(TERMS_URL)}>
+        <Pressable style={styles.row} onPress={() => router.push('/settings/terms')}>
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>Terms of Service</Text>
           </View>
@@ -446,7 +447,9 @@ export default function Settings() {
       </Glass>
 
       <Text style={styles.footer}>
-        Hustle & Heart v0.1{'\n'}You're not alone. You're loved. 💛
+        Hustle & Heart v{Constants.expoConfig?.version ?? '1.0'}
+        {Constants.nativeBuildVersion ? ` (${Constants.nativeBuildVersion})` : ''}
+        {'\n'}You're not alone. You're loved. 💛
       </Text>
     </ScrollView>
   );

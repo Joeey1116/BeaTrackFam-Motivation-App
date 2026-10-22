@@ -262,6 +262,28 @@ export async function deleteVent(id: string): Promise<void> {
   );
 }
 
+// ---------- Full local wipe (account deletion) ----------
+/**
+ * Remove EVERYTHING this app stored on the device: all keys under the
+ * brand storage prefix (favorites, journal, streaks, mood, vent entries,
+ * plan, theme, onboarding flag, ...) plus imported-music bookkeeping.
+ * Used by account deletion so the device returns to a first-run state.
+ * Imported music FILES are deleted by the caller (lib/music helpers).
+ */
+export async function clearAllLocalData(): Promise<void> {
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    const ours = keys.filter(
+      (k) => k.startsWith(`${P}/`) || k === '@hustle-heart.imported-tracks'
+    );
+    if (ours.length > 0) {
+      await AsyncStorage.multiRemove(ours);
+    }
+  } catch {
+    // Best effort — deletion continues even if a key resists removal.
+  }
+}
+
 // ---------- Breathe sessions ----------
 export async function logBreatheSession(exerciseId: string, minutes: number): Promise<void> {
   const raw = await AsyncStorage.getItem(KEYS.BREATHE_SESSIONS);

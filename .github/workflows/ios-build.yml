@@ -30,6 +30,15 @@ jobs:
     name: Archive Hustle & Heart Motivation (Release)
     runs-on: macos-26
     timeout-minutes: 120
+    # Supabase config for optional sign-in / account features. Without
+    # these, the app ships with NO backend configured and the account
+    # option is dead (that was builds ≤17). Values live in repo secrets —
+    # add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY under
+    # Settings → Secrets and variables → Actions (same values as the
+    # Supabase dashboard → Project Settings → API).
+    env:
+      EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
 
     steps:
       - name: Check out the repo

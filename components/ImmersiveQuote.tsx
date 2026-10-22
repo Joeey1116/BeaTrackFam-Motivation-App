@@ -54,20 +54,32 @@ export function ImmersiveQuote({
           <Ionicons name="flame" size={16} color={theme.accent} />
           <Text style={[styles.streakText, { color: theme.text }]}>{streak}</Text>
         </Pressable>
-        <Pressable
-          onPress={() => router.push('/(tabs)/favorites')}
-          style={styles.heartsRow}
-          hitSlop={10}
-        >
-          {[0, 1, 2, 3, 4].map((i) => (
-            <Ionicons
-              key={i}
-              name={i < heartsToday ? 'heart' : 'heart-outline'}
-              size={18}
-              color={i < heartsToday ? '#ff4d6d' : theme.muted}
-            />
-          ))}
-        </Pressable>
+        <View style={styles.topRight}>
+          <Pressable
+            onPress={() => router.push('/(tabs)/favorites')}
+            style={styles.heartsRow}
+            hitSlop={10}
+          >
+            {[0, 1, 2, 3, 4].map((i) => (
+              <Ionicons
+                key={i}
+                name={i < heartsToday ? 'heart' : 'heart-outline'}
+                size={18}
+                color={i < heartsToday ? '#ff4d6d' : theme.muted}
+              />
+            ))}
+          </Pressable>
+          {/* Music lives on its own screen (/music) — build 18 moved it
+              out of Settings; this is its home-tab entry point. */}
+          <Pressable
+            onPress={() => router.push('/music')}
+            style={styles.streakBadge}
+            hitSlop={10}
+            accessibilityLabel="Open Music"
+          >
+            <Ionicons name="musical-notes" size={16} color={theme.accent} />
+          </Pressable>
+        </View>
       </View>
 
       {/* Center: quote */}
@@ -127,6 +139,11 @@ const styles = StyleSheet.create({
   heartsRow: {
     flexDirection: 'row',
     gap: 4,
+  },
+  topRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   quoteWrap: {
     flex: 1,
