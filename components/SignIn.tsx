@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as AuthSession from 'expo-auth-session';
+import * as Crypto from 'expo-crypto';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
@@ -46,6 +47,11 @@ export function SignIn({ onSuccess, onSkip }: Props) {
         throw new Error('No identity token');
       }
 
+      // Native Apple tokens carry aud = the app bundle ID
+      // (com.beatrackfaminc.motivation). Supabase only accepts the token
+      // if that bundle ID is listed under Authentication → Providers →
+      // Apple → Client IDs in the Supabase dashboard — otherwise this
+      // fails with "Unacceptable audience in id_token" (build 18 report).
       const { error } = await supabase.auth.signInWithIdToken({
         provider: 'apple',
         token: credential.identityToken,
@@ -75,11 +81,22 @@ export function SignIn({ onSuccess, onSkip }: Props) {
     setBusy(true);
     try {
       const redirectUri = AuthSession.makeRedirectUri({ scheme: 'hustleandheart' });
+      // Implicit (id_token) flow. PKCE MUST be off here: expo-auth-session
+      // defaults usePKCE to true even for id_token requests, which adds
+      // code_challenge + code_challenge_method=S256 to the authorize URL —
+      // and Google rejects those params on the implicit flow with
+      // "Parameter not allowed for this message type: code_challenge_method"
+      // (Error 400 invalid_request, build 18 field report).
+      // A nonce binds the returned id_token to this request; Supabase
+      // requires the same raw nonce when the token carries one.
+      const nonce = Crypto.randomUUID();
       const request = new AuthSession.AuthRequest({
         clientId: GOOGLE_CLIENT_ID,
         redirectUri,
         scopes: ['openid', 'profile', 'email'],
         responseType: AuthSession.ResponseType.IdToken,
+        usePKCE: false,
+        extraParams: { nonce },
       });
       const result = await request.promptAsync(googleDiscovery);
 
@@ -93,6 +110,7 @@ export function SignIn({ onSuccess, onSkip }: Props) {
       const { error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: result.params.id_token,
+        nonce,
       });
 
       if (error) throw error;
