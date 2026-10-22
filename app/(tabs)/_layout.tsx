@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useStrings } from '../../lib/i18n';
-import { GlassTabBackground } from '../../components/GlassTabBackground';
+import { GlassTabBar } from '../../components/GlassTabBar';
 
 const ICONS: Record<string, [string, string]> = {
   index: ['sunny-outline', 'sunny'],
@@ -12,8 +12,12 @@ const ICONS: Record<string, [string, string]> = {
 };
 
 /**
- * Bottom navigation is the classic JS tab bar with the GlassTabBackground
- * (Liquid Glass on iOS 26+, frosted-glass fallback elsewhere).
+ * Bottom navigation is the classic JS tab bar with a custom FLOATING
+ * GLASS CAPSULE (components/GlassTabBar, build 20). Builds 18–19 used a
+ * full-width bar with a glass background; over the app's black content
+ * it read on device as a flat dark slab ("no Liquid Glass" reports).
+ * The capsule — real GlassView material on iOS 26+, BlurView frost
+ * elsewhere, bright rim, selection pill — is what reads as glass.
  *
  * NOTE: expo-router's `unstable-native-tabs` was reverted on Oct 14, 2026 —
  * the native RNSTabBarController SIGABRTs on iOS 26 TestFlight builds while
@@ -31,15 +35,11 @@ export default function TabsLayout() {
   const { t } = useStrings();
   return (
     <Tabs
+      tabBar={(props) => <GlassTabBar {...(props as any)} />}
       screenOptions={({ route }) => {
         const [outline, filled] = ICONS[route.name] ?? ['ellipse-outline', 'ellipse'];
         return {
           headerShown: false,
-          tabBarBackground: () => <GlassTabBackground />,
-          tabBarStyle: { backgroundColor: 'transparent', borderTopColor: 'rgba(255,255,255,0.16)', borderTopWidth: 1, position: 'absolute' },
-          tabBarActiveTintColor: '#ffffff',
-          tabBarInactiveTintColor: '#666666',
-          tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
           tabBarIcon: ({ color, focused, size }) => (
             <Ionicons name={(focused ? filled : outline) as any} size={size} color={color} />
           ),
