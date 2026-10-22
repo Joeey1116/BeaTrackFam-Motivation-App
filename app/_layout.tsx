@@ -9,6 +9,7 @@ import { refreshQuoteLiveActivity } from '../lib/liveActivity';
 import { maybeRequestTracking } from '../lib/tracking';
 import { useHavenPlus } from '../lib/purchases';
 import { ensureBackgroundAudio } from '../lib/audio';
+import { ThemeProvider, useTheme } from '../lib/themeContext';
 
 /**
  * Mounts the IAP hook at launch: prefetches StoreKit products so the
@@ -44,13 +45,22 @@ export default function RootLayout() {
   if (!ready) return null;
 
   return (
-    <>
+    <ThemeProvider>
       <StatusBar style="light" />
       <PurchaseBootstrap />
+      <ThemedStack />
+    </ThemeProvider>
+  );
+}
+
+/** Stack lives inside the provider so its scene background follows the theme. */
+function ThemedStack() {
+  const { palette } = useTheme();
+  return (
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: '#000000' },
+          contentStyle: { backgroundColor: palette.background },
           // NOT 'fade': the cross-fade rendered pushed screens (Themes,
           // Tracks, Account…) semi-transparent over the live tab screen
           // beneath, so rows ghosted/overlapped illegibly mid-navigation
@@ -64,6 +74,5 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="quote/today" options={{ presentation: 'card' }} />
       </Stack>
-    </>
   );
 }

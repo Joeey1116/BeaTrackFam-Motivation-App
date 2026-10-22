@@ -12,20 +12,21 @@ import {
   getChosenTracks,
   getFavorites,
   getStreak,
-  getThemeId,
   recordOpen,
   toggleFavorite,
 } from '../../lib/storage';
 import { refreshQuoteLiveActivity } from '../../lib/liveActivity';
-import { Colors } from '../../lib/design';
+import { useTheme } from '../../lib/themeContext';
 
 export default function Today() {
   const { lang } = useStrings();
+  // Theme comes from the app-wide provider (build 20) — a selection in
+  // Settings recolors this screen in the same render pass, no refetch.
+  const { themeId, palette } = useTheme();
   const [tracks, setTracks] = useState<TrackId[]>([]);
   const [quote, setQuote] = useState<Quote | null>(null);
   const [streak, setStreak] = useState(0);
   const [isFav, setIsFav] = useState(false);
-  const [themeId, setThemeId] = useState('midnight');
   const [heartsToday, setHeartsToday] = useState(0);
   const shotRef = useRef<ShotHandle | null>(null);
 
@@ -36,7 +37,6 @@ export default function Today() {
     const q = await getQuoteOfTheDay(l, tr);
     setQuote(q);
     setStreak(await recordOpen());
-    setThemeId(await getThemeId());
     if (q) {
       const favs = await getFavorites();
       setIsFav(favs.includes(q.id));
@@ -84,11 +84,11 @@ export default function Today() {
   };
 
   if (!quote) {
-    return <View style={styles.loading} />;
+    return <View style={[styles.loading, { backgroundColor: palette.background }]} />;
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: palette.background }]}>
       <ImmersiveQuote
         quote={quote}
         themeId={themeId}
@@ -110,11 +110,9 @@ export default function Today() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   loading: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   hidden: {
     position: 'absolute',
