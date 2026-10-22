@@ -105,7 +105,10 @@
       ],
       "./plugins/withNitroIapGradleProps"
     ],
-    "scheme": "hustleandheart",
+    "scheme": [
+      "hustleandheart",
+      "com.googleusercontent.apps.584493036670-ioeipe5lqocjiu64udhb15m0bm1po78u"
+    ],
     "slug": "hustle-heart",
     "userInterfaceStyle": "dark",
     "version": "1.0",

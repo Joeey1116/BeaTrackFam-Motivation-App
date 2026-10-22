@@ -11,9 +11,21 @@ interface Props {
   onSkip: () => void;
 }
 
-// Google OAuth client ID (from Google Cloud Console). Set in Supabase
-// Dashboard → Authentication → Providers → Google with the matching secret.
+// Google OAuth client ID (from Google Cloud Console). This is the iOS-type
+// client bound to bundle ID com.beatrackfaminc.motivation; it is also listed
+// under Supabase Dashboard → Authentication → Providers → Google → Client
+// IDs, which is what lets Supabase accept the ID tokens it mints.
 const GOOGLE_CLIENT_ID = '584493036670-ioeipe5lqocjiu64udhb15m0bm1po78u.apps.googleusercontent.com';
+
+// Google's native-app policy (RFC 8252): for an iOS-type OAuth client the
+// redirect URI's scheme MUST be the reversed client ID. An arbitrary custom
+// scheme (the app's own "hustleandheart") is rejected by Google with
+// "Access blocked — doesn't comply with Google's OAuth 2.0 policy for
+// keeping apps secure / Error 400: invalid_request" (build 19 field
+// report). The reversed scheme is registered in app.json "scheme" so iOS
+// routes the auth-session return back into the app.
+const GOOGLE_REDIRECT_SCHEME =
+  'com.googleusercontent.apps.584493036670-ioeipe5lqocjiu64udhb15m0bm1po78u';
 
 const googleDiscovery = {
   authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -80,36 +92,70 @@ export function SignIn({ onSuccess, onSkip }: Props) {
 
     setBusy(true);
     try {
-      const redirectUri = AuthSession.makeRedirectUri({ scheme: 'hustleandheart' });
-      // Implicit (id_token) flow. PKCE MUST be off here: expo-auth-session
-      // defaults usePKCE to true even for id_token requests, which adds
-      // code_challenge + code_challenge_method=S256 to the authorize URL —
-      // and Google rejects those params on the implicit flow with
-      // "Parameter not allowed for this message type: code_challenge_method"
-      // (Error 400 invalid_request, build 18 field report).
-      // A nonce binds the returned id_token to this request; Supabase
+      // ONE coherent flow (build 20): authorization-code + PKCE directly
+      // against Google, then Supabase signInWithIdToken with the minted
+      // ID token — the same shape as the (working) Apple flow.
+      //
+      // History of the broken versions:
+      // - Build 18: implicit id_token flow WITH PKCE params — Google
+      //   rejected code_challenge_method on an implicit request.
+      // - Build 19: implicit flow without PKCE but redirecting to the
+      //   app's custom scheme "hustleandheart" — Google blocked it under
+      //   its native-app policy ("doesn't comply with Google's OAuth 2.0
+      //   policy for keeping apps secure", Error 400 invalid_request):
+      //   native public clients must use PKCE, and an iOS client's
+      //   redirect scheme must be the reversed client ID.
+      // The Supabase-hosted browser flow (signInWithOAuth) is NOT used:
+      // it needs a Web-type client + secret in the dashboard, while this
+      // app is configured with the iOS client.
+      const redirectUri = AuthSession.makeRedirectUri({
+        scheme: GOOGLE_REDIRECT_SCHEME,
+        path: 'oauth2redirect/google',
+      });
+      // A nonce binds the returned ID token to this request; Supabase
       // requires the same raw nonce when the token carries one.
       const nonce = Crypto.randomUUID();
       const request = new AuthSession.AuthRequest({
         clientId: GOOGLE_CLIENT_ID,
         redirectUri,
         scopes: ['openid', 'profile', 'email'],
-        responseType: AuthSession.ResponseType.IdToken,
-        usePKCE: false,
+        responseType: AuthSession.ResponseType.Code,
+        usePKCE: true,
         extraParams: { nonce },
       });
       const result = await request.promptAsync(googleDiscovery);
 
-      if (result.type !== 'success' || !result.params.id_token) {
+      if (result.type !== 'success') {
         if (result.type !== 'dismiss' && result.type !== 'cancel') {
           throw new Error('Google sign-in did not complete.');
         }
         return;
       }
 
+      const code = result.params.code;
+      if (!code || !request.codeVerifier) {
+        throw new Error('Google sign-in did not complete.');
+      }
+
+      // Public (iOS) client: the PKCE verifier stands in for a client
+      // secret at the token endpoint.
+      const tokenResponse = await AuthSession.exchangeCodeAsync(
+        {
+          clientId: GOOGLE_CLIENT_ID,
+          code,
+          redirectUri,
+          extraParams: { code_verifier: request.codeVerifier },
+        },
+        googleDiscovery
+      );
+
+      if (!tokenResponse.idToken) {
+        throw new Error('Google did not return an identity token.');
+      }
+
       const { error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
-        token: result.params.id_token,
+        token: tokenResponse.idToken,
         nonce,
       });
 
