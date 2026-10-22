@@ -26,7 +26,12 @@ export function GlassTabBackground() {
     return (
       <GlassView
         glassEffectStyle="regular"
-        tintColor="rgba(40,10,60,0.5)"
+        // Neutral dark tint ONLY. Build 18 used rgba(40,10,60,0.5) — a
+        // heavy purple wash that read on device as a flat dark slab,
+        // not glass ("no Liquid Glass" field report). A light neutral
+        // tint lets the material refract the content scrolling beneath
+        // the bar, which is what makes it read as Liquid Glass.
+        tintColor="rgba(22,22,25,0.32)"
         style={StyleSheet.absoluteFill}
       />
     );
@@ -34,9 +39,9 @@ export function GlassTabBackground() {
   return (
     <View style={StyleSheet.absoluteFill}>
       <BlurView
-        intensity={90}
+        intensity={85}
         tint="dark"
-        style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(24,10,32,0.55)' }]}
+        style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(18,18,21,0.42)' }]}
       />
       {/* Light sheen catching the top of the glass */}
       <LinearGradient

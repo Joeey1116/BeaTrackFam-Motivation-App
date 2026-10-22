@@ -36,7 +36,7 @@ export default function TabsLayout() {
         return {
           headerShown: false,
           tabBarBackground: () => <GlassTabBackground />,
-          tabBarStyle: { backgroundColor: 'transparent', borderTopColor: '#1f1f1f', borderTopWidth: 1, position: 'absolute' },
+          tabBarStyle: { backgroundColor: 'transparent', borderTopColor: 'rgba(255,255,255,0.16)', borderTopWidth: 1, position: 'absolute' },
           tabBarActiveTintColor: '#ffffff',
           tabBarInactiveTintColor: '#666666',
           tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
