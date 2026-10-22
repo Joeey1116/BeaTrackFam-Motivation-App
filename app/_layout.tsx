@@ -51,7 +51,12 @@ export default function RootLayout() {
         screenOptions={{
           headerShown: false,
           contentStyle: { backgroundColor: '#000000' },
-          animation: 'fade',
+          // NOT 'fade': the cross-fade rendered pushed screens (Themes,
+          // Tracks, Account…) semi-transparent over the live tab screen
+          // beneath, so rows ghosted/overlapped illegibly mid-navigation
+          // (build 18 screen recording). An opaque slide keeps exactly
+          // one screen visible at a time.
+          animation: 'slide_from_right',
         }}
       >
         <Stack.Screen name="index" />
