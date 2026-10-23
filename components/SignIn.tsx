@@ -109,13 +109,22 @@ export function SignIn({ onSuccess, onSkip }: Props) {
       //   policy for keeping apps secure", Error 400 invalid_request):
       //   native public clients must use PKCE, and an iOS client's
       //   redirect scheme must be the reversed client ID.
+      // - Builds 19–22 (incl. build 20's auth-code + PKCE rewrite): the
+      //   flow logic was right, but the redirect URI was built with
+      //   AuthSession.makeRedirectUri({scheme, path}), which produces a
+      //   DOUBLE-slash URI — "com.googleusercontent.apps.<id>://
+      //   oauth2redirect/google". Google's iOS-type clients only accept
+      //   the single-slash opaque form "<scheme>:/oauth2redirect", so
+      //   every attempt died at the authorize step with the same
+      //   "Access blocked / Error 400: invalid_request" page. Proven
+      //   Oct 22, 2026 by Google's own on-device "error details", which
+      //   flagged exactly that redirect_uri and nothing else.
+      // - Build 23: the redirect URI is a literal string (below). NEVER
+      //   route this redirect through makeRedirectUri again.
       // The Supabase-hosted browser flow (signInWithOAuth) is NOT used:
       // it needs a Web-type client + secret in the dashboard, while this
       // app is configured with the iOS client.
-      const redirectUri = AuthSession.makeRedirectUri({
-        scheme: GOOGLE_REDIRECT_SCHEME,
-        path: 'oauth2redirect/google',
-      });
+      const redirectUri = `${GOOGLE_REDIRECT_SCHEME}:/oauth2redirect`;
       // A nonce binds the returned ID token to this request; Supabase
       // requires the same raw nonce when the token carries one.
       const nonce = Crypto.randomUUID();
