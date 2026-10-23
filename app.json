@@ -7,7 +7,7 @@
       },
       "package": "com.beatrackfaminc.motivation",
       "permissions": [],
-      "versionCode": 7,
+      "versionCode": 8,
       "blockedPermissions": [
         "com.google.android.gms.permission.AD_ID"
       ]
@@ -19,7 +19,7 @@
     },
     "icon": "./assets/icon.png",
     "ios": {
-      "buildNumber": "21",
+      "buildNumber": "22",
       "bundleIdentifier": "com.beatrackfaminc.motivation",
       "deploymentTarget": "16.4",
       "icon": "./assets/icon.png",
