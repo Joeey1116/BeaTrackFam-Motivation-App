@@ -2,12 +2,12 @@
   "expo": {
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#000000",
-        "foregroundImage": "./assets/icon.png"
+        "backgroundColor": "#101010",
+        "foregroundImage": "./assets/adaptive-icon.png"
       },
       "package": "com.beatrackfaminc.motivation",
       "permissions": [],
-      "versionCode": 14,
+      "versionCode": 15,
       "blockedPermissions": [
         "com.google.android.gms.permission.AD_ID"
       ]
