@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Keyboard,
   Platform,
@@ -12,6 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../lib/themeContext';
 import type { ThemePalette } from '../lib/themes';
+import { supabase } from '../lib/supabase';
 import { containsCrisisLanguage } from './MoodCheckIn';
 
 interface Message {
@@ -27,10 +29,18 @@ interface Props {
 }
 
 /**
- * AI Companion — a friendly chat friend.
- * Warm, scripted responses (phase 1). Full LLM is phase 2.
- * Detects crisis language and quietly surfaces resources.
- * Never forces hotlines — just makes them available.
+ * Haven — a real AI buddy (phase 2, build 24).
+ *
+ * Replies come from the `buddy-chat` Supabase Edge Function, which
+ * forwards the recent conversation (last ~20 messages, sent each call)
+ * to Google Gemini server-side. Signed-in users get the real buddy.
+ * Whenever the function can't answer — signed out, offline, not
+ * configured, upstream error — the on-device scripted engine
+ * (getResponse below) answers instead, so this tab never goes dead.
+ *
+ * Crisis language is checked ON-DEVICE before any network call and
+ * surfaces the resources immediately, regardless of the AI. The
+ * function re-checks server-side as a backstop.
  */
 export function CompanionChat({ userName, onClose }: Props) {
   const { palette } = useTheme();
@@ -45,7 +55,18 @@ export function CompanionChat({ userName, onClose }: Props) {
     },
   ]);
   const [input, setInput] = useState('');
+  const [busy, setBusy] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+
+  // Keep the newest content on screen — new bubbles and the typing
+  // indicator alike.
+  useEffect(() => {
+    const t = setTimeout(
+      () => flatListRef.current?.scrollToEnd({ animated: true }),
+      80
+    );
+    return () => clearTimeout(t);
+  }, [messages, busy]);
 
   // Keyboard handling: this chat renders inside a pageSheet Modal, where
   // KeyboardAvoidingView mis-measures the keyboard frame (the sheet is
@@ -70,9 +91,9 @@ export function CompanionChat({ userName, onClose }: Props) {
     };
   }, []);
 
-  const send = () => {
+  const send = async () => {
     const text = input.trim();
-    if (!text) return;
+    if (!text || busy) return;
     Keyboard.dismiss();
 
     const userMsg: Message = {
@@ -80,27 +101,59 @@ export function CompanionChat({ userName, onClose }: Props) {
       text,
       fromUser: true,
     };
-
-    const isCrisis = containsCrisisLanguage(text);
-    const reply = isCrisis
-      ? {
-          id: (Date.now() + 1).toString(),
-          text: "I'm really glad you told me. You matter, and you don't have to carry this alone.\n\nIf you need someone right now:\n• Call or text 988 (Suicide & Crisis Lifeline)\n• Text HOME to 741741 (Crisis Text Line)\n• Call 1-800-799-7233 (Domestic Violence Hotline)\n\nI'm still here. Keep talking to me.",
-          fromUser: false,
-          isCrisis: true,
-        }
-      : {
-          id: (Date.now() + 1).toString(),
-          text: getResponse(text, userName, messages.length),
-          fromUser: false,
-        };
-
-    setMessages((prev) => [...prev, userMsg, reply]);
     setInput('');
 
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
+    // Crisis pre-check — on-device, before any network call. The
+    // resources land immediately and never depend on the AI answering.
+    if (containsCrisisLanguage(text)) {
+      const crisisReply: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I'm really glad you told me. You matter, and you don't have to carry this alone.\n\nIf you need someone right now:\n• Call or text 988 (Suicide & Crisis Lifeline)\n• Text HOME to 741741 (Crisis Text Line)\n• Call 1-800-799-7233 (Domestic Violence Hotline)\n\nI'm still here. Keep talking to me.",
+        fromUser: false,
+        isCrisis: true,
+      };
+      setMessages((prev) => [...prev, userMsg, crisisReply]);
+      return;
+    }
+
+    // Conversation history for the buddy — the function is stateless,
+    // so the recent thread rides along with every call.
+    const history = [...messages, userMsg].slice(-20).map((m) => ({
+      role: m.fromUser ? 'user' : 'assistant',
+      content: m.text,
+    }));
+
+    setMessages((prev) => [...prev, userMsg]);
+    setBusy(true);
+
+    let replyText: string | null = null;
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.functions.invoke('buddy-chat', {
+          body: { messages: history },
+        });
+        if (
+          !error &&
+          data &&
+          typeof data.reply === 'string' &&
+          data.reply.trim()
+        ) {
+          replyText = data.reply.trim();
+        }
+      } catch {
+        replyText = null;
+      }
+    }
+
+    // Fallback: any failure (signed out, offline, function down) drops
+    // to the on-device scripted engine — the tab never goes dead.
+    const reply: Message = {
+      id: (Date.now() + 1).toString(),
+      text: replyText ?? getResponse(text, userName, messages.length),
+      fromUser: false,
+    };
+    setMessages((prev) => [...prev, reply]);
+    setBusy(false);
   };
 
   return (
@@ -141,6 +194,14 @@ export function CompanionChat({ userName, onClose }: Props) {
             </Text>
           </View>
         )}
+        ListFooterComponent={
+          busy ? (
+            <View style={[styles.bubble, styles.aiBubble, styles.typingBubble]}>
+              <ActivityIndicator size="small" color={palette.textDim} />
+              <Text style={styles.typingText}>Haven is typing…</Text>
+            </View>
+          ) : null
+        }
       />
 
       <Text style={styles.disclaimer}>
@@ -157,7 +218,11 @@ export function CompanionChat({ userName, onClose }: Props) {
           multiline
           onSubmitEditing={send}
         />
-        <Pressable onPress={send} style={styles.sendBtn}>
+        <Pressable
+          onPress={send}
+          disabled={busy}
+          style={[styles.sendBtn, busy && styles.sendBtnDisabled]}
+        >
           <Ionicons name="send" size={20} color={palette.buttonText} />
         </Pressable>
       </View>
@@ -166,8 +231,11 @@ export function CompanionChat({ userName, onClose }: Props) {
 }
 
 /**
- * Haven's reply engine — keyword/intent matching, fully on-device
- * (phase 1 by design; a real LLM companion is the planned phase 2).
+ * Haven's FALLBACK reply engine — keyword/intent matching, fully
+ * on-device. Since build 24 the real buddy (buddy-chat Edge Function)
+ * answers first; this engine only speaks when the function can't —
+ * signed out, offline, not configured, or an upstream error — so the
+ * Companion tab never goes dead.
  *
  * Build 19 coverage pass: build 18 only had six intents and a generic
  * random fallback, so everyday messages landed on non-sequiturs —
@@ -313,6 +381,16 @@ function createStyles(p: ThemePalette) {
     borderWidth: 1,
     borderColor: '#ff4d6d',
   },
+  typingBubble: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  typingText: {
+    fontSize: 14,
+    color: p.textDim,
+    fontStyle: 'italic',
+  },
   bubbleText: {
     fontSize: 15,
     lineHeight: 22,
@@ -354,6 +432,9 @@ function createStyles(p: ThemePalette) {
     backgroundColor: p.button,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sendBtnDisabled: {
+    opacity: 0.45,
   },
   });
 }
