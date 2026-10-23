@@ -118,7 +118,7 @@ export default function Browse() {
 
 function createStyles(p: ThemePalette) {
   return StyleSheet.create({
-  // paddingBottom clears the floating glass capsule (build 21) so the
+  // paddingBottom clears the floating tab bar so the
   // last cards can scroll up past it instead of hiding behind it.
   body: { padding: Spacing.lg, paddingBottom: 120, gap: Spacing.md },
   h1: { ...Type.display, color: p.text },
