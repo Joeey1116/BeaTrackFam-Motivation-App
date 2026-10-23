@@ -17,7 +17,7 @@ interface Props {
 // client bound to bundle ID com.beatrackfaminc.motivation; it is also listed
 // under Supabase Dashboard → Authentication → Providers → Google → Client
 // IDs, which is what lets Supabase accept the ID tokens it mints.
-const GOOGLE_CLIENT_ID = '584493036670-ioeipe5lqocjiu64udhb15m0bm1po78u.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '584493036670-rtp9oo468n0t241e4s6tikcth375dolq.apps.googleusercontent.com';
 
 // Google's native-app policy (RFC 8252): for an iOS-type OAuth client the
 // redirect URI's scheme MUST be the reversed client ID. An arbitrary custom
@@ -27,7 +27,7 @@ const GOOGLE_CLIENT_ID = '584493036670-ioeipe5lqocjiu64udhb15m0bm1po78u.apps.goo
 // report). The reversed scheme is registered in app.json "scheme" so iOS
 // routes the auth-session return back into the app.
 const GOOGLE_REDIRECT_SCHEME =
-  'com.googleusercontent.apps.584493036670-ioeipe5lqocjiu64udhb15m0bm1po78u';
+  'com.googleusercontent.apps.584493036670-rtp9oo468n0t241e4s6tikcth375dolq';
 
 const googleDiscovery = {
   authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -121,6 +121,26 @@ export function SignIn({ onSuccess, onSkip }: Props) {
       //   flagged exactly that redirect_uri and nothing else.
       // - Build 23: the redirect URI is a literal string (below). NEVER
       //   route this redirect through makeRedirectUri again.
+      // - Build 25: the TRUE root cause surfaces. Build 23's device test
+      //   still failed, and this time Google's error page said why in
+      //   plain language: "Custom scheme URIs are not allowed for 'WEB'
+      //   client type." The client ID used through build 24
+      //   (584493036670-ioeipe5…) was a WEB-type OAuth client all along —
+      //   the "iOS client" label came from its slot in Supabase's Client
+      //   IDs list, which says nothing about a client's type in Google
+      //   Cloud. Web clients are banned from custom-scheme redirects
+      //   entirely (either slash form), which is why every flow rewrite
+      //   in builds 19–24 died at the same authorize step; the
+      //   redirect_uri flagging was a symptom, not the disease. Build 25
+      //   swaps in a genuine iOS-type client created in Google Cloud
+      //   Console for bundle com.beatrackfaminc.motivation
+      //   (584493036670-rtp9oo4…): GOOGLE_CLIENT_ID +
+      //   GOOGLE_REDIRECT_SCHEME above and the app.json scheme entry all
+      //   carry the new ID, and the new ID was added to Supabase's
+      //   Google → Client IDs list so Supabase accepts its tokens. The
+      //   old WEB client is NOT deleted: its ID + secret remain in
+      //   Supabase's Google provider main settings as the provider
+      //   anchor — it just no longer serves the app's sign-in flow.
       // The Supabase-hosted browser flow (signInWithOAuth) is NOT used:
       // it needs a Web-type client + secret in the dashboard, while this
       // app is configured with the iOS client.
