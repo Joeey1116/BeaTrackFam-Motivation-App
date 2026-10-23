@@ -7,7 +7,7 @@
       },
       "package": "com.beatrackfaminc.motivation",
       "permissions": [],
-      "versionCode": 10,
+      "versionCode": 11,
       "blockedPermissions": [
         "com.google.android.gms.permission.AD_ID"
       ]
@@ -19,7 +19,7 @@
     },
     "icon": "./assets/icon.png",
     "ios": {
-      "buildNumber": "24",
+      "buildNumber": "25",
       "bundleIdentifier": "com.beatrackfaminc.motivation",
       "deploymentTarget": "16.4",
       "icon": "./assets/icon.png",
@@ -107,7 +107,7 @@
     ],
     "scheme": [
       "hustleandheart",
-      "com.googleusercontent.apps.584493036670-ioeipe5lqocjiu64udhb15m0bm1po78u"
+      "com.googleusercontent.apps.584493036670-rtp9oo468n0t241e4s6tikcth375dolq"
     ],
     "slug": "hustle-heart",
     "userInterfaceStyle": "dark",
