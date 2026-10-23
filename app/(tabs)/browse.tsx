@@ -118,7 +118,9 @@ export default function Browse() {
 
 function createStyles(p: ThemePalette) {
   return StyleSheet.create({
-  body: { padding: Spacing.lg, gap: Spacing.md },
+  // paddingBottom clears the floating glass capsule (build 21) so the
+  // last cards can scroll up past it instead of hiding behind it.
+  body: { padding: Spacing.lg, paddingBottom: 120, gap: Spacing.md },
   h1: { ...Type.display, color: p.text },
   segments: { flexDirection: 'row', backgroundColor: p.surface, borderRadius: Radius.pill, padding: 4, gap: 4 },
   segment: { flex: 1, borderRadius: Radius.pill, paddingVertical: Spacing.sm, alignItems: 'center' },

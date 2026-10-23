@@ -181,7 +181,9 @@ export default function Journal() {
 
 function createStyles(p: ThemePalette) {
   return StyleSheet.create({
-  body: { padding: Spacing.lg, gap: Spacing.sm },
+  // paddingBottom clears the floating glass capsule (build 21) so the
+  // last entries can scroll up past it instead of hiding behind it.
+  body: { padding: Spacing.lg, paddingBottom: 120, gap: Spacing.sm },
   h1: { ...Type.display, color: p.text },
   date: { ...Type.body, color: p.textDim },
   card: { borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: p.border, gap: Spacing.md, marginTop: Spacing.sm },
