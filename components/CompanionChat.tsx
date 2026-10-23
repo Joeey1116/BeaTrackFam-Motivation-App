@@ -17,6 +17,7 @@ import type { ThemePalette } from '../lib/themes';
 import { supabase } from '../lib/supabase';
 import { getPlan } from '../lib/storage';
 import { containsCrisisLanguage } from './MoodCheckIn';
+import { t as translate, useStrings } from '../lib/i18n';
 
 interface Message {
   id: string;
@@ -28,14 +29,14 @@ interface Message {
 }
 
 /**
- * Shown ONCE per day, right after the first lite-mode reply, when a
- * free user reaches the buddy's daily deep-mode (Gemini Pro) limit.
- * The function flags that reply with limitReached; Plus users never
- * receive the flag, so they never see this. Warm, not a paywall —
- * the conversation continues in lite mode either way.
+ * The daily-limit notice text lives in the locale tables
+ * (companion.limitNotice) — it is shown ONCE per day, right after the
+ * first lite-mode reply, when a free user reaches the buddy's daily
+ * deep-mode (Gemini Pro) limit. The function flags that reply with
+ * limitReached; Plus users never receive the flag, so they never see
+ * this. Warm, not a paywall — the conversation continues in lite mode
+ * either way.
  */
-const LIMIT_NOTICE =
-  "Quick heads-up from me: my deep-thinking mode runs on a free daily limit, and we've hit today's. We're not done talking though — I'll keep replying in lite mode for the rest of today, and deep mode resets tomorrow. Haven Plus members skip the limit entirely. You are not alone. 🖤";
 
 /** Local calendar day (YYYY-MM-DD) — the notice's once-a-day key. */
 function localDayKey(): string {
@@ -74,13 +75,14 @@ interface Props {
  */
 export function CompanionChat({ userName, onClose }: Props) {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '0',
       text: userName
-        ? `Hey ${userName} 💛 I'm here. What's on your mind?`
-        : `Hey 💛 I'm here. What's on your mind?`,
+        ? t('companion.greetingNamed', { name: userName })
+        : t('companion.greeting'),
       fromUser: false,
     },
   ]);
@@ -142,7 +144,7 @@ export function CompanionChat({ userName, onClose }: Props) {
     if (containsCrisisLanguage(text)) {
       const crisisReply: Message = {
         id: (Date.now() + 1).toString(),
-        text: "I'm really glad you told me. You matter, and you don't have to carry this alone.\n\nIf you need someone right now:\n• Call or text 988 (Suicide & Crisis Lifeline)\n• Text HOME to 741741 (Crisis Text Line)\n• Call 1-800-799-7233 (Domestic Violence Hotline)\n\nI'm still here. Keep talking to me.",
+        text: t('companion.crisisReply'),
         fromUser: false,
         isCrisis: true,
       };
@@ -216,7 +218,7 @@ export function CompanionChat({ userName, onClose }: Props) {
       if (!alreadyShown) {
         toAppend.push({
           id: (Date.now() + 2).toString(),
-          text: LIMIT_NOTICE,
+          text: t('companion.limitNotice'),
           fromUser: false,
           isNotice: true,
         });
@@ -231,8 +233,8 @@ export function CompanionChat({ userName, onClose }: Props) {
     <View style={[styles.container, { paddingBottom: keyboardHeight }]}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>Companion</Text>
-          <Text style={styles.subtitle}>Always here for you 💛</Text>
+          <Text style={styles.title}>{t('companion.chatTitle')}</Text>
+          <Text style={styles.subtitle}>{t('companion.chatSubtitle')}</Text>
         </View>
         <Pressable onPress={onClose} hitSlop={12}>
           <Ionicons name="close" size={24} color={palette.text} />
@@ -271,14 +273,14 @@ export function CompanionChat({ userName, onClose }: Props) {
           busy ? (
             <View style={[styles.bubble, styles.aiBubble, styles.typingBubble]}>
               <ActivityIndicator size="small" color={palette.textDim} />
-              <Text style={styles.typingText}>Haven is typing…</Text>
+              <Text style={styles.typingText}>{t('companion.typing')}</Text>
             </View>
           ) : null
         }
       />
 
       <Text style={styles.disclaimer}>
-        Support resources are always available in Settings → Help.
+        {t('companion.disclaimer')}
       </Text>
 
       <View style={styles.inputRow}>
@@ -286,7 +288,7 @@ export function CompanionChat({ userName, onClose }: Props) {
           style={styles.input}
           value={input}
           onChangeText={setInput}
-          placeholder="Talk to me..."
+          placeholder={t('companion.placeholder')}
           placeholderTextColor={palette.textDim}
           multiline
           onSubmitEditing={send}
@@ -328,77 +330,77 @@ function getResponse(text: string, userName?: string, turn = 0): string {
     lower.match(/\b(i'm|im|i am)\s+(ok|okay|fine|good|alright|well|great)\b/) ||
     lower.match(/^\s*(i'm|im)\s+(ok|okay|fine|good|alright)\s*$/)
   ) {
-    return `I'm good — better now that you're here${name} 💛 Glad you're doing okay. How's your day actually going so far?`;
+    return translate('companion.replies.checkin', { name });
   }
 
   // Explicitly asking for support — answer it directly, don't deflect.
   if (lower.match(/\b(support|help me|need help|need you|be there for me|someone to talk)\b/)) {
-    return `I'm right here${name}, and I'm not going anywhere. You don't have to carry this alone. What's the hardest part right now — let's start there.`;
+    return translate('companion.replies.support', { name });
   }
 
   if (lower.match(/\b(stress|stressed|anxious|anxiety|worried|overwhelm|panic)\b/)) {
-    return `That sounds really heavy${name}. It's okay to feel that way — stress means you care. Want to try a quick breathing exercise together? Or just keep talking, I'm here.`;
+    return translate('companion.replies.stress', { name });
   }
 
   if (lower.match(/\b(sad|down|depress|lonely|alone|cry|empty|numb)\b/)) {
-    return `I'm sorry you're feeling this way${name}. You're not alone — I'm right here. Sometimes just saying it out loud helps. What's weighing on you most right now?`;
+    return translate('companion.replies.sad', { name });
   }
 
   if (lower.match(/\b(angry|mad|frustrated|annoyed|unfair)\b/)) {
-    return `That sounds genuinely frustrating${name}. It makes sense you'd feel that way. What happened?`;
+    return translate('companion.replies.angry', { name });
   }
 
   if (lower.match(/\b(tired|exhaust|sleep|insomnia|can't sleep|awake)\b/)) {
-    return `Rest is productive too${name}. Your body and mind need it. Is there something keeping you up, or are you just running on empty?`;
+    return translate('companion.replies.tired', { name });
   }
 
   if (lower.match(/\b(god|pray|prayer|faith|blessed|church|synagogue|bible|torah)\b/)) {
-    return `Faith carries a lot of people through the hardest seasons${name}. What's on your heart that you're bringing to God right now?`;
+    return translate('companion.replies.faith', { name });
   }
 
   if (lower.match(/\b(work|job|boss|money|bills|rent|broke)\b/)) {
-    return `That pressure is real${name}, and it wears on a person. Is it one big thing hanging over you, or a pile of little ones?`;
+    return translate('companion.replies.work', { name });
   }
 
   if (lower.match(/\b(motivat|stuck|give up|procrastinat|lazy)\b/)) {
-    return `You don't need to feel motivated to take one small step${name} — the feeling usually follows the step. What's one tiny thing you could do in the next ten minutes?`;
+    return translate('companion.replies.motivation', { name });
   }
 
   if (lower.match(/\b(grateful|thankful|gratitude)\b/)) {
-    return `Gratitude changes the shape of a day${name}. What's one thing — big or tiny — you're thankful for right now?`;
+    return translate('companion.replies.gratitude', { name });
   }
 
   if (lower.match(/\b(happy|great|amazing|excited|proud|awesome|fantastic)\b/)) {
-    return `I love hearing that${name}! 🎉 Hold onto this feeling. What's making today good?`;
+    return translate('companion.replies.happy', { name });
   }
 
   if (lower.match(/\b(thank|thanks)\b/)) {
-    return `Always${name} 💛 That's what I'm here for.`;
+    return translate('companion.replies.thanks', { name });
   }
 
   if (lower.match(/^(hi|hey|hello|yo|morning|good morning|good evening)\b/)) {
-    return `Hey${name}! Good to see you. How's your heart today?`;
+    return translate('companion.replies.greeting', { name });
   }
 
   // A direct question Haven can't truly answer — be honest, stay warm,
   // and hand the conversation back instead of faking an answer.
   if (lower.trim().endsWith('?') || lower.match(/^(what|why|how|who|when|where|can you|do you)\b/)) {
-    return `That's a real question${name}, and I don't want to fake an answer for you. I'm a simple companion — but I'm a good listener. What's behind the question for you today?`;
+    return translate('companion.replies.question', { name });
   }
 
   // Long messages are usually venting — reflect, don't summarize.
   if (text.length > 140) {
-    return `I read every word of that${name}. It sounds like there's a lot on your shoulders. Which part of it feels heaviest right now?`;
+    return translate('companion.replies.long', { name });
   }
 
   // Fallbacks: warm, and every one ends in a follow-up question so the
   // conversation moves instead of stalling on a canned line.
   const defaults = [
-    `I hear you${name}. What part of that is sitting with you the most?`,
-    `That makes sense${name}. What else is on your mind tonight?`,
-    `I'm with you${name}. If you could change one thing about today, what would it be?`,
-    `Tell me more about that${name} — when did it start feeling this way?`,
-    `Okay${name}, I'm listening. What do you need most right now — advice, or just company?`,
+    translate('companion.replies.default1', { name }),
+    translate('companion.replies.default2', { name }),
+    translate('companion.replies.default3', { name }),
+    translate('companion.replies.default4', { name }),
+    translate('companion.replies.default5', { name }),
   ];
   return defaults[turn % defaults.length];
 }

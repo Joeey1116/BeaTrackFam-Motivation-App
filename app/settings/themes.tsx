@@ -8,6 +8,7 @@ import { Radius, Spacing, Type } from '../../lib/design';
 import { getPlan } from '../../lib/storage';
 import { THEMES, type Theme, type ThemePalette } from '../../lib/themes';
 import { useTheme } from '../../lib/themeContext';
+import { useStrings } from '../../lib/i18n';
 
 /**
  * Themes — tap a theme and it applies IMMEDIATELY, app-wide (build 20):
@@ -22,6 +23,7 @@ import { useTheme } from '../../lib/themeContext';
  */
 export default function ThemesScreen() {
   const { themeId: current, chooseTheme, palette } = useTheme();
+  const { t } = useStrings();
   const [isPlus, setIsPlus] = useState(false);
   const styles = useMemo(() => createStyles(palette), [palette]);
 
@@ -29,12 +31,18 @@ export default function ThemesScreen() {
     getPlan().then((p) => setIsPlus(p === 'haven-plus'));
   }, []);
 
+  const themeLabel = (theme: Theme) => {
+    const key = `themesScreen.names.${theme.id}`;
+    const label = t(key);
+    return label === key ? theme.name : label;
+  };
+
   const pick = async (theme: Theme) => {
     const locked = !isPlus && theme.premium;
     if (locked) {
-      Alert.alert('Haven Plus', 'Haven includes 3 themes. Haven Plus unlocks them all.', [
-        { text: 'Not Now', style: 'cancel' },
-        { text: 'OK', onPress: () => router.back() },
+      Alert.alert(t('settings.upgradeTitle'), t('themesScreen.lockedBody'), [
+        { text: t('settings.notNow'), style: 'cancel' },
+        { text: t('common.ok'), onPress: () => router.back() },
       ]);
       return;
     }
@@ -47,13 +55,13 @@ export default function ThemesScreen() {
     <Screen>
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-          <Text style={styles.back}>‹ Back</Text>
+          <Text style={styles.back}>{t('common.back')}</Text>
         </Pressable>
-        <Text style={styles.h1}>Themes</Text>
+        <Text style={styles.h1}>{t('themesScreen.title')}</Text>
         <Text style={styles.sub}>
           {isPlus
-            ? 'Make your home yours. Tap to apply — it takes effect everywhere, right away.'
-            : 'Haven includes 3 themes. Haven Plus unlocks them all. Tap to apply — it takes effect everywhere, right away.'}
+            ? t('themesScreen.subPlus')
+            : t('themesScreen.subFree')}
         </Text>
         <View style={styles.list}>
           {THEMES.map((theme) => {
@@ -72,7 +80,7 @@ export default function ThemesScreen() {
                   end={{ x: 1, y: 1 }}
                 />
                 <Text style={styles.label} numberOfLines={1}>
-                  {theme.name}
+                  {themeLabel(theme)}
                 </Text>
                 {theme.premium && (
                   <Text style={styles.premiumTag}>{isPlus ? '' : 'PLUS'}</Text>

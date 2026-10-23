@@ -25,9 +25,8 @@ import { getPlan, isCompanionEnabled, isStreakBuddyEnabled, isRitualsEnabled,
   setCompanionEnabled, setStreakBuddyEnabled, setRitualsEnabled,
   isNotifEnabled, setNotifEnabled, getUserName, setUserName,
   getChosenTracks, setChosenTracks, getThemeId, setThemeId } from '../../lib/storage';
-import { useStrings, setLanguage } from '../../lib/i18n';
-import { TRACKS, TRACK_LABELS, BRAND, type TrackId } from '../../lib/brand';
-import { useHavenPlus, SKU_NAMES } from '../../lib/purchases';
+import { useStrings, setLanguage, planName } from '../../lib/i18n';
+import { useHavenPlus } from '../../lib/purchases';
 
 const REVIEW_URL = 'https://apps.apple.com/app/id6821567537?action=write-review';
 
@@ -82,12 +81,12 @@ export default function Settings() {
 
   const manageSubscription = () => {
     Alert.alert(
-      'Manage Subscription',
-      'Your subscription is billed by Apple or Google. Tap below to manage it.',
+      t('settings.manageAlertTitle'),
+      t('settings.manageAlertBody'),
       [
-        { text: 'Apple Subscriptions', onPress: openAppleSubs },
-        { text: 'Google Play Subscriptions', onPress: openPlaySubs },
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('settings.manageApple'), onPress: openAppleSubs },
+        { text: t('settings.manageGoogle'), onPress: openPlaySubs },
+        { text: t('common.cancel'), style: 'cancel' },
       ]
     );
   };
@@ -97,23 +96,23 @@ export default function Settings() {
     // "takes forever" sheet. Products are prefetched at app launch.
     if (productsLoading || subscriptions.length === 0) {
       Alert.alert(
-        'One moment',
-        'Loading Haven Plus plans…',
-        [{ text: 'OK', style: 'cancel' }]
+        t('settings.upgradeLoadingTitle'),
+        t('settings.loadingPlans'),
+        [{ text: t('common.ok'), style: 'cancel' }]
       );
       return;
     }
     Alert.alert(
-      'Haven Plus',
-      'Lock-screen quotes, widgets, every theme, custom backgrounds, your own music, zero ads.\n\n14-day free trial on all plans — you choose, never automatic.',
+      t('settings.upgradeTitle'),
+      t('settings.upgradeBody'),
       [
         // Live StoreKit prices — never hardcoded, so they can't drift.
         ...subscriptions.map((sub) => ({
-          text: `${SKU_NAMES[sub.id] ?? sub.title} ${sub.displayPrice}`,
+          text: `${planName(sub.id, sub.title)} ${sub.displayPrice}`,
           onPress: () => handlePurchase(sub.id),
         })),
-        { text: 'Restore Purchase', onPress: handleRestore },
-        { text: 'Not Now', style: 'cancel' },
+        { text: t('settings.restorePurchase'), onPress: handleRestore },
+        { text: t('settings.notNow'), style: 'cancel' },
       ]
     );
   };
@@ -128,8 +127,8 @@ export default function Settings() {
       if (ok) {
         await load();
         Alert.alert(
-          'Welcome to Haven Plus 💛',
-          'Your subscription is active. Enjoy everything.'
+          t('settings.welcomePlusTitle'),
+          t('settings.welcomePlusBody')
         );
       }
       // Cancelled or failed → stay silent; the store sheet already said so.
@@ -145,10 +144,10 @@ export default function Settings() {
       // restore() grants haven-plus itself on success (lib/purchases.ts).
       const ok = await restore();
       Alert.alert(
-        ok ? 'Restored' : 'No Purchase Found',
+        ok ? t('settings.restoredTitle') : t('settings.noPurchaseTitle'),
         ok
-          ? 'Your Haven Plus subscription has been restored.'
-          : 'We couldn\'t find a previous Haven Plus purchase on this account.'
+          ? t('settings.restoredBody')
+          : t('settings.noPurchaseBody')
       );
       if (ok) load();
     } finally {
@@ -179,7 +178,7 @@ export default function Settings() {
   const shareApp = async () => {
     try {
       await Share.share({
-        message: 'Hustle & Heart — daily fuel for your grind. You are not alone. You are loved. 💛',
+        message: t('settings.shareMessage'),
       });
     } catch {
       // dismissed
@@ -188,22 +187,22 @@ export default function Settings() {
 
   const leaveReview = () => {
     Linking.openURL(REVIEW_URL).catch(() => {
-      Alert.alert('Thank you!', 'You can leave a review on the App Store page for Hustle & Heart.');
+      Alert.alert(t('settings.reviewThanksTitle'), t('settings.reviewThanksBody'));
     });
   };
 
   const whyWeBuiltThis = () => {
     Alert.alert(
-      'Why We Built This',
-      "We're a merch company — that's what we're known for. But we wanted to do something DIFFERENT.\n\nHustle & Heart is our love letter to everyone grinding through hard days. You are not alone. You are loved. 💛\n\n— Joey, BeaTrackFam"
+      t('settings.whyBuilt'),
+      t('settings.whyBuiltBody')
     );
   };
 
   const supportResources = () => {
     Alert.alert(
-      'Support Resources',
-      'If you\'re struggling, please reach out. You matter.\n\n988 Suicide & Crisis Lifeline: call or text 988\nCrisis Text Line: text HOME to 741741\nNational Domestic Violence Hotline: 1-800-799-7233 or text START to 88788',
-      [{ text: 'Close', style: 'cancel' }]
+      t('settings.supportResources'),
+      t('settings.supportBody'),
+      [{ text: t('common.close'), style: 'cancel' }]
     );
   };
 
@@ -241,10 +240,10 @@ export default function Settings() {
         { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 120 },
       ]}
     >
-      <Text style={styles.title}>Settings</Text>
+      <Text style={styles.title}>{t('settings.title')}</Text>
 
       {/* HAVEN */}
-      <Text style={styles.section}>HAVEN</Text>
+      <Text style={styles.section}>{t('settings.sections.haven')}</Text>
       <Glass style={styles.group}>
         <Pressable
           style={styles.row}
@@ -252,14 +251,14 @@ export default function Settings() {
         >
           <View style={styles.rowInfo}>
             <Text style={styles.rowTitle}>
-              {plan === 'haven-plus' ? 'Haven Plus' : 'Haven'} Plan
+              {plan === 'haven-plus' ? t('settings.planPlusTitle') : t('settings.planFreeTitle')}
             </Text>
             <Text style={styles.rowDesc}>
               {plan === 'haven-plus'
-                ? 'You\'re on Haven Plus. Thank you 💛 Tap to manage.'
+                ? t('settings.planPlusDesc')
                 : productsLoading
-                  ? 'Loading plans…'
-                  : 'You\'re on the free Haven plan. Tap to see Haven Plus.'}
+                  ? t('settings.loadingPlans')
+                  : t('settings.planFreeDesc')}
             </Text>
           </View>
           {productsLoading && plan !== 'haven-plus' ? (
@@ -271,8 +270,8 @@ export default function Settings() {
         {plan === 'haven-plus' && (
           <Pressable onPress={manageSubscription} style={styles.row}>
             <View style={styles.rowInfo}>
-              <Text style={styles.rowTitle}>Manage Subscription</Text>
-              <Text style={styles.rowDesc}>Cancel or change — as easy as signing up.</Text>
+              <Text style={styles.rowTitle}>{t('settings.manageSub')}</Text>
+              <Text style={styles.rowDesc}>{t('settings.manageSubDesc')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
           </Pressable>
@@ -280,8 +279,8 @@ export default function Settings() {
         {plan !== 'haven-plus' && (
           <Pressable onPress={handleRestore} style={styles.row}>
             <View style={styles.rowInfo}>
-              <Text style={styles.rowTitle}>Restore Purchase</Text>
-              <Text style={styles.rowDesc}>Already subscribed? Restore it here.</Text>
+              <Text style={styles.rowTitle}>{t('settings.restorePurchase')}</Text>
+              <Text style={styles.rowDesc}>{t('settings.restoreDesc')}</Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
           </Pressable>
@@ -289,68 +288,68 @@ export default function Settings() {
       </Glass>
 
       {/* ABOUT YOU */}
-      <Text style={styles.section}>ABOUT YOU</Text>
+      <Text style={styles.section}>{t('settings.sections.aboutYou')}</Text>
       <Glass style={styles.group}>
         <Pressable style={styles.row} onPress={editName}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Name</Text>
+            <Text style={styles.rowTitle}>{t('settings.nameRow')}</Text>
             <Text style={styles.rowDesc}>
-              {userName ? `Hi, ${userName}!` : 'So your companion knows what to call you'}
+              {userName ? t('settings.nameDescNamed', { name: userName }) : t('settings.nameDesc')}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={editBeliefs}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Beliefs</Text>
-            <Text style={styles.rowDesc}>Faith and topic tracks</Text>
+            <Text style={styles.rowTitle}>{t('settings.beliefs')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.beliefsDesc')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
       {/* MAKE IT YOURS */}
-      <Text style={styles.section}>MAKE IT YOURS</Text>
+      <Text style={styles.section}>{t('settings.sections.makeItYours')}</Text>
       <Glass style={styles.group}>
         <View style={styles.row}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>AI Companion</Text>
-            <Text style={styles.rowDesc}>Friendly chat friend</Text>
+            <Text style={styles.rowTitle}>{t('settings.aiCompanion')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.aiCompanionDesc')}</Text>
           </View>
           <Switch value={companion} onValueChange={toggleCompanion} />
         </View>
         <View style={styles.row}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Streak Buddy</Text>
-            <Text style={styles.rowDesc}>Grows with your streak</Text>
+            <Text style={styles.rowTitle}>{t('settings.streakBuddy')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.streakBuddyDesc')}</Text>
           </View>
           <Switch value={buddy} onValueChange={toggleBuddy} />
         </View>
         <View style={styles.row}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Daily Rituals</Text>
-            <Text style={styles.rowDesc}>Morning greeting, evening wind-down</Text>
+            <Text style={styles.rowTitle}>{t('settings.dailyRituals')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.dailyRitualsDesc')}</Text>
           </View>
           <Switch value={rituals} onValueChange={toggleRituals} />
         </View>
         <View style={styles.row}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Notifications</Text>
-            <Text style={styles.rowDesc}>Daily reminders and rituals</Text>
+            <Text style={styles.rowTitle}>{t('settings.notifications')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.notificationsDesc')}</Text>
           </View>
           <Switch value={notifOn} onValueChange={toggleNotif} />
         </View>
         <Pressable style={styles.row} onPress={editLanguage}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Language</Text>
-            <Text style={styles.rowDesc}>English, עברית, Español</Text>
+            <Text style={styles.rowTitle}>{t('settings.language')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.languageDesc')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={editThemes}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Themes</Text>
-            <Text style={styles.rowDesc}>Make your home yours</Text>
+            <Text style={styles.rowTitle}>{t('settings.themes')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.themesDesc')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
@@ -361,15 +360,15 @@ export default function Settings() {
           screen itself handles signed-out / signed-in / not-configured
           states; Delete Account lives there and only shows when the
           user is actually signed in. */}
-      <Text style={styles.section}>ACCOUNT</Text>
+      <Text style={styles.section}>{t('settings.sections.account')}</Text>
       <Glass style={styles.group}>
         <Pressable style={styles.row} onPress={openAccount}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Account</Text>
+            <Text style={styles.rowTitle}>{t('settings.accountRow')}</Text>
             <Text style={styles.rowDesc}>
               {accountEmail
-                ? `Signed in as ${accountEmail}`
-                : 'Sign in, sign out, delete account (optional)'}
+                ? t('settings.accountDescSignedIn', { email: accountEmail })
+                : t('settings.accountDescSignedOut')}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
@@ -377,26 +376,26 @@ export default function Settings() {
       </Glass>
 
       {/* SUPPORT US */}
-      <Text style={styles.section}>SUPPORT US</Text>
+      <Text style={styles.section}>{t('settings.sections.supportUs')}</Text>
       <Glass style={styles.group}>
         <Pressable style={styles.row} onPress={shareApp}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Share Hustle & Heart</Text>
-            <Text style={styles.rowDesc}>Tell someone who needs this</Text>
+            <Text style={styles.rowTitle}>{t('settings.shareApp')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.shareDesc')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={leaveReview}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Leave a Review</Text>
-            <Text style={styles.rowDesc}>It means the world to us</Text>
+            <Text style={styles.rowTitle}>{t('settings.leaveReview')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.reviewDesc')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
       </Glass>
 
       {/* FOLLOW US */}
-      <Text style={styles.section}>FOLLOW US</Text>
+      <Text style={styles.section}>{t('settings.sections.followUs')}</Text>
       <Glass style={styles.group}>
         <Pressable
           style={styles.row}
@@ -411,25 +410,25 @@ export default function Settings() {
       </Glass>
 
       {/* HELP */}
-      <Text style={styles.section}>HELP</Text>
+      <Text style={styles.section}>{t('settings.sections.help')}</Text>
       <Glass style={styles.group}>
         <Pressable style={styles.row} onPress={whyWeBuiltThis}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Why We Built This</Text>
-            <Text style={styles.rowDesc}>Our story</Text>
+            <Text style={styles.rowTitle}>{t('settings.whyBuilt')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.whyBuiltDesc')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={supportResources}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Support Resources</Text>
-            <Text style={styles.rowDesc}>988, Crisis Text Line, DV Hotline — always here</Text>
+            <Text style={styles.rowTitle}>{t('settings.supportResources')}</Text>
+            <Text style={styles.rowDesc}>{t('settings.supportDesc')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={contactUs}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Contact Us</Text>
+            <Text style={styles.rowTitle}>{t('settings.contactUs')}</Text>
             <Text style={styles.rowDesc}>contact@beatrackfam.info</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
@@ -437,17 +436,17 @@ export default function Settings() {
       </Glass>
 
       {/* OTHER */}
-      <Text style={styles.section}>OTHER</Text>
+      <Text style={styles.section}>{t('settings.sections.other')}</Text>
       <Glass style={styles.group}>
         <Pressable style={styles.row} onPress={() => router.push('/settings/privacy')}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Privacy Policy</Text>
+            <Text style={styles.rowTitle}>{t('settings.privacyPolicy')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
         <Pressable style={styles.row} onPress={() => router.push('/settings/terms')}>
           <View style={styles.rowInfo}>
-            <Text style={styles.rowTitle}>Terms of Service</Text>
+            <Text style={styles.rowTitle}>{t('settings.termsOfService')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={palette.textDim} />
         </Pressable>
@@ -456,7 +455,7 @@ export default function Settings() {
       <Text style={styles.footer}>
         Hustle & Heart v{Constants.expoConfig?.version ?? '1.0'}
         {Constants.nativeBuildVersion ? ` (${Constants.nativeBuildVersion})` : ''}
-        {'\n'}You're not alone. You're loved. 💛
+        {'\n'}{t('settings.footerNote')}
       </Text>
       </ScrollView>
     </View>

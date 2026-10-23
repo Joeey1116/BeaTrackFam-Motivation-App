@@ -38,8 +38,8 @@ export function initNotificationHandler(): void {
 
   if (Platform.OS === 'android') {
     void setNotificationChannelAsync(CHANNEL_ID, {
-      name: 'Daily Quotes',
-      description: `Your morning quote from ${BRAND.SHORT_NAME}`,
+      name: t('notifications.channelName'),
+      description: t('notifications.channelDesc', { app: BRAND.SHORT_NAME }),
       importance: 4, // MAX
       vibrationPattern: [0, 250, 250, 250],
     });

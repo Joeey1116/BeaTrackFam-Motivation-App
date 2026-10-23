@@ -5,6 +5,7 @@ import * as AuthSession from 'expo-auth-session';
 import * as Crypto from 'expo-crypto';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { useStrings } from '../lib/i18n';
 import type { ThemePalette } from '../lib/themes';
 import { useTheme } from '../lib/themeContext';
 
@@ -41,12 +42,13 @@ const googleDiscovery = {
  */
 export function SignIn({ onSuccess, onSkip }: Props) {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [busy, setBusy] = useState(false);
 
   const signInWithApple = async () => {
     if (!isSupabaseConfigured() || !supabase) {
-      Alert.alert('Not configured', 'Sign-in is not set up yet.');
+      Alert.alert(t('signin.notConfiguredTitle'), t('signin.notConfiguredBody'));
       return;
     }
 
@@ -60,7 +62,7 @@ export function SignIn({ onSuccess, onSkip }: Props) {
       });
 
       if (!credential.identityToken) {
-        throw new Error('No identity token');
+        throw new Error(t('signin.noIdentityToken'));
       }
 
       // Native Apple tokens carry aud = the app bundle ID
@@ -77,7 +79,7 @@ export function SignIn({ onSuccess, onSkip }: Props) {
       onSuccess();
     } catch (e: any) {
       if (e.code !== 'ERR_REQUEST_CANCELED') {
-        Alert.alert('Sign-in failed', e.message || 'Please try again.');
+        Alert.alert(t('signin.failedTitle'), e.message || t('signin.tryAgain'));
       }
     } finally {
       setBusy(false);
@@ -86,11 +88,11 @@ export function SignIn({ onSuccess, onSkip }: Props) {
 
   const signInWithGoogle = async () => {
     if (!isSupabaseConfigured() || !supabase) {
-      Alert.alert('Not configured', 'Sign-in is not set up yet.');
+      Alert.alert(t('signin.notConfiguredTitle'), t('signin.notConfiguredBody'));
       return;
     }
     if (!GOOGLE_CLIENT_ID) {
-      Alert.alert('Not configured', 'Google sign-in is not set up yet.');
+      Alert.alert(t('signin.notConfiguredTitle'), t('signin.googleNotConfiguredBody'));
       return;
     }
 
@@ -178,14 +180,14 @@ export function SignIn({ onSuccess, onSkip }: Props) {
 
       if (result.type !== 'success') {
         if (result.type !== 'dismiss' && result.type !== 'cancel') {
-          throw new Error('Google sign-in did not complete.');
+          throw new Error(t('signin.googleIncomplete'));
         }
         return;
       }
 
       const code = result.params.code;
       if (!code || !request.codeVerifier) {
-        throw new Error('Google sign-in did not complete.');
+        throw new Error(t('signin.googleIncomplete'));
       }
 
       // Public (iOS) client: the PKCE verifier stands in for a client
@@ -201,7 +203,7 @@ export function SignIn({ onSuccess, onSkip }: Props) {
       );
 
       if (!tokenResponse.idToken) {
-        throw new Error('Google did not return an identity token.');
+        throw new Error(t('signin.googleNoToken'));
       }
 
       const { error } = await supabase.auth.signInWithIdToken({
@@ -213,7 +215,7 @@ export function SignIn({ onSuccess, onSkip }: Props) {
       if (error) throw error;
       onSuccess();
     } catch (e: any) {
-      Alert.alert('Sign-in failed', e.message || 'Please try again.');
+      Alert.alert(t('signin.failedTitle'), e.message || t('signin.tryAgain'));
     } finally {
       setBusy(false);
     }
@@ -224,10 +226,9 @@ export function SignIn({ onSuccess, onSkip }: Props) {
   return (
     <View style={styles.container}>
       <Ionicons name="cloud-upload-outline" size={48} color={palette.text} />
-      <Text style={styles.title}>Keep your data safe</Text>
+      <Text style={styles.title}>{t('signin.title')}</Text>
       <Text style={styles.subtitle}>
-        Sign in to sync your journal, favorites, and streaks across devices.
-        The app works fully without an account — this is optional.
+        {t('signin.subtitle')}
       </Text>
 
       {Platform.OS === 'ios' && (
@@ -247,16 +248,16 @@ export function SignIn({ onSuccess, onSkip }: Props) {
           disabled={busy}
         >
           <Ionicons name="logo-google" size={20} color={palette.text} />
-          <Text style={styles.googleText}>Sign in with Google</Text>
+          <Text style={styles.googleText}>{t('signin.google')}</Text>
         </Pressable>
       )}
 
       <Pressable onPress={onSkip} style={styles.skipBtn}>
-        <Text style={styles.skipText}>Skip — I'll stay offline</Text>
+        <Text style={styles.skipText}>{t('signin.skip')}</Text>
       </Pressable>
 
       <Text style={styles.note}>
-        Your journal stays private. We never sell your data.
+        {t('signin.note')}
       </Text>
     </View>
   );

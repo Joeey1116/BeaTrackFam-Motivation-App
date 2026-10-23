@@ -3,6 +3,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../lib/themeContext';
 import type { ThemePalette } from '../lib/themes';
+import { useStrings } from '../lib/i18n';
 
 interface Props {
   onComplete: (exerciseId: string, minutes: number) => void;
@@ -11,8 +12,8 @@ interface Props {
 
 interface Exercise {
   id: string;
-  name: string;
-  desc: string;
+  /** Locale key under breathe.exercises (id '478' is not a valid key start). */
+  key: string;
   inhale: number;
   hold: number;
   exhale: number;
@@ -20,24 +21,9 @@ interface Exercise {
 }
 
 const EXERCISES: Exercise[] = [
-  {
-    id: 'box',
-    name: 'Box Breathing',
-    desc: 'Calm your nervous system. Used by Navy SEALs.',
-    inhale: 4, hold: 4, exhale: 4, cycles: 4,
-  },
-  {
-    id: '478',
-    name: '4-7-8 Breathing',
-    desc: 'Melt away anxiety and prepare for rest.',
-    inhale: 4, hold: 7, exhale: 8, cycles: 3,
-  },
-  {
-    id: 'calm',
-    name: 'Deep Calm',
-    desc: 'Slow, gentle breaths to center yourself.',
-    inhale: 5, hold: 2, exhale: 5, cycles: 5,
-  },
+  { id: 'box', key: 'box', inhale: 4, hold: 4, exhale: 4, cycles: 4 },
+  { id: '478', key: 'f478', inhale: 4, hold: 7, exhale: 8, cycles: 3 },
+  { id: 'calm', key: 'calm', inhale: 5, hold: 2, exhale: 5, cycles: 5 },
 ];
 
 /**
@@ -46,6 +32,7 @@ const EXERCISES: Exercise[] = [
  */
 export function Breathe({ onComplete, onClose }: Props) {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [selected, setSelected] = useState<Exercise | null>(null);
   const [phase, setPhase] = useState<'inhale' | 'hold' | 'exhale' | 'done'>('inhale');
@@ -112,20 +99,23 @@ export function Breathe({ onComplete, onClose }: Props) {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Breathe</Text>
+          <Text style={styles.title}>{t('breathe.title')}</Text>
           <Pressable onPress={onClose} hitSlop={12}>
             <Ionicons name="close" size={24} color={palette.text} />
           </Pressable>
         </View>
         <Text style={styles.subtitle}>
-          A few minutes of breathing can shift your whole day.
+          {t('breathe.subtitle')}
         </Text>
         {EXERCISES.map((ex) => (
           <Pressable key={ex.id} onPress={() => startExercise(ex)} style={styles.card}>
-            <Text style={styles.cardName}>{ex.name}</Text>
-            <Text style={styles.cardDesc}>{ex.desc}</Text>
+            <Text style={styles.cardName}>{t(`breathe.exercises.${ex.key}.name`)}</Text>
+            <Text style={styles.cardDesc}>{t(`breathe.exercises.${ex.key}.desc`)}</Text>
             <Text style={styles.cardMeta}>
-              {ex.cycles} rounds · ~{Math.round(((ex.inhale + ex.hold + ex.exhale) * ex.cycles) / 60)} min
+              {t('breathe.roundsMeta', {
+                rounds: ex.cycles,
+                min: Math.round(((ex.inhale + ex.hold + ex.exhale) * ex.cycles) / 60),
+              })}
             </Text>
           </Pressable>
         ))}
@@ -134,16 +124,16 @@ export function Breathe({ onComplete, onClose }: Props) {
   }
 
   const phaseText = {
-    inhale: 'Breathe in...',
-    hold: 'Hold...',
-    exhale: 'Breathe out...',
-    done: 'Complete',
+    inhale: t('breathe.inhale'),
+    hold: t('breathe.hold'),
+    exhale: t('breathe.exhale'),
+    done: t('breathe.complete'),
   }[phase];
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{selected.name}</Text>
+        <Text style={styles.title}>{t(`breathe.exercises.${selected.key}.name`)}</Text>
         <Pressable onPress={() => { setRunning(false); setSelected(null); scale.setValue(1); }} hitSlop={12}>
           <Ionicons name="close" size={24} color={palette.text} />
         </Pressable>
@@ -152,18 +142,18 @@ export function Breathe({ onComplete, onClose }: Props) {
       {phase === 'done' ? (
         <View style={styles.doneWrap}>
           <Ionicons name="checkmark-circle" size={64} color={palette.text} />
-          <Text style={styles.doneTitle}>Beautiful.</Text>
+          <Text style={styles.doneTitle}>{t('breathe.doneTitle')}</Text>
           <Text style={styles.doneText}>
-            You just gave yourself a moment of calm. That's strength.
+            {t('breathe.doneText')}
           </Text>
           <Pressable onPress={() => { setSelected(null); scale.setValue(1); }} style={styles.doneBtn}>
-            <Text style={styles.doneBtnText}>Done</Text>
+            <Text style={styles.doneBtnText}>{t('breathe.done')}</Text>
           </Pressable>
         </View>
       ) : (
         <View style={styles.breatheWrap}>
           <Text style={styles.cycleText}>
-            Round {cycle} of {selected.cycles}
+            {t('breathe.roundOf', { cycle, total: selected.cycles })}
           </Text>
           <Animated.View style={[styles.circle, { transform: [{ scale }] }]}>
             <Text style={styles.phaseText}>{phaseText}</Text>
@@ -172,7 +162,7 @@ export function Breathe({ onComplete, onClose }: Props) {
             onPress={() => { setRunning(false); setSelected(null); scale.setValue(1); }}
             style={styles.stopBtn}
           >
-            <Text style={styles.stopText}>End Session</Text>
+            <Text style={styles.stopText}>{t('breathe.endSession')}</Text>
           </Pressable>
         </View>
       )}

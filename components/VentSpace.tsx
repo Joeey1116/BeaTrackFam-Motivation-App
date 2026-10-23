@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../lib/themeContext';
 import type { ThemePalette } from '../lib/themes';
 import { containsCrisisLanguage } from './MoodCheckIn';
+import { useStrings } from '../lib/i18n';
 
 interface VentEntry {
   id: string;
@@ -25,6 +26,7 @@ interface Props {
  */
 export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [text, setText] = useState('');
   const [showCrisisHint, setShowCrisisHint] = useState(false);
@@ -46,20 +48,20 @@ export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Vent Space</Text>
+        <Text style={styles.title}>{t('vent.title')}</Text>
         <Pressable onPress={onClose} hitSlop={12}>
           <Ionicons name="close" size={24} color={palette.text} />
         </Pressable>
       </View>
 
       <Text style={styles.subtitle}>
-        Get it out. No structure, no judgment. This is just for you.
+        {t('vent.subtitle')}
       </Text>
 
       <TextInput
         style={styles.input}
         multiline
-        placeholder="What's on your mind? Let it out..."
+        placeholder={t('vent.placeholder')}
         placeholderTextColor={palette.textDim}
         value={text}
         onChangeText={setText}
@@ -70,7 +72,7 @@ export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
         <View style={styles.crisisHint}>
           <Ionicons name="heart-outline" size={16} color="#ff8a8a" />
           <Text style={styles.crisisHintText}>
-            If you need someone to talk to, support is available in Settings → Help.
+            {t('vent.crisisHint')}
           </Text>
         </View>
       )}
@@ -80,13 +82,13 @@ export function VentSpace({ entries, onSave, onDelete, onClose }: Props) {
         style={[styles.saveBtn, text.trim().length === 0 && styles.saveBtnDisabled]}
         disabled={text.trim().length === 0}
       >
-        <Text style={styles.saveText}>Let It Out</Text>
+        <Text style={styles.saveText}>{t('vent.save')}</Text>
       </Pressable>
 
-      <Text style={styles.historyTitle}>Previous vents</Text>
+      <Text style={styles.historyTitle}>{t('vent.historyTitle')}</Text>
       <ScrollView style={styles.history}>
         {entries.length === 0 && (
-          <Text style={styles.empty}>Nothing here yet. Your vents stay private, on your device.</Text>
+          <Text style={styles.empty}>{t('vent.empty')}</Text>
         )}
         {entries.map((e) => (
           <View key={e.id} style={styles.entry}>

@@ -52,9 +52,13 @@ export type Language = (typeof LANGUAGES)[number];
 
 export const RTL_LANGUAGES: readonly Language[] = ['he'];
 
-/** Which tracks have native (non-English-fallback) quote libraries per language. */
+/**
+ * Which tracks have native (non-English-fallback) quote libraries per language.
+ * Build 27: the bundled libraries are complete in all three languages
+ * (every track mirrored into Hebrew and Spanish), so no track falls back.
+ */
 export const NATIVE_TRACKS: Record<Language, readonly TrackId[]> = {
   en: ['motivation', 'gratitude', 'faith-christian', 'faith-jewish', 'loyalty', 'hustle', 'resilience'],
-  he: ['faith-jewish', 'motivation'],
-  es: ['motivation'],
+  he: ['motivation', 'gratitude', 'faith-christian', 'faith-jewish', 'loyalty', 'hustle', 'resilience'],
+  es: ['motivation', 'gratitude', 'faith-christian', 'faith-jewish', 'loyalty', 'hustle', 'resilience'],
 };

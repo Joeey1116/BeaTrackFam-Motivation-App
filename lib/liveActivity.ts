@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import { BRAND } from './brand';
+import { t, trackName } from './i18n';
 import type { Quote } from './quotes';
 
 /**
@@ -20,15 +21,19 @@ export async function refreshQuoteLiveActivity(quote: Quote): Promise<void> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const QuoteActivity = require('../widgets/QuoteActivity').default;
-    const category = quote.tracks[0] ?? 'motivation';
+    // The widget runtime is isolated (no app imports), so all display
+    // strings are localized HERE and passed in as props.
+    const state = {
+      quote: quote.text,
+      category: trackName(quote.tracks[0] ?? 'motivation'),
+      label: t('today.quoteOfTheDay'),
+      compact: t('today.dailyQuote'),
+    };
     const instances = QuoteActivity.getInstances();
     for (const instance of instances) {
-      await instance.end('immediate', { quote: quote.text, category });
+      await instance.end('immediate', state);
     }
-    QuoteActivity.start(
-      { quote: quote.text, category },
-      `${BRAND.SCHEME}://quote/today`,
-    );
+    QuoteActivity.start(state, `${BRAND.SCHEME}://quote/today`);
   } catch {
     // ActivityKit unavailable — non-fatal, the app works fine without it.
   }

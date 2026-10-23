@@ -4,6 +4,7 @@ import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../lib/themeContext';
 import type { ThemePalette } from '../lib/themes';
+import { useStrings } from '../lib/i18n';
 
 interface Props {
   onSave: (valence: number, emotions: string[], note?: string) => void | Promise<void>;
@@ -13,15 +14,43 @@ interface Props {
   initial?: { valence: number; emotions: string[] } | null;
 }
 
-const EMOTIONS = [
-  'Calm', 'Anxious', 'Grateful', 'Stressed', 'Hopeful',
-  'Sad', 'Energized', 'Lonely', 'Content', 'Overwhelmed',
-  'Peaceful', 'Frustrated', 'Joyful', 'Tired', 'Motivated',
+/**
+ * Emotion values are STORED in English (they're saved mood data and old
+ * entries already hold them); only the displayed label is localized,
+ * via `emotions.<key>`.
+ */
+export const EMOTIONS: { value: string; key: string }[] = [
+  { value: 'Calm', key: 'calm' },
+  { value: 'Anxious', key: 'anxious' },
+  { value: 'Grateful', key: 'grateful' },
+  { value: 'Stressed', key: 'stressed' },
+  { value: 'Hopeful', key: 'hopeful' },
+  { value: 'Sad', key: 'sad' },
+  { value: 'Energized', key: 'energized' },
+  { value: 'Lonely', key: 'lonely' },
+  { value: 'Content', key: 'content' },
+  { value: 'Overwhelmed', key: 'overwhelmed' },
+  { value: 'Peaceful', key: 'peaceful' },
+  { value: 'Frustrated', key: 'frustrated' },
+  { value: 'Joyful', key: 'joyful' },
+  { value: 'Tired', key: 'tired' },
+  { value: 'Motivated', key: 'motivated' },
 ];
+
+/** Locale key for a stored emotion value (unknown values pass through). */
+export function emotionKey(value: string): string | null {
+  return EMOTIONS.find((e) => e.value === value)?.key ?? null;
+}
 
 const CRISIS_KEYWORDS = [
   'kill myself', 'suicide', 'end it', 'hurt myself', 'self harm',
   'want to die', 'no reason to live',
+  // Hebrew
+  'להרוג את עצמי', 'להתאבד', 'התאבדות', 'רוצה למות', 'לפגוע בעצמי',
+  'אין לי סיבה לחיות', 'לסיים עם הכל',
+  // Spanish
+  'matarme', 'suicidio', 'suicidarme', 'quiero morir', 'hacerme daño',
+  'no quiero vivir', 'quitarme la vida', 'sin razón para vivir',
 ];
 
 /**
@@ -31,6 +60,7 @@ const CRISIS_KEYWORDS = [
  */
 export function MoodCheckIn({ onSave, onClose, initial }: Props) {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [valence, setValence] = useState(initial?.valence ?? 0);
   const [selected, setSelected] = useState<string[]>(initial?.emotions ?? []);
@@ -44,11 +74,11 @@ export function MoodCheckIn({ onSave, onClose, initial }: Props) {
   };
 
   const getValenceLabel = () => {
-    if (valence <= -0.6) return 'Very Unpleasant';
-    if (valence <= -0.2) return 'Unpleasant';
-    if (valence < 0.2) return 'Neutral';
-    if (valence < 0.6) return 'Pleasant';
-    return 'Very Pleasant';
+    if (valence <= -0.6) return t('mood.veryUnpleasant');
+    if (valence <= -0.2) return t('mood.unpleasant');
+    if (valence < 0.2) return t('mood.neutral');
+    if (valence < 0.6) return t('mood.pleasant');
+    return t('mood.veryPleasant');
   };
 
   const handleSave = async () => {
@@ -70,21 +100,21 @@ export function MoodCheckIn({ onSave, onClose, initial }: Props) {
       <View style={styles.container}>
         <View style={styles.crisisCard}>
           <Ionicons name="heart" size={48} color="#ff4d6d" />
-          <Text style={styles.crisisTitle}>You matter. Help is here.</Text>
+          <Text style={styles.crisisTitle}>{t('mood.crisisTitle')}</Text>
           <Text style={styles.crisisText}>
-            If you're struggling, please reach out right now:
+            {t('mood.crisisText')}
           </Text>
           <Pressable style={styles.crisisBtn}>
-            <Text style={styles.crisisBtnText}>Call/Text 988 — Suicide & Crisis Lifeline</Text>
+            <Text style={styles.crisisBtnText}>{t('mood.crisisCall988')}</Text>
           </Pressable>
           <Pressable style={styles.crisisBtn}>
-            <Text style={styles.crisisBtnText}>Text HOME to 741741 — Crisis Text Line</Text>
+            <Text style={styles.crisisBtnText}>{t('mood.crisisText741741')}</Text>
           </Pressable>
           <Pressable style={styles.crisisBtn}>
-            <Text style={styles.crisisBtnText}>Call 1-800-799-7233 — DV Hotline</Text>
+            <Text style={styles.crisisBtnText}>{t('mood.crisisCallDV')}</Text>
           </Pressable>
           <Pressable onPress={() => setShowCrisis(false)}>
-            <Text style={styles.backLink}>Back to check-in</Text>
+            <Text style={styles.backLink}>{t('mood.backToCheckIn')}</Text>
           </Pressable>
         </View>
       </View>
@@ -100,7 +130,7 @@ export function MoodCheckIn({ onSave, onClose, initial }: Props) {
         showsVerticalScrollIndicator={false}
       >
       <View style={styles.header}>
-        <Text style={styles.title}>How are you feeling?</Text>
+        <Text style={styles.title}>{t('mood.title')}</Text>
         <Pressable onPress={onClose} hitSlop={12}>
           <Ionicons name="close" size={24} color={palette.text} />
         </Pressable>
@@ -121,32 +151,32 @@ export function MoodCheckIn({ onSave, onClose, initial }: Props) {
         thumbTintColor={palette.text}
       />
       <View style={styles.sliderLabels}>
-        <Text style={styles.sliderLabel}>Very Unpleasant</Text>
-        <Text style={styles.sliderLabel}>Very Pleasant</Text>
+        <Text style={styles.sliderLabel}>{t('mood.veryUnpleasant')}</Text>
+        <Text style={styles.sliderLabel}>{t('mood.veryPleasant')}</Text>
       </View>
 
-      <Text style={styles.sectionTitle}>What words fit? (pick any)</Text>
+      <Text style={styles.sectionTitle}>{t('mood.wordsFit')}</Text>
       <View style={styles.emotionGrid}>
         {EMOTIONS.map((e) => (
           <Pressable
-            key={e}
-            onPress={() => toggleEmotion(e)}
-            style={[styles.emotionChip, selected.includes(e) && styles.emotionChipActive]}
+            key={e.value}
+            onPress={() => toggleEmotion(e.value)}
+            style={[styles.emotionChip, selected.includes(e.value) && styles.emotionChipActive]}
           >
-            <Text style={[styles.emotionText, selected.includes(e) && styles.emotionTextActive]}>
-              {e}
+            <Text style={[styles.emotionText, selected.includes(e.value) && styles.emotionTextActive]}>
+              {t(`emotions.${e.key}`)}
             </Text>
           </Pressable>
         ))}
       </View>
 
       <Pressable onPress={() => setShowCrisis(true)}>
-        <Text style={styles.crisisLink}>Need support right now? Tap here.</Text>
+        <Text style={styles.crisisLink}>{t('mood.needSupport')}</Text>
       </Pressable>
 
       <Pressable onPress={handleSave} style={styles.saveBtn} disabled={saving}>
         <Text style={styles.saveText}>
-          {saving ? 'Saving…' : initial ? 'Update Check-In' : 'Save Check-In'}
+          {saving ? t('mood.saving') : initial ? t('mood.updateCheckIn') : t('mood.saveCheckIn')}
         </Text>
       </Pressable>
       </ScrollView>

@@ -12,12 +12,14 @@ import type { ThemePalette } from '../../lib/themes';
 import { CompanionChat } from '../../components/CompanionChat';
 import { StreakBuddy } from '../../components/StreakBuddy';
 import { isCompanionEnabled, isStreakBuddyEnabled, getStreak, getUserName } from '../../lib/storage';
+import { useStrings } from '../../lib/i18n';
 
 /**
  * Companion room — where your friend hangs out.
  * AI chat + streak buddy. Only shown if user opted in during onboarding.
  */
 export default function Companion() {
+  const { t } = useStrings();
   const insets = useSafeAreaInsets();
   const { theme, palette } = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
@@ -46,10 +48,9 @@ export default function Companion() {
         <LinearGradient colors={theme.bg} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
         <View style={styles.empty}>
           <Ionicons name="heart-outline" size={48} color={palette.border} />
-          <Text style={styles.emptyTitle}>Companion is off</Text>
+          <Text style={styles.emptyTitle}>{t('companion.offTitle')}</Text>
           <Text style={styles.emptyText}>
-            You chose a clean experience during onboarding. You can turn on the
-            companion and streak buddy anytime in Settings.
+            {t('companion.offText')}
           </Text>
         </View>
       </View>
@@ -59,9 +60,9 @@ export default function Companion() {
   return (
     <View style={[styles.container, { paddingTop: insets.top + 20, paddingBottom: insets.bottom + TAB_BAR_CLEARANCE }]}>
       <LinearGradient colors={theme.bg} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={StyleSheet.absoluteFill} />
-      <Text style={styles.title}>Companion</Text>
+      <Text style={styles.title}>{t('companion.title')}</Text>
       <Text style={styles.subtitle}>
-        Your friend is here. You're not alone. 💛
+        {t('companion.subtitle')}
       </Text>
 
       {buddyOn && (
@@ -75,9 +76,9 @@ export default function Companion() {
           <Glass style={styles.chatCard}>
             <Ionicons name="chatbubbles-outline" size={28} color={palette.text} />
             <View style={styles.cardInfo}>
-              <Text style={styles.cardTitle}>Talk to me</Text>
+              <Text style={styles.cardTitle}>{t('companion.talkTitle')}</Text>
               <Text style={styles.cardDesc}>
-                Struggling, celebrating, or just want company — I'm here.
+                {t('companion.talkDesc')}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color={palette.textDim} />

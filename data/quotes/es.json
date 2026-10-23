@@ -1,1 +1,1845 @@
-{"language":"es","quotes":[{"id":"mot-es-001","text":"No llegaste hasta aquí solo para llegar hasta aquí. Sigue adelante.","tracks":["motivation"]},{"id":"mot-es-002","text":"El único mal día es el día en que te rindes. Todo lo demás es una lección.","tracks":["motivation"]},{"id":"mot-es-003","text":"Tu gran avance siempre está al otro lado del momento en que quieres rendirte.","tracks":["motivation"]},{"id":"mot-es-004","text":"Deja de esperar a sentirte listo. Listo es una mentira. Empieza desordenado, empieza con miedo, solo empieza.","tracks":["motivation"]},{"id":"mot-es-005","text":"Nadie vendrá a salvarte — y esa es la mejor noticia, porque significa que TÚ vas a salvarte.","tracks":["motivation"]},{"id":"mot-es-006","text":"Dentro de un año desearás haber empezado hoy. Así que empieza hoy.","tracks":["motivation"]},{"id":"mot-es-007","text":"La disciplina es elegir lo que más quieres sobre lo que quieres ahora.","tracks":["motivation"]},{"id":"mot-es-008","text":"Puedes ser un trabajo en progreso y una obra maestra al mismo tiempo.","tracks":["motivation"]},{"id":"mot-es-009","text":"El dolor de la disciplina pesa gramos. El dolor del arrepentimiento pesa toneladas.","tracks":["motivation"]},{"id":"mot-es-010","text":"No reduzcas tus sueños para que encajen en tu realidad. Aumenta tu esfuerzo para que alcance tus sueños.","tracks":["motivation"]},{"id":"mot-es-011","text":"Pasos pequeños cada día vencen saltos gigantes una vez al año. 1000%.","tracks":["motivation"]},{"id":"mot-es-012","text":"Tu yo del futuro te ruega que no te rindas hoy.","tracks":["motivation"]},{"id":"mot-es-013","text":"No se trata de ser el mejor. Se trata de ser mejor que ayer.","tracks":["motivation"]},{"id":"mot-es-014","text":"El miedo es solo emoción sin respiración. Respira y ve.","tracks":["motivation"]},{"id":"mot-es-015","text":"Sobreviviste el 100% de tus días más duros. Tu récord es perfecto.","tracks":["motivation"]},{"id":"mot-es-016","text":"La motivación te pone en marcha. El hábito te mantiene. Construye el hábito.","tracks":["motivation"]},{"id":"mot-es-017","text":"Deja de comparar tu capítulo 1 con el capítulo 20 de otro.","tracks":["motivation"]},{"id":"mot-es-018","text":"La remontada siempre es más fuerte que la caída. Siempre.","tracks":["motivation"]},{"id":"mot-es-019","text":"No necesitas permiso para convertirte en quien debes ser.","tracks":["motivation"]},{"id":"mot-es-020","text":"Los días duros no duran. La gente fuerte sí.","tracks":["motivation"]},{"id":"mot-es-021","text":"Tu única competencia es quien fuiste ayer. Véncele a diario.","tracks":["motivation"]},{"id":"mot-es-022","text":"Sueña en grande, empieza en pequeño, muévete rápido.","tracks":["motivation"]},{"id":"mot-es-023","text":"El mejor momento para empezar fue ayer. El segundo mejor es ahora.","tracks":["motivation"]},{"id":"mot-es-024","text":"La duda mata más sueños que el fracaso.","tracks":["motivation"]},{"id":"mot-es-025","text":"Eres más fuerte que tu excusa más fuerte.","tracks":["motivation"]},{"id":"mot-es-026","text":"Progreso, no perfección. Cada día.","tracks":["motivation"]},{"id":"mot-es-027","text":"Los ganadores no nacen. Se construyen a las 5 AM cuando nadie mira.","tracks":["motivation"]},{"id":"mot-es-028","text":"Convierte tus 'no puedo' en 'puedo' y tus sueños en planes.","tracks":["motivation"]},{"id":"mot-es-029","text":"La energía fluye hacia donde va el enfoque. Enfócate en ganar.","tracks":["motivation"]},{"id":"mot-es-030","text":"Sé tan bueno que no puedan ignorarte.","tracks":["motivation"]},{"id":"mot-es-031","text":"Tu mentalidad es el motor. Lléna la a diario.","tracks":["motivation"]},{"id":"mot-es-032","text":"Los campeones se hacen cuando nadie aplaude.","tracks":["motivation"]},{"id":"mot-es-033","text":"No lo desees. Trabaja por ello.","tracks":["motivation"]},{"id":"mot-es-034","text":"La distancia entre los sueños y la realidad se llama acción.","tracks":["motivation"]},{"id":"mot-es-035","text":"Las tormentas no duran, pero las lecciones sí. Sigue navegando.","tracks":["motivation"]},{"id":"mot-es-036","text":"Haz que hoy sea tan bueno que ayer sienta celos.","tracks":["motivation"]},{"id":"mot-es-037","text":"Tu potencial es infinito. Tus excusas no deberían serlo.","tracks":["motivation"]},{"id":"mot-es-038","text":"Actúa como la persona que quieres ser, empezando ahora.","tracks":["motivation"]},{"id":"mot-es-039","text":"Las metas grandes necesitan pasos diarios. Da el paso de hoy.","tracks":["motivation"]},{"id":"mot-es-040","text":"No estás estancado. Apenas estás empezando.","tracks":["motivation"]}]}
+{
+  "language": "es",
+  "quotes": [
+    {
+      "id": "mot-es-001",
+      "text": "No llegaste hasta aquí solo para llegar hasta aquí. Sigue adelante.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-002",
+      "text": "El único mal día es el día en que te rindes. Todo lo demás es una lección.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-003",
+      "text": "Tu gran avance siempre está al otro lado del momento en que quieres rendirte.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-004",
+      "text": "Deja de esperar a sentirte listo. Listo es una mentira. Empieza desordenado, empieza con miedo, solo empieza.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-005",
+      "text": "Nadie vendrá a salvarte — y esa es la mejor noticia, porque significa que TÚ vas a salvarte.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-006",
+      "text": "Dentro de un año desearás haber empezado hoy. Así que empieza hoy.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-007",
+      "text": "La disciplina es elegir lo que más quieres sobre lo que quieres ahora.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-008",
+      "text": "Puedes ser un trabajo en progreso y una obra maestra al mismo tiempo.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-009",
+      "text": "El dolor de la disciplina pesa gramos. El dolor del arrepentimiento pesa toneladas.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-010",
+      "text": "No reduzcas tus sueños para que encajen en tu realidad. Aumenta tu esfuerzo para que alcance tus sueños.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-011",
+      "text": "Pasos pequeños cada día vencen saltos gigantes una vez al año. 1000%.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-012",
+      "text": "Tu yo del futuro te ruega que no te rindas hoy.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-013",
+      "text": "No se trata de ser el mejor. Se trata de ser mejor que ayer.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-014",
+      "text": "El miedo es solo emoción sin respiración. Respira y ve.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-015",
+      "text": "Sobreviviste el 100% de tus días más duros. Tu récord es perfecto.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-016",
+      "text": "La motivación te pone en marcha. El hábito te mantiene. Construye el hábito.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-017",
+      "text": "Deja de comparar tu capítulo 1 con el capítulo 20 de otro.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-018",
+      "text": "La remontada siempre es más fuerte que la caída. Siempre.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-019",
+      "text": "No necesitas permiso para convertirte en quien debes ser.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-020",
+      "text": "Los días duros no duran. La gente fuerte sí.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-021",
+      "text": "Tu única competencia es quien fuiste ayer. Véncele a diario.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-022",
+      "text": "Sueña en grande, empieza en pequeño, muévete rápido.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-023",
+      "text": "El mejor momento para empezar fue ayer. El segundo mejor es ahora.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-024",
+      "text": "La duda mata más sueños que el fracaso.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-025",
+      "text": "Eres más fuerte que tu excusa más fuerte.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-026",
+      "text": "Progreso, no perfección. Cada día.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-027",
+      "text": "Los ganadores no nacen. Se construyen a las 5 AM cuando nadie mira.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-028",
+      "text": "Convierte tus 'no puedo' en 'puedo' y tus sueños en planes.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-029",
+      "text": "La energía fluye hacia donde va el enfoque. Enfócate en ganar.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-030",
+      "text": "Sé tan bueno que no puedan ignorarte.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-031",
+      "text": "Tu mentalidad es el motor. Lléna la a diario.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-032",
+      "text": "Los campeones se hacen cuando nadie aplaude.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-033",
+      "text": "No lo desees. Trabaja por ello.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-034",
+      "text": "La distancia entre los sueños y la realidad se llama acción.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-035",
+      "text": "Las tormentas no duran, pero las lecciones sí. Sigue navegando.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-036",
+      "text": "Haz que hoy sea tan bueno que ayer sienta celos.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-037",
+      "text": "Tu potencial es infinito. Tus excusas no deberían serlo.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-038",
+      "text": "Actúa como la persona que quieres ser, empezando ahora.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-039",
+      "text": "Las metas grandes necesitan pasos diarios. Da el paso de hoy.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "mot-es-040",
+      "text": "No estás estancado. Apenas estás empezando.",
+      "tracks": [
+        "motivation"
+      ]
+    },
+    {
+      "id": "gra-es-001",
+      "text": "Hoy despertaste. Eso ya es una bendición que millones no tienen.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-002",
+      "text": "La gratitud convierte lo que tienes en más que suficiente.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-003",
+      "text": "El aire en tus pulmones es un regalo por el que alguien más está orando.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-004",
+      "text": "Di gracias hoy como si de verdad lo sintieras. Mira lo que cambia.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-005",
+      "text": "Un corazón agradecido ve bendiciones que un corazón amargado no ve.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-006",
+      "text": "Tienes tanto por qué dar gracias — empieza a contar y no pares.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-007",
+      "text": "Dale gracias a Dios por las puertas que se cerraron. Te estaban protegiendo.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-008",
+      "text": "Hoy agradezco la lucha — construyó la fuerza sobre la que estoy de pie.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-009",
+      "text": "La gratitud es la forma más rápida de cambiar todo tu ánimo.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-010",
+      "text": "No esperes la gran victoria para dar gracias. Las bendiciones pequeñas son las grandes.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-011",
+      "text": "Alguien allá afuera cambiaría de lugar contigo en un instante. Recuérdalo.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-012",
+      "text": "Gracias por el techo, la comida y la gente que me ama. Lo básico es la bendición.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-013",
+      "text": "La gratitud convierte un martes cualquiera en un milagro.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-014",
+      "text": "Cuando no encuentres algo por qué agradecer, agradece que puedes seguir buscando.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-015",
+      "text": "Un corazón agradecido es un imán para más cosas buenas.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-016",
+      "text": "Dios te dio el día de hoy. No lo pierdas quejándote de ayer.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-017",
+      "text": "Escribe tres cosas buenas antes de dormir. Mira cómo cambia tu vida.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-018",
+      "text": "Mientras más agradecido eres, más tienes por qué agradecer.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-019",
+      "text": "La gratitud es gratis y paga un interés del 1000%.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-020",
+      "text": "Dale las gracias a la gente que estuvo para ti. Díselo hoy, no algún día.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "loy-es-001",
+      "text": "La lealtad no es una palabra, es una forma de vivir. Está ahí para tu gente.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-002",
+      "text": "Los de verdad no cambian cuando las cosas se ponen difíciles. Sé uno de verdad.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-003",
+      "text": "Pregunta cómo están tus amigos fuertes. Están cargando mucho en silencio.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-004",
+      "text": "Lealtad por encima de todo — la gente que da todo por ti merece lo mismo de vuelta.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-005",
+      "text": "Tu círculo es pequeño por una razón. Calidad antes que cantidad, siempre.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-006",
+      "text": "Un corazón leal en un mundo desleal vale más que el oro.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-007",
+      "text": "No olvides quién estaba ahí antes de que empezaras a brillar.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-008",
+      "text": "Estar en las buenas y en las malas no es drama. Es estar ahí, cada vez.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-009",
+      "text": "Los que te aplauden en privado son los que debes mantener cerca.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-010",
+      "text": "La lealtad es decirle la verdad a tu gente, aunque duela.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-011",
+      "text": "Protege el nombre de tu gente cuando no están presentes.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-012",
+      "text": "Los de siempre valen más que los nuevos. Recuerda quién creyó en ti primero.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-013",
+      "text": "La lealtad se prueba en las temporadas difíciles, no en las fáciles.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-014",
+      "text": "Sé el amigo que te gustaría tener. Ese es todo el secreto.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-015",
+      "text": "Tu gente es tu mayor riqueza. Invierte en ellos.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-016",
+      "text": "Nunca cambies una década de lealtad por un momento de comodidad.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-017",
+      "text": "Demuestra el amor en voz alta. La vida es demasiado corta para apreciar en silencio.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-018",
+      "text": "La gente leal no lleva la cuenta. Solo sigue estando ahí.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-019",
+      "text": "Si ellos irían a la guerra por ti, ve a la guerra por ellos.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-020",
+      "text": "La sangre te hace pariente. La lealtad te hace familia.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "gra-es-021",
+      "text": "Empieza cada día con un corazón agradecido y mira cómo se multiplican los milagros.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-022",
+      "text": "La gratitud convierte una casa en un hogar y a un desconocido en un amigo.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-023",
+      "text": "Cuenta tus bendiciones, no tus problemas.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-024",
+      "text": "¿El secreto de la felicidad? Querer lo que ya tienes.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-025",
+      "text": "Cada amanecer es prueba de que tienes otra oportunidad. Da gracias.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-026",
+      "text": "La gente agradecida es gente magnética.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-027",
+      "text": "Agradece por tu vida, incluso por las partes complicadas.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-028",
+      "text": "El agradecimiento es la llave que abre la puerta de la alegría.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-029",
+      "text": "Valora las cosas pequeñas — un día verás que eran las grandes.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-030",
+      "text": "Una mente agradecida es una mente en paz.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-031",
+      "text": "Las bendiciones persiguen a los agradecidos.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-032",
+      "text": "Hoy, encuentra una razón para darle gracias a Dios cada hora.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-033",
+      "text": "La gratitud hace que lo común se vuelva extraordinario.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-034",
+      "text": "No dejes que lo que quieres te haga olvidar lo que tienes.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-035",
+      "text": "Los corazones agradecidos atraen bendiciones fieles.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-036",
+      "text": "La gratitud es la memoria del corazón.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-037",
+      "text": "Despierta agradecido, acuéstate agradecido, vive agradecido.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-038",
+      "text": "La gente más feliz no es la que más tiene — es la más agradecida por lo que tiene.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-039",
+      "text": "Da gracias en la espera, no solo en la victoria.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "gra-es-040",
+      "text": "Tu lista de gratitud es más larga que tu lista de deseos. Léela.",
+      "tracks": [
+        "gratitude"
+      ]
+    },
+    {
+      "id": "loy-es-021",
+      "text": "La lealtad es rara. Si la encuentras, protégela con todo.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-022",
+      "text": "Apoya a tu gente en público y corrígela en privado.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-023",
+      "text": "La lealtad verdadera no necesita público.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-024",
+      "text": "La moneda más valiosa es la confianza. Gástala con sabiduría y gánala cada día.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-025",
+      "text": "La lealtad no se prueba con palabras. Se prueba con presencia.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-026",
+      "text": "Mantén tu círculo pequeño y tu lealtad aún más fuerte.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-027",
+      "text": "Un amigo leal vale más que mil seguidores.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-028",
+      "text": "No solo hables de lealtad — vívela cuando sea incómodo.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-029",
+      "text": "Tu gente nunca debería dudar de qué lado estás.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-030",
+      "text": "La lealtad es contestar la llamada de las 2 de la mañana.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-031",
+      "text": "La traición es barata. La lealtad no tiene precio.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-032",
+      "text": "Cuida las relaciones que también te cuidan a ti.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-033",
+      "text": "Lealtad antes que likes. La gente antes que las plataformas.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-034",
+      "text": "La prueba de la lealtad es la distancia y el tiempo. Pásala.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-035",
+      "text": "Sé leal primero a tus valores, después a tu gente.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-036",
+      "text": "La lealtad real celebra las victorias de los demás como si fueran tuyas.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-037",
+      "text": "Nunca dejes que el éxito te haga olvidar a quienes te sostuvieron.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-038",
+      "text": "La lealtad es un camino de ida y vuelta. Recórrelo cada día.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-039",
+      "text": "Tu palabra es tu compromiso. Mantenla inquebrantable.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "loy-es-040",
+      "text": "En un mundo de opciones, sé la constante de alguien.",
+      "tracks": [
+        "loyalty"
+      ]
+    },
+    {
+      "id": "hus-es-001",
+      "text": "Tu sueño no funciona si tú no trabajas. Ponte manos a la obra.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-002",
+      "text": "Nadie trabajará más que tú si te niegas a dejar que alguien lo haga.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-003",
+      "text": "Construye en silencio. Deja que los resultados hagan el ruido.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-004",
+      "text": "El trabajo duro no es bonito. La transformación sí lo es. Aguanta la parte difícil.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-005",
+      "text": "No necesitas que te regalen nada. Necesitas un plan y ejecutarlo sin parar.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-006",
+      "text": "Negocio pequeño, sueños grandes, ética de trabajo imparable.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-007",
+      "text": "Todo imperio empezó con una persona que se negó a rendirse.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-008",
+      "text": "Trabaja tan duro que piensen que tuviste suerte.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-009",
+      "text": "Tu trabajo de 9 a 5 paga las cuentas. Tu tiempo de 5 a 9 construye tu sueño.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-010",
+      "text": "La constancia vence al talento cuando el talento no se presenta todos los días.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-011",
+      "text": "Planta semillas todos los días. La temporada de cosecha viene.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-012",
+      "text": "No persigas el dinero. Persigue la excelencia y el dinero te seguirá.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-013",
+      "text": "Al principio, el esfuerzo es solitario. Así sabes que está funcionando.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-014",
+      "text": "Apuesta por ti al 1000%. Eres la inversión más segura que harás jamás.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-015",
+      "text": "Hecho es mejor que perfecto. Lánzalo, luego mejóralo.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-016",
+      "text": "Tu competencia está durmiendo. ¿Qué estás haciendo tú?",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-017",
+      "text": "Sacrifica unos años de comodidad por décadas de libertad.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-018",
+      "text": "El sueño es gratis. El esfuerzo se vende por separado.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-019",
+      "text": "Nadie te entrega un negocio. Lo construyes ladrillo a ladrillo.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-020",
+      "text": "Mantente con hambre, mantente humilde, mantente trabajando.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-021",
+      "text": "Trabaja en silencio, brilla en público.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-022",
+      "text": "Tu ética de trabajo es tu superpoder.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-023",
+      "text": "Trabaja duro ahora, brilla después.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-024",
+      "text": "Sin atajos. Sin excusas. Solo trabajo.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-025",
+      "text": "El que madruga no solo consigue el gusano: construye el nido.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-026",
+      "text": "El esfuerzo propio paga los mejores dividendos.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-027",
+      "text": "Supera a la persona que fuiste ayer.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-028",
+      "text": "El trabajo real vence a las apariencias, siempre.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-029",
+      "text": "Tu futuro se construye en las horas que nadie ve.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-030",
+      "text": "Deja de mirar pantallas, empieza a construir.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-031",
+      "text": "El esfuerzo solo respeta la constancia.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-032",
+      "text": "Haz sagrado tu esfuerzo: ponle todo tu corazón al trabajo.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-033",
+      "text": "Dueño de negocio pequeño, fe gigante, esfuerzo sin fin.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-034",
+      "text": "Los ingresos siguen al valor. Crea valor sin parar.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-035",
+      "text": "Trabaja los fines de semana como si tus sueños dependieran de eso: dependen.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-036",
+      "text": "El esfuerzo nunca miente. Los resultados siempre dicen la verdad.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-037",
+      "text": "Construye tu sueño antes de que alguien te contrate para construir el suyo.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-038",
+      "text": "La disciplina en la oscuridad trae el reconocimiento a la luz.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-039",
+      "text": "Todo 'éxito de la noche a la mañana' tardó años en lograrse. Sigue creando.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "hus-es-040",
+      "text": "Tu esfuerzo es tu testimonio.",
+      "tracks": [
+        "hustle"
+      ]
+    },
+    {
+      "id": "res-es-001",
+      "text": "Cáete siete veces, levántate ocho. Esa es toda la fórmula.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-002",
+      "text": "Tus cicatrices son prueba de que luchaste y ganaste.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-003",
+      "text": "Tocar fondo es solo suelo firme desde donde impulsarte.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-004",
+      "text": "La resiliencia no es evitar la caída: es dominar el levantarte.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-005",
+      "text": "Cada tropiezo es la preparación para un regreso más fuerte.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-006",
+      "text": "Te doblaste, pero no te rompiste. Eso es poder.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-007",
+      "text": "Los tiempos difíciles revelan a la gente fuerte. Esa persona eres tú.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-008",
+      "text": "La herida es por donde entra la fuerza.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-009",
+      "text": "Sigue adelante. La historia no ha terminado.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-010",
+      "text": "La presión crea diamantes. Te están puliendo.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-011",
+      "text": "Has sobrevivido todos tus días difíciles hasta ahora. Mantén viva esa racha.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-012",
+      "text": "La resiliencia es silenciosa. Simplemente vuelve a presentarse mañana.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-013",
+      "text": "Llora si lo necesitas, luego vuelve a levantarte.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-014",
+      "text": "Los crayones rotos aún colorean. Los corazones rotos aún aman.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-015",
+      "text": "Tu historia de regreso se está escribiendo ahora mismo.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-016",
+      "text": "No dejes que un mal capítulo arruine todo el libro.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-017",
+      "text": "La fuerza crece en la lucha. Tú estás creciendo.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-018",
+      "text": "La noche es más oscura justo antes del amanecer. Resiste.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-019",
+      "text": "Las personas resilientes no tienen vidas más fáciles: tienen una determinación más fuerte.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-020",
+      "text": "Levántate. Sacúdete el polvo. Vuelve a intentarlo.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-021",
+      "text": "El dolor es temporal. Rendirse es para siempre.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-022",
+      "text": "No estás empezando de cero: estás empezando con más sabiduría.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-023",
+      "text": "El fuego no te destruyó. Te refinó.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-024",
+      "text": "Vuelve con fuerza, como si nunca te hubieras ido.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-025",
+      "text": "Las dificultades son el precio de la sabiduría.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-026",
+      "text": "Tu futuro necesita tu versión luchadora. Sigue luchando.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-027",
+      "text": "Un pie delante del otro. Eso es resiliencia.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-028",
+      "text": "El acero más fuerte pasa por el fuego más caliente.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-029",
+      "text": "Tú puedes con esto, y tienes la prueba de la vez pasada.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-030",
+      "text": "La resiliencia es sentirlo todo y seguir adelante de todos modos.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-031",
+      "text": "Las tormentas pasan. El ancla aguanta. Tú tienes la tuya.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-032",
+      "text": "No cuentes las caídas. Cuenta las veces que te levantaste.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-033",
+      "text": "Lo que intentó quebrarte, en cambio te construyó.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-034",
+      "text": "El mañana te necesita. Preséntate.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-035",
+      "text": "La determinación es gracia bajo presión. Tú tienes ambas.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-036",
+      "text": "La montaña es alta, pero tu voluntad también.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-037",
+      "text": "Todo experto fue alguna vez un principiante que se negó a rendirse.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-038",
+      "text": "Tu punto de quiebre en realidad es tu punto de avance.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-039",
+      "text": "Mantén la fe en ti: te la has ganado.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "res-es-040",
+      "text": "Levántate. Otra vez. Siempre.",
+      "tracks": [
+        "resilience"
+      ]
+    },
+    {
+      "id": "fai-es-001",
+      "text": "Dios no te trajo hasta aquí para abandonarte ahora. Confía en su plan.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-002",
+      "text": "Cuando no puedas ver el camino, camina por fe de todos modos.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-003",
+      "text": "El tiempo de Dios es perfecto, aunque se sienta dolorosamente lento.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-004",
+      "text": "Ora como si todo dependiera de Dios. Trabaja como si todo dependiera de ti.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-005",
+      "text": "La tormenta no significa que Dios se fue. Significa que te está enseñando a navegar.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-006",
+      "text": "Suelta y deja que Dios actúe. Tus manos son demasiado pequeñas para esta batalla.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-007",
+      "text": "La fe es creer que el sol saldrá incluso en la noche más oscura.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-008",
+      "text": "Dios cierra puertas que nadie puede abrir, y abre puertas que nadie puede cerrar.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-009",
+      "text": "No estás atrasado. Estás en el horario de Dios, y es perfecto.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-010",
+      "text": "Preocuparte es pagar por adelantado un problema que quizás nunca tengas. Mejor ora.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-011",
+      "text": "Dios da sus batallas más duras a sus soldados más fuertes.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-012",
+      "text": "Cuando está fuera de tu control, está en las manos de Dios: el lugar más seguro.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-013",
+      "text": "Tu fe tiene que ser más grande que tu miedo. Todos los días.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-014",
+      "text": "Dale gracias a Dios por adelantado. La bendición ya viene en camino.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-015",
+      "text": "Dios nunca desperdicia el dolor. Cada cicatriz se convierte en una historia que salva a alguien.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-016",
+      "text": "Camina en fe y el camino aparecerá bajo tus pies.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-017",
+      "text": "Nada es imposible cuando Dios está en ello. Nada.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-018",
+      "text": "Quédate quieto y reconoce. La batalla ya está ganada.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-019",
+      "text": "Dios está escribiendo con tu vida una historia que estarás orgulloso de contar.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fai-es-020",
+      "text": "Mantén la fe. El avance está más cerca de lo que crees.",
+      "tracks": [
+        "faith-christian",
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fch-es-001",
+      "text": "Jesús no te salvó para mantenerte pequeño. Camina con valentía en su nombre.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-002",
+      "text": "Cuando Jesús es tu fundamento, ninguna tormenta puede sacudirte.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-003",
+      "text": "Comienza tu día a los pies de Jesús. Todo lo demás se acomoda.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-004",
+      "text": "La sangre de Jesús ya pagó por tu victoria. Camina en ella.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-005",
+      "text": "Jesús te ama más allá de millones: deja que eso penetre hoy en tu corazón.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-006",
+      "text": "Deposita tus preocupaciones en Él. Jesús puede cargar lo que tú no puedes.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-007",
+      "text": "Con Cristo, incluso tu peor día es la preparación para un testimonio.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-008",
+      "text": "Jesús es el mismo ayer, hoy y por los siglos. Apóyate en eso.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-009",
+      "text": "Deja que Jesús guíe y mira cómo se abren las puertas de par en par.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-010",
+      "text": "Tu identidad está en Cristo, no en tus circunstancias.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-011",
+      "text": "Ora en el nombre de Jesús y espera que el cielo se mueva.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-012",
+      "text": "Jesús convirtió el agua en vino: imagina lo que hará con tu desastre.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-013",
+      "text": "Sigue a Jesús al 1000%. La fe a medias da resultados a medias.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-014",
+      "text": "La cruz lo demostró: Jesús nunca se rendirá contigo.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-015",
+      "text": "Cuando te sientas solo, recuerda: Jesús nunca se va.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-016",
+      "text": "Deja que tu luz brille para Jesús hoy. Alguien necesita verla.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-017",
+      "text": "Jesús es tu paz en medio del caos. Respíralo.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-018",
+      "text": "Confía en Jesús con la pluma: está escribiendo una obra maestra con tu vida.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-019",
+      "text": "Nada se desperdicia en Cristo. Cada lágrima riega la alegría futura.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fch-es-020",
+      "text": "Jesús te llamó amigo. Camina hoy como realeza.",
+      "tracks": [
+        "faith-christian"
+      ]
+    },
+    {
+      "id": "fje-es-001",
+      "text": "Como David frente a Goliat: tu gigante es más pequeño que tu Dios.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-002",
+      "text": "El Dios de Abraham, Isaac y Jacob camina contigo hoy.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-003",
+      "text": "Recuerda el Éxodo: lo que te esclavizó no puede retenerte para siempre.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-004",
+      "text": "Quédate quieto y reconoce: las mismas palabras que calmaron corazones antiguos calman el tuyo.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-005",
+      "text": "El Shabat nos recuerda: el descanso también es sagrado. Incluso los guerreros descansan.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-006",
+      "text": "Como Ester, fuiste creado para un momento como este.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-007",
+      "text": "El Shemá comienza con escuchar. Aquieta tu corazón y escucha.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-008",
+      "text": "El pozo de José se convirtió en su palacio. Tu lugar más bajo no es tu lugar final.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-009",
+      "text": "Bienaventurados los que confían: sus raíces son profundas como árboles junto al agua.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-010",
+      "text": "Daniel oraba con las ventanas abiertas. Vive tu fe en voz alta.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-011",
+      "text": "La Torá enseña: elige la vida, elige la bendición, elige hoy.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-012",
+      "text": "Como los israelitas ante el mar: cuando no hay camino, Dios abre uno.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-013",
+      "text": "Tus antepasados sobrevivieron al faraón. Tú sobrevivirás esta semana.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-014",
+      "text": "Enciende las velas de la esperanza: incluso las llamas pequeñas hacen retroceder la oscuridad.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-015",
+      "text": "Gam zeh ya'avor: esto también pasará. Resiste.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-016",
+      "text": "Dios prometió a Abraham descendientes como las estrellas. Tu futuro es así de inmenso.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-017",
+      "text": "Moisés tenía 80 años cuando comenzó su misión. Nunca es demasiado tarde.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-018",
+      "text": "Modeh ani: las primeras palabras del día judío son gracias. Comienza agradecido.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-019",
+      "text": "El mismo Dios que partió el mar parte tus problemas.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    },
+    {
+      "id": "fje-es-020",
+      "text": "Camina con humildad, ama la misericordia, haz justicia: el camino antiguo todavía funciona.",
+      "tracks": [
+        "faith-jewish"
+      ]
+    }
+  ]
+}

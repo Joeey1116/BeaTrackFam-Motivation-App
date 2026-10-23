@@ -7,6 +7,7 @@ import { Radius, Spacing, Type } from '../../lib/design';
 import type { ThemePalette } from '../../lib/themes';
 import { useTheme } from '../../lib/themeContext';
 import { getUserName, setUserName } from '../../lib/storage';
+import { useStrings } from '../../lib/i18n';
 
 /**
  * Your Name — separate screen (not a popup).
@@ -14,6 +15,7 @@ import { getUserName, setUserName } from '../../lib/storage';
  */
 export default function NameScreen() {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [name, setName] = useState('');
 
@@ -24,8 +26,8 @@ export default function NameScreen() {
   const onSave = async () => {
     const clean = name.trim().slice(0, 40);
     await setUserName(clean);
-    Alert.alert('Saved', clean ? `Your companion will call you ${clean}.` : 'Name cleared.', [
-      { text: 'OK', onPress: () => router.back() },
+    Alert.alert(t('common.saved'), clean ? t('nameScreen.savedNamed', { name: clean }) : t('nameScreen.savedCleared'), [
+      { text: t('common.ok'), onPress: () => router.back() },
     ]);
   };
 
@@ -33,16 +35,16 @@ export default function NameScreen() {
     <Screen>
       <View style={styles.body}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-          <Text style={styles.back}>‹ Back</Text>
+          <Text style={styles.back}>{t('common.back')}</Text>
         </Pressable>
-        <Text style={styles.h1}>Your Name</Text>
-        <Text style={styles.sub}>So your companion knows what to call you.</Text>
+        <Text style={styles.h1}>{t('nameScreen.title')}</Text>
+        <Text style={styles.sub}>{t('nameScreen.sub')}</Text>
         <Glass style={styles.card}>
           <TextInput
             style={styles.input}
             value={name}
             onChangeText={setName}
-            placeholder="What should we call you?"
+            placeholder={t('nameScreen.placeholder')}
             placeholderTextColor={palette.textDim}
             maxLength={40}
             autoFocus
@@ -50,10 +52,10 @@ export default function NameScreen() {
         </Glass>
         <View style={styles.buttons}>
           <Pressable onPress={() => router.back()} style={[styles.btn, styles.cancelBtn]}>
-            <Text style={styles.cancelText}>Cancel</Text>
+            <Text style={styles.cancelText}>{t('common.cancel')}</Text>
           </Pressable>
           <Pressable onPress={onSave} style={[styles.btn, styles.saveBtn]}>
-            <Text style={styles.saveText}>Save</Text>
+            <Text style={styles.saveText}>{t('common.save')}</Text>
           </Pressable>
         </View>
       </View>

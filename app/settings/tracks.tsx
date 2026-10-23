@@ -8,7 +8,8 @@ import { Radius, Spacing, Type } from '../../lib/design';
 import type { ThemePalette } from '../../lib/themes';
 import { useTheme } from '../../lib/themeContext';
 import { getChosenTracks, setChosenTracks } from '../../lib/storage';
-import { TRACKS, TRACK_LABELS, type TrackId } from '../../lib/brand';
+import { TRACKS, type TrackId } from '../../lib/brand';
+import { trackName, useStrings } from '../../lib/i18n';
 
 /**
  * Faith & Topic Tracks — separate screen (not a popup).
@@ -16,6 +17,7 @@ import { TRACKS, TRACK_LABELS, type TrackId } from '../../lib/brand';
  */
 export default function TracksScreen() {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [chosen, setChosen] = useState<TrackId[]>([]);
 
@@ -37,10 +39,10 @@ export default function TracksScreen() {
     <Screen>
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-          <Text style={styles.back}>‹ Back</Text>
+          <Text style={styles.back}>{t('common.back')}</Text>
         </Pressable>
-        <Text style={styles.h1}>Faith & Topic Tracks</Text>
-        <Text style={styles.sub}>Pick the tracks that feel like home. Tap to toggle.</Text>
+        <Text style={styles.h1}>{t('tracksScreen.title')}</Text>
+        <Text style={styles.sub}>{t('tracksScreen.sub')}</Text>
         <View style={styles.list}>
           {TRACKS.map((id) => {
             const active = chosen.includes(id);
@@ -48,7 +50,7 @@ export default function TracksScreen() {
               <Pressable key={id} onPress={() => toggle(id)}>
                 <Glass style={[styles.card, active && styles.cardActive]}>
                   <Text style={[styles.label, active && styles.labelActive]}>
-                    {TRACK_LABELS[id]}
+                    {trackName(id)}
                   </Text>
                   {active && <Ionicons name="checkmark" size={22} color={palette.buttonText} />}
                 </Glass>
@@ -57,7 +59,7 @@ export default function TracksScreen() {
           })}
         </View>
         <Pressable onPress={() => router.back()} style={styles.doneBtn}>
-          <Text style={styles.doneText}>Done</Text>
+          <Text style={styles.doneText}>{t('common.done')}</Text>
         </Pressable>
       </ScrollView>
     </Screen>

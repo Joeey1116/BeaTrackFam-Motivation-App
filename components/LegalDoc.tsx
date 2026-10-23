@@ -6,6 +6,7 @@ import { Spacing, Type } from '../lib/design';
 import type { LegalSection } from '../lib/legal';
 import type { ThemePalette } from '../lib/themes';
 import { useTheme } from '../lib/themeContext';
+import { useStrings } from '../lib/i18n';
 
 interface Props {
   title: string;
@@ -20,13 +21,14 @@ interface Props {
  */
 export function LegalDoc({ title, updated, sections }: Props) {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-          <Text style={styles.back}>‹ Back</Text>
+          <Text style={styles.back}>{t('common.back')}</Text>
         </Pressable>
         <Text style={styles.h1}>{title}</Text>
         <Text style={styles.updated}>{updated}</Text>

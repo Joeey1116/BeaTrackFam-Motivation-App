@@ -6,6 +6,7 @@ import * as FileSystem from 'expo-file-system';
 import { Radius, Spacing, Type } from '../lib/design';
 import type { ThemePalette } from '../lib/themes';
 import { useTheme } from '../lib/themeContext';
+import { useStrings } from '../lib/i18n';
 import {
   BUNDLED_TRACKS,
   loadImportedTracks,
@@ -16,7 +17,17 @@ import {
   type Track,
 } from '../lib/music';
 
-const GENRES = ['All', 'Ambient', 'Piano', 'Nature', 'Meditation', 'Acoustic', 'Lo-Fi'];
+const GENRES = ['All', 'Ambient', 'Piano', 'Nature', 'Meditation', 'Acoustic', 'Lo-Fi'] as const;
+
+/** Locale key suffix for a genre id ('Lo-Fi' → 'lofi'). */
+const genreKey = (g: string) => g.toLowerCase().replace(/[^a-z]/g, '');
+
+/** Localized genre label; unknown genres (user data) pass through as-is. */
+function genreLabel(g: string, t: (path: string) => string): string {
+  const key = `music.genres.${genreKey(g)}`;
+  const label = t(key);
+  return label === key ? g : label;
+}
 
 interface Props {
   isHavenPlus: boolean;
@@ -32,6 +43,7 @@ interface Props {
  */
 export function MusicPlayer({ isHavenPlus }: Props) {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [genre, setGenre] = useState('All');
   const [tracks, setTracks] = useState<Track[]>(BUNDLED_TRACKS);
@@ -80,18 +92,18 @@ export function MusicPlayer({ isHavenPlus }: Props) {
         imported: true,
       };
       setTracks((prev) => [...prev, newTrack]);
-      Alert.alert('Added', `"${imported.title}" is now in your music.`);
+      Alert.alert(t('music.addedTitle'), t('music.addedBody', { title: imported.title }));
     } catch (e) {
       console.error('Import failed:', e);
-      Alert.alert('Could not import', 'That file could not be added. Try another audio file.');
+      Alert.alert(t('music.importFailTitle'), t('music.importFailBody'));
     }
   };
 
   const removeImported = (id: string) => {
-    Alert.alert('Remove track?', 'This deletes the imported file from the app.', [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('music.removeTitle'), t('music.removeBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Remove',
+        text: t('common.remove'),
         style: 'destructive',
         onPress: async () => {
           try {
@@ -116,15 +128,14 @@ export function MusicPlayer({ isHavenPlus }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.subtitle}>
-        Calming sounds for your home. Pick your vibe — music keeps playing
-        when you leave this screen.
+        {t('music.subtitle')}
       </Text>
 
       {!isHavenPlus && (
         <View style={styles.adNote}>
           <Ionicons name="information-circle-outline" size={16} color={palette.textDim} />
           <Text style={styles.adNoteText}>
-            Free tracks include occasional ads. Haven Plus removes them.
+            {t('music.adNote')}
           </Text>
         </View>
       )}
@@ -142,7 +153,7 @@ export function MusicPlayer({ isHavenPlus }: Props) {
             style={[styles.genreChip, genre === g && styles.genreChipActive]}
           >
             <Text style={[styles.genreText, genre === g && styles.genreTextActive]}>
-              {g}
+              {t(`music.genres.${genreKey(g)}`)}
             </Text>
           </Pressable>
         ))}
@@ -166,8 +177,8 @@ export function MusicPlayer({ isHavenPlus }: Props) {
                   {track.title}
                 </Text>
                 <Text style={styles.trackMeta} numberOfLines={1}>
-                  {track.artist}
-                  {track.genre ? ` · ${track.genre}` : ''}
+                  {track.artist === 'Your library' ? t('music.yourLibrary') : track.artist}
+                  {track.genre ? ` · ${genreLabel(track.genre, t)}` : ''}
                   {track.duration ? ` · ${track.duration}` : ''}
                 </Text>
               </View>
@@ -178,14 +189,14 @@ export function MusicPlayer({ isHavenPlus }: Props) {
           );
         })}
         {filtered.length === 0 && (
-          <Text style={styles.empty}>No tracks in this genre yet.</Text>
+          <Text style={styles.empty}>{t('music.empty')}</Text>
         )}
       </ScrollView>
 
       {isHavenPlus && (
         <Pressable style={styles.importBtn} onPress={importTrack}>
           <Ionicons name="add-circle-outline" size={20} color={palette.text} />
-          <Text style={styles.importText}>Import Your Own Music</Text>
+          <Text style={styles.importText}>{t('music.import')}</Text>
         </Pressable>
       )}
 

@@ -93,6 +93,15 @@ export function t(path: string, params?: Record<string, string | number>): strin
   return val.replace(/\{(\w+)\}/g, (_, k: string) => String(params?.[k] ?? `{${k}}`));
 }
 
+/** Localized subscription-period name for a store SKU id (Monthly, 3 Months…). */
+export function planName(sku: string, fallback: string): string {
+  if (sku.includes('3MONTH') || sku.includes('3month')) return t('plans.threeMonths');
+  if (sku.includes('6MONTH') || sku.includes('6month')) return t('plans.sixMonths');
+  if (sku.includes('YEAR') || sku.includes('yearly')) return t('plans.yearly');
+  if (sku.includes('MONTH') || sku.includes('monthly')) return t('plans.monthly');
+  return fallback;
+}
+
 export function trackName(trackId: string): string {
   return t(`tracks.${trackId}.name`, undefined) !== `tracks.${trackId}.name`
     ? t(`tracks.${trackId}.name`)

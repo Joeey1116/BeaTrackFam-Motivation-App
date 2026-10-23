@@ -21,7 +21,7 @@ import {
   type MoodEntry,
   type VentEntry,
 } from '../../lib/storage';
-import { MoodCheckIn } from '../../components/MoodCheckIn';
+import { MoodCheckIn, emotionKey } from '../../components/MoodCheckIn';
 import { VentSpace } from '../../components/VentSpace';
 import { Breathe } from '../../components/Breathe';
 
@@ -69,30 +69,41 @@ export default function Journal() {
   // rolled to tomorrow's date).
   const todayMood = moodHistory.find((m) => m.date === todayKey());
 
+  const emotionLabel = (value: string) => {
+    const key = emotionKey(value);
+    return key ? t(`emotions.${key}`) : value;
+  };
+
   const wellnessCards = [
     {
       key: 'mood',
       icon: 'happy-outline' as const,
-      title: 'Mood Check-In',
+      title: t('journal.moodTitle'),
       desc: todayMood
-        ? `Today: ${todayMood.emotions.slice(0, 2).join(', ') || 'Checked in'}`
-        : 'How are you feeling right now?',
+        ? t('journal.moodDescToday', {
+            emotions:
+              todayMood.emotions.slice(0, 2).map(emotionLabel).join(', ') ||
+              t('journal.moodDescCheckedIn'),
+          })
+        : t('journal.moodDescDefault'),
       onPress: () => setMoodModal(true),
     },
     {
       key: 'vent',
       icon: 'chatbubble-ellipses-outline' as const,
-      title: 'Vent Space',
+      title: t('journal.ventTitle'),
       desc: ventEntries.length > 0
-        ? `${ventEntries.length} ${ventEntries.length === 1 ? 'vent' : 'vents'} — get it out`
-        : 'Free-write. No judgment, just space.',
+        ? ventEntries.length === 1
+          ? t('journal.ventDescOne')
+          : t('journal.ventDescMany', { n: ventEntries.length })
+        : t('journal.ventDescEmpty'),
       onPress: () => setVentModal(true),
     },
     {
       key: 'breathe',
       icon: 'leaf-outline' as const,
-      title: 'Breathe',
-      desc: 'Guided breathing for stress, anxiety, calm.',
+      title: t('journal.breatheTitle'),
+      desc: t('journal.breatheDesc'),
       onPress: () => setBreatheModal(true),
     },
   ];
@@ -122,7 +133,7 @@ export default function Journal() {
           ) : null}
         </Glass>
 
-        <Text style={styles.sectionTitle}>Wellness</Text>
+        <Text style={styles.sectionTitle}>{t('journal.wellness')}</Text>
         {wellnessCards.map((c) => (
           <Pressable key={c.key} onPress={c.onPress}>
             <Glass style={styles.card}>

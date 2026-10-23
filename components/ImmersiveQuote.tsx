@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { trackName } from '../lib/i18n';
+import { trackName, useStrings } from '../lib/i18n';
 import { getTheme } from '../lib/themes';
 import { Type } from '../lib/design';
 import type { Quote } from '../lib/quotes';
@@ -34,6 +34,7 @@ export function ImmersiveQuote({
   onShare,
   onNewQuote,
 }: Props) {
+  const { t } = useStrings();
   const theme = getTheme(themeId);
   const primaryTrack = quote.tracks[0];
   const insets = useSafeAreaInsets();
@@ -75,7 +76,7 @@ export function ImmersiveQuote({
             onPress={() => router.push('/music')}
             style={styles.streakBadge}
             hitSlop={10}
-            accessibilityLabel="Open Music"
+            accessibilityLabel={t('today.openMusic')}
           >
             <Ionicons name="musical-notes" size={16} color={theme.accent} />
           </Pressable>
@@ -98,7 +99,7 @@ export function ImmersiveQuote({
         </Pressable>
         <Pressable onPress={onNewQuote} style={styles.newQuoteBtn}>
           <Ionicons name="refresh" size={20} color="#000" />
-          <Text style={styles.newQuoteText}>New quote</Text>
+          <Text style={styles.newQuoteText}>{t('today.newQuote')}</Text>
         </Pressable>
         <Pressable onPress={onFavorite} style={styles.actionBtn} hitSlop={12}>
           <Ionicons

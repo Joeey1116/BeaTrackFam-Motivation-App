@@ -14,6 +14,10 @@ import { createLiveActivity, type LiveActivityEnvironment } from 'expo-widgets';
 type QuoteActivityProps = {
   quote: string;
   category: string;
+  /** Localized "Quote of the day" — computed by lib/liveActivity.ts. */
+  label?: string;
+  /** Localized "Daily Quote" for the compact trailing view. */
+  compact?: string;
 };
 
 const QuoteActivityView = (props: QuoteActivityProps, environment: LiveActivityEnvironment) => {
@@ -25,7 +29,7 @@ const QuoteActivityView = (props: QuoteActivityProps, environment: LiveActivityE
     banner: (
       <VStack modifiers={[padding({ all: 14 })]}>
         <Text modifiers={[font({ size: 11, weight: 'bold' }), foregroundStyle('#999999')]}>
-          {props.category.toUpperCase()} — QUOTE OF THE DAY
+          {props.category.toUpperCase()} — {(props.label ?? 'Quote of the day').toUpperCase()}
         </Text>
         <Text modifiers={[font({ size: 15, weight: 'semibold' }), foregroundStyle(quoteColor)]}>
           {props.quote}
@@ -35,7 +39,7 @@ const QuoteActivityView = (props: QuoteActivityProps, environment: LiveActivityE
     compactLeading: <Text modifiers={[font({ weight: 'bold' }), foregroundStyle('#FFFFFF')]}>❝</Text>,
     compactTrailing: (
       <Text modifiers={[font({ size: 12, weight: 'medium' }), foregroundStyle('#FFFFFF')]}>
-        Daily Quote
+        {props.compact ?? 'Daily Quote'}
       </Text>
     ),
     minimal: <Text modifiers={[foregroundStyle('#FFFFFF')]}>❝</Text>,

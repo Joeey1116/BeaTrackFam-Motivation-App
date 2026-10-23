@@ -7,6 +7,7 @@ import { Spacing, Type } from '../lib/design';
 import type { ThemePalette } from '../lib/themes';
 import { useTheme } from '../lib/themeContext';
 import { getPlan } from '../lib/storage';
+import { useStrings } from '../lib/i18n';
 
 /**
  * Music — its own screen (moved OUT of Settings in build 18, per Joey).
@@ -15,6 +16,7 @@ import { getPlan } from '../lib/storage';
  */
 export default function MusicScreen() {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const [isPlus, setIsPlus] = useState(false);
 
@@ -28,9 +30,9 @@ export default function MusicScreen() {
     <Screen>
       <View style={styles.body}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-          <Text style={styles.back}>‹ Back</Text>
+          <Text style={styles.back}>{t('common.back')}</Text>
         </Pressable>
-        <Text style={styles.h1}>Music</Text>
+        <Text style={styles.h1}>{t('music.title')}</Text>
         <MusicPlayer isHavenPlus={isPlus} />
       </View>
     </Screen>

@@ -6,6 +6,7 @@ import { Spacing, Type } from '../../lib/design';
 import type { ThemePalette } from '../../lib/themes';
 import { useTheme } from '../../lib/themeContext';
 import { SignIn } from '../../components/SignIn';
+import { useStrings } from '../../lib/i18n';
 
 /**
  * Sign In — separate screen (not a popup).
@@ -13,13 +14,14 @@ import { SignIn } from '../../components/SignIn';
  */
 export default function SignInScreen() {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
 
   return (
     <Screen>
       <View style={styles.body}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-          <Text style={styles.back}>‹ Back</Text>
+          <Text style={styles.back}>{t('common.back')}</Text>
         </Pressable>
         <View style={styles.content}>
           <SignIn onSuccess={() => router.back()} onSkip={() => router.back()} />

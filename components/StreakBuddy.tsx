@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTheme } from '../lib/themeContext';
+import { useStrings } from '../lib/i18n';
 import type { ThemePalette } from '../lib/themes';
 
 interface Props {
@@ -15,61 +16,59 @@ interface Props {
  */
 export function StreakBuddy({ streak, plantType = 'sprout' }: Props) {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const stage = getStage(streak);
   const emoji = getEmoji(stage, plantType);
-  const message = getMessage(stage, streak);
+  const message =
+    streak === 0 ? t('buddy.messages.waiting') : t(`buddy.messages.${stage}`);
 
   return (
     <View style={styles.container}>
       <Text style={styles.emoji}>{emoji}</Text>
-      <Text style={styles.stage}>{stage}</Text>
+      <Text style={styles.stage}>{t(`buddy.stages.${stage}`)}</Text>
       <Text style={styles.message}>{message}</Text>
-      <Text style={styles.streak}>{streak} day{streak === 1 ? '' : 's'} strong</Text>
+      <Text style={styles.streak}>
+        {streak === 1
+          ? t('buddy.daysStrongOne')
+          : t('buddy.daysStrongMany', { n: streak })}
+      </Text>
     </View>
   );
 }
 
-function getStage(streak: number): string {
-  if (streak === 0) return 'Seed';
-  if (streak <= 2) return 'Sprout';
-  if (streak <= 6) return 'Seedling';
-  if (streak <= 13) return 'Sapling';
-  if (streak <= 29) return 'Young Tree';
-  if (streak <= 59) return 'Tree';
-  return 'Flourishing';
+type StageId = 'seed' | 'sprout' | 'seedling' | 'sapling' | 'youngTree' | 'tree' | 'flourishing';
+
+function getStage(streak: number): StageId {
+  if (streak === 0) return 'seed';
+  if (streak <= 2) return 'sprout';
+  if (streak <= 6) return 'seedling';
+  if (streak <= 13) return 'sapling';
+  if (streak <= 29) return 'youngTree';
+  if (streak <= 59) return 'tree';
+  return 'flourishing';
 }
 
-function getEmoji(stage: string, plantType: string): string {
-  const map: Record<string, Record<string, string>> = {
+function getEmoji(stage: StageId, plantType: string): string {
+  const map: Record<string, Record<StageId, string>> = {
     sprout: {
-      'Seed': '🌰', 'Sprout': '🌱', 'Seedling': '🌿',
-      'Sapling': '🪴', 'Young Tree': '🌳', 'Tree': '🌳', 'Flourishing': '🌲',
+      seed: '🌰', sprout: '🌱', seedling: '🌿',
+      sapling: '🪴', youngTree: '🌳', tree: '🌳', flourishing: '🌲',
     },
     sunflower: {
-      'Seed': '🌰', 'Sprout': '🌱', 'Seedling': '🌿',
-      'Sapling': '🌻', 'Young Tree': '🌻', 'Tree': '🌻', 'Flourishing': '🌻',
+      seed: '🌰', sprout: '🌱', seedling: '🌿',
+      sapling: '🌻', youngTree: '🌻', tree: '🌻', flourishing: '🌻',
     },
     oak: {
-      'Seed': '🌰', 'Sprout': '🌱', 'Seedling': '🌿',
-      'Sapling': '🪴', 'Young Tree': '🌳', 'Tree': '🌳', 'Flourishing': '🌳',
+      seed: '🌰', sprout: '🌱', seedling: '🌿',
+      sapling: '🪴', youngTree: '🌳', tree: '🌳', flourishing: '🌳',
     },
     succulent: {
-      'Seed': '🌰', 'Sprout': '🌱', 'Seedling': '🌵',
-      'Sapling': '🌵', 'Young Tree': '🌵', 'Tree': '🌵', 'Flourishing': '🌵',
+      seed: '🌰', sprout: '🌱', seedling: '🌵',
+      sapling: '🌵', youngTree: '🌵', tree: '🌵', flourishing: '🌵',
     },
   };
   return map[plantType]?.[stage] ?? '🌱';
-}
-
-function getMessage(stage: string, streak: number): string {
-  if (streak === 0) return 'Your buddy is waiting. Open the app tomorrow to plant the seed.';
-  if (stage === 'Sprout') return 'Look — it\'s sprouting! Keep showing up.';
-  if (stage === 'Seedling') return 'Growing strong. You\'re doing this.';
-  if (stage === 'Sapling') return 'A whole week! Your buddy is thriving.';
-  if (stage === 'Young Tree') return 'Two weeks of showing up. That\'s real.';
-  if (stage === 'Tree') return 'A month. Look how far you\'ve come.';
-  return 'Flourishing — just like you.';
 }
 
 function createStyles(p: ThemePalette) {

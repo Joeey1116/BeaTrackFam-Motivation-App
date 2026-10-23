@@ -22,7 +22,7 @@ const LANGS = [
 export default function LanguageScreen() {
   const { palette } = useTheme();
   const styles = useMemo(() => createStyles(palette), [palette]);
-  const { lang } = useStrings();
+  const { lang, t } = useStrings();
 
   const pick = async (id: 'en' | 'he' | 'es', name: string) => {
     if (id === lang) {
@@ -30,8 +30,8 @@ export default function LanguageScreen() {
       return;
     }
     await setLanguage(id);
-    Alert.alert('Saved', `Language set to ${name}. Restart the app to apply the new layout.`, [
-      { text: 'OK', onPress: () => router.back() },
+    Alert.alert(t('common.saved'), t('languageScreen.savedBody', { name }), [
+      { text: t('common.ok'), onPress: () => router.back() },
     ]);
   };
 
@@ -39,10 +39,10 @@ export default function LanguageScreen() {
     <Screen>
       <View style={styles.body}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-          <Text style={styles.back}>‹ Back</Text>
+          <Text style={styles.back}>{t('common.back')}</Text>
         </Pressable>
-        <Text style={styles.h1}>Language</Text>
-        <Text style={styles.sub}>Choose your language.</Text>
+        <Text style={styles.h1}>{t('languageScreen.title')}</Text>
+        <Text style={styles.sub}>{t('languageScreen.sub')}</Text>
         <View style={styles.list}>
           {LANGS.map((l) => {
             const active = lang === l.id;

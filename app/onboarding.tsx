@@ -7,8 +7,8 @@ import { Glass } from '../components/Glass';
 import { Radius, Spacing, Type } from '../lib/design';
 import type { ThemePalette } from '../lib/themes';
 import { useTheme } from '../lib/themeContext';
-import { BRAND, LANGUAGES, TRACKS, TRACK_LABELS, type Language, type TrackId } from '../lib/brand';
-import { setLanguage, useStrings } from '../lib/i18n';
+import { BRAND, LANGUAGES, TRACKS, type Language, type TrackId } from '../lib/brand';
+import { planName, setLanguage, trackName, useStrings } from '../lib/i18n';
 import {
   setChosenTracks,
   setGoals,
@@ -24,7 +24,7 @@ import { ensureDailyQuotesScheduled, requestPermission } from '../lib/notificati
 import { getLanguage } from '../lib/i18n';
 import { getQuoteOfTheDay } from '../lib/quotes';
 import { refreshQuoteLiveActivity } from '../lib/liveActivity';
-import { useHavenPlus, SKUS, SKU_NAMES } from '../lib/purchases';
+import { useHavenPlus, SKUS } from '../lib/purchases';
 
 const STEPS = [
   'welcome',
@@ -51,21 +51,20 @@ const GOALS = [
 type GoalId = (typeof GOALS)[number];
 
 const REMINDER_OPTIONS = [
-  { id: '6am', label: '6:00 AM' },
-  { id: '7am', label: '7:00 AM' },
-  { id: '8am', label: '8:00 AM' },
-  { id: '9am', label: '9:00 AM' },
-  { id: 'none', label: 'No reminders' },
+  { id: '6am', key: 'six' },
+  { id: '7am', key: 'seven' },
+  { id: '8am', key: 'eight' },
+  { id: '9am', key: 'nine' },
+  { id: 'none', key: 'none' },
 ] as const;
 
-
-const GOAL_LABELS: Record<GoalId, string> = {
-  'find-calm': 'Find calm',
-  'build-confidence': 'Build confidence',
-  'improve-focus': 'Improve focus',
-  'find-happiness': 'Find happiness',
-  'reduce-stress': 'Reduce stress',
-  'stay-grateful': 'Stay grateful',
+const GOAL_KEYS: Record<GoalId, string> = {
+  'find-calm': 'findCalm',
+  'build-confidence': 'buildConfidence',
+  'improve-focus': 'improveFocus',
+  'find-happiness': 'findHappiness',
+  'reduce-stress': 'reduceStress',
+  'stay-grateful': 'stayGrateful',
 };
 
 export default function Onboarding() {
@@ -90,9 +89,9 @@ export default function Onboarding() {
     if (!sub) return null;
     return {
       sku,
-      name: SKU_NAMES[sku] ?? sub.title,
+      name: planName(sku, sub.title),
       price: sub.displayPrice,
-      save: sku === SKUS[SKUS.length - 1] ? 'Best value' : undefined,
+      save: sku === SKUS[SKUS.length - 1] ? tr('plans.bestValue') : undefined,
     };
   }).filter((t): t is NonNullable<typeof t> => t !== null);
 
@@ -195,22 +194,22 @@ export default function Onboarding() {
           <View style={styles.center}>
             <Image source={require('../assets/mark.png')} style={styles.heroMark} />
             <Text style={styles.appName}>{BRAND.SHORT_NAME}</Text>
-            <Text style={styles.tagline}>{BRAND.TAGLINE}</Text>
+            <Text style={styles.tagline}>{tr('onboarding.tagline')}</Text>
             <Text style={styles.welcomeSub}>
-              Your daily home for motivation, calm, and strength.
+              {tr('onboarding.welcomeSub')}
             </Text>
           </View>
         )}
 
         {step === 'beliefs' && (
           <View style={styles.step}>
-            <Text style={styles.h1}>What speaks to your heart?</Text>
-            <Text style={styles.sub}>Pick the tracks that feel like home. You can change these anytime.</Text>
+            <Text style={styles.h1}>{tr('onboarding.beliefsTitle')}</Text>
+            <Text style={styles.sub}>{tr('onboarding.beliefsSub')}</Text>
             <View style={styles.list}>
               {TRACKS.map((id) => (
                 <Pressable key={id} onPress={() => toggleTrack(id)}>
                   <Glass style={[styles.opt, tracks.includes(id) && styles.optActive]}>
-                    <Text style={styles.optText}>{TRACK_LABELS[id]}</Text>
+                    <Text style={styles.optText}>{trackName(id)}</Text>
                     {tracks.includes(id) ? (
                       <Ionicons name="checkmark-circle" size={22} color={palette.text} />
                     ) : (
@@ -225,13 +224,13 @@ export default function Onboarding() {
 
         {step === 'goals' && (
           <View style={styles.step}>
-            <Text style={styles.h1}>What do you want from this app?</Text>
-            <Text style={styles.sub}>Select all that apply — we'll shape your experience around them.</Text>
+            <Text style={styles.h1}>{tr('onboarding.goalsTitle')}</Text>
+            <Text style={styles.sub}>{tr('onboarding.goalsSub')}</Text>
             <View style={styles.list}>
               {GOALS.map((id) => (
                 <Pressable key={id} onPress={() => toggleGoal(id)}>
                   <Glass style={[styles.opt, goals.includes(id) && styles.optActive]}>
-                    <Text style={styles.optText}>{GOAL_LABELS[id]}</Text>
+                    <Text style={styles.optText}>{tr(`onboarding.goals.${GOAL_KEYS[id]}`)}</Text>
                     {goals.includes(id) ? (
                       <Ionicons name="checkmark-circle" size={22} color={palette.text} />
                     ) : (
@@ -267,17 +266,16 @@ export default function Onboarding() {
 
         {step === 'makeItYours' && (
           <View style={styles.step}>
-            <Text style={styles.h1}>Make it yours</Text>
+            <Text style={styles.h1}>{tr('onboarding.makeItYoursTitle')}</Text>
             <Text style={styles.sub}>
-              How do you want Hustle & Heart to feel? Turn on what speaks to you —
-              the app works beautifully either way.
+              {tr('onboarding.makeItYoursSub')}
             </Text>
             <View style={styles.list}>
               <Pressable onPress={() => setWantCompanion(!wantCompanion)}>
                 <Glass style={[styles.opt, wantCompanion && styles.optActive]}>
                   <View style={styles.optInfo}>
-                    <Text style={styles.optText}>AI Companion</Text>
-                    <Text style={styles.optDesc}>A friendly chat friend who's there when you need to talk</Text>
+                    <Text style={styles.optText}>{tr('settings.aiCompanion')}</Text>
+                    <Text style={styles.optDesc}>{tr('onboarding.companionDesc')}</Text>
                   </View>
                   <View style={[styles.toggle, wantCompanion && styles.toggleOn]}>
                     <View style={[styles.knob, wantCompanion && styles.knobOn]} />
@@ -287,8 +285,8 @@ export default function Onboarding() {
               <Pressable onPress={() => setWantBuddy(!wantBuddy)}>
                 <Glass style={[styles.opt, wantBuddy && styles.optActive]}>
                   <View style={styles.optInfo}>
-                    <Text style={styles.optText}>Streak Buddy</Text>
-                    <Text style={styles.optDesc}>A little companion that grows as your streak builds</Text>
+                    <Text style={styles.optText}>{tr('settings.streakBuddy')}</Text>
+                    <Text style={styles.optDesc}>{tr('onboarding.buddyDesc')}</Text>
                   </View>
                   <View style={[styles.toggle, wantBuddy && styles.toggleOn]}>
                     <View style={[styles.knob, wantBuddy && styles.knobOn]} />
@@ -298,8 +296,8 @@ export default function Onboarding() {
               <Pressable onPress={() => setWantRituals(!wantRituals)}>
                 <Glass style={[styles.opt, wantRituals && styles.optActive]}>
                   <View style={styles.optInfo}>
-                    <Text style={styles.optText}>Daily Rituals</Text>
-                    <Text style={styles.optDesc}>Morning greeting and evening wind-down</Text>
+                    <Text style={styles.optText}>{tr('settings.dailyRituals')}</Text>
+                    <Text style={styles.optDesc}>{tr('onboarding.ritualsDesc')}</Text>
                   </View>
                   <View style={[styles.toggle, wantRituals && styles.toggleOn]}>
                     <View style={[styles.knob, wantRituals && styles.knobOn]} />
@@ -308,53 +306,52 @@ export default function Onboarding() {
               </Pressable>
             </View>
             <Text style={styles.freeNote}>
-              Not a fan of AI? Turn it off — you'll still get quotes, journal, and streaks.
+              {tr('onboarding.freeNoteAi')}
             </Text>
           </View>
         )}
 
         {step === 'yourHome' && (
           <View style={styles.step}>
-            <Text style={styles.h1}>This is your home</Text>
+            <Text style={styles.h1}>{tr('onboarding.homeTitle')}</Text>
             <Text style={styles.sub}>
-              Not tabs. Rooms. Each one is a space that's yours —
-              walk in whenever you need it.
+              {tr('onboarding.homeSub')}
             </Text>
             <View style={styles.list}>
               <Glass style={styles.roomCard}>
                 <Text style={styles.roomEmoji}>☀️</Text>
                 <View style={styles.optInfo}>
-                  <Text style={styles.optText}>Today</Text>
-                  <Text style={styles.optDesc}>Your living room — daily quote, streak, grounding</Text>
+                  <Text style={styles.optText}>{tr('onboarding.rooms.today.name')}</Text>
+                  <Text style={styles.optDesc}>{tr('onboarding.rooms.today.desc')}</Text>
                 </View>
               </Glass>
               <Glass style={styles.roomCard}>
                 <Text style={styles.roomEmoji}>📓</Text>
                 <View style={styles.optInfo}>
-                  <Text style={styles.optText}>Journal</Text>
-                  <Text style={styles.optDesc}>Your private study — just for you, nobody else sees it</Text>
+                  <Text style={styles.optText}>{tr('onboarding.rooms.journal.name')}</Text>
+                  <Text style={styles.optDesc}>{tr('onboarding.rooms.journal.desc')}</Text>
                 </View>
               </Glass>
               <Glass style={styles.roomCard}>
                 <Text style={styles.roomEmoji}>💭</Text>
                 <View style={styles.optInfo}>
-                  <Text style={styles.optText}>Mood</Text>
-                  <Text style={styles.optDesc}>Your check-in corner — how are you, really?</Text>
+                  <Text style={styles.optText}>{tr('onboarding.rooms.mood.name')}</Text>
+                  <Text style={styles.optDesc}>{tr('onboarding.rooms.mood.desc')}</Text>
                 </View>
               </Glass>
               <Glass style={styles.roomCard}>
                 <Text style={styles.roomEmoji}>🌬️</Text>
                 <View style={styles.optInfo}>
-                  <Text style={styles.optText}>Breathe</Text>
-                  <Text style={styles.optDesc}>Your quiet room — calm is always here</Text>
+                  <Text style={styles.optText}>{tr('onboarding.rooms.breathe.name')}</Text>
+                  <Text style={styles.optDesc}>{tr('onboarding.rooms.breathe.desc')}</Text>
                 </View>
               </Glass>
               {wantCompanion && (
                 <Glass style={styles.roomCard}>
                   <Text style={styles.roomEmoji}>💛</Text>
                   <View style={styles.optInfo}>
-                    <Text style={styles.optText}>Companion</Text>
-                    <Text style={styles.optDesc}>Where your friend hangs out — always here for you</Text>
+                    <Text style={styles.optText}>{tr('onboarding.rooms.companion.name')}</Text>
+                    <Text style={styles.optDesc}>{tr('onboarding.rooms.companion.desc')}</Text>
                   </View>
                 </Glass>
               )}
@@ -364,13 +361,13 @@ export default function Onboarding() {
 
         {step === 'reminders' && (
           <View style={styles.step}>
-            <Text style={styles.h1}>When should your quote arrive?</Text>
-            <Text style={styles.sub}>A gentle nudge to start your day right.</Text>
+            <Text style={styles.h1}>{tr('onboarding.remindersTitle')}</Text>
+            <Text style={styles.sub}>{tr('onboarding.remindersSub')}</Text>
             <View style={styles.list}>
               {REMINDER_OPTIONS.map((opt) => (
                 <Pressable key={opt.id} onPress={() => setReminder(opt.id)}>
                   <Glass style={[styles.opt, reminder === opt.id && styles.optActive]}>
-                    <Text style={styles.optText}>{opt.label}</Text>
+                    <Text style={styles.optText}>{tr(`onboarding.reminderOpts.${opt.key}`)}</Text>
                     {reminder === opt.id ? (
                       <Ionicons name="checkmark-circle" size={22} color={palette.text} />
                     ) : (
@@ -386,11 +383,10 @@ export default function Onboarding() {
         {step === 'premium' && (
           <View style={styles.step}>
             <View style={styles.premiumCard}>
-              <Text style={styles.havenBadge}>You're on Haven</Text>
+              <Text style={styles.havenBadge}>{tr('onboarding.premium.badgeOnHaven')}</Text>
               <Text style={styles.premiumTitle}>Haven Plus</Text>
               <Text style={styles.premiumSub}>
-                Lock-screen quotes, widgets, every theme, custom backgrounds,
-                your own music, zero ads.
+                {tr('onboarding.premium.sub')}
               </Text>
               <View style={styles.tierList}>
                 {productsLoading ? (
@@ -409,7 +405,7 @@ export default function Onboarding() {
                   ))
                 )}
               </View>
-              <Text style={styles.trialNote}>14-day free trial on all plans. Cancel anytime in one tap. You choose — never automatic.</Text>
+              <Text style={styles.trialNote}>{tr('onboarding.premium.trialNote')}</Text>
               <Pressable
                 style={[styles.premiumButton, (busy || purchasing) && styles.disabled]}
                 onPress={() => handlePremiumChoice('trial')}
@@ -418,16 +414,15 @@ export default function Onboarding() {
                 {purchasing ? (
                   <ActivityIndicator size="small" color={palette.buttonText} />
                 ) : (
-                  <Text style={styles.premiumButtonText}>Try Haven Plus Free</Text>
+                  <Text style={styles.premiumButtonText}>{tr('onboarding.premium.tryFree')}</Text>
                 )}
               </Pressable>
               <Pressable onPress={() => handlePremiumChoice('skip')}>
-                <Text style={styles.skipPremium}>Stay on Haven (Free)</Text>
+                <Text style={styles.skipPremium}>{tr('onboarding.premium.stayFree')}</Text>
               </Pressable>
             </View>
             <Text style={styles.freeNote}>
-              Haven is complete — daily quotes, all tracks, journal, wellness, companion, music.
-              Haven Plus is just the extras.
+              {tr('onboarding.premium.freeNote')}
             </Text>
           </View>
         )}
@@ -435,9 +430,9 @@ export default function Onboarding() {
         {step === 'notifications' && (
           <View style={styles.center}>
             <Ionicons name="notifications-outline" size={64} color={palette.text} />
-            <Text style={styles.h1}>Stay in the flow</Text>
+            <Text style={styles.h1}>{tr('onboarding.notifTitle2')}</Text>
             <Text style={styles.sub}>
-              Allow notifications so your daily quote and reminders can reach you.
+              {tr('onboarding.notifSub')}
             </Text>
           </View>
         )}
@@ -447,12 +442,12 @@ export default function Onboarding() {
       <View style={styles.footer}>
         {stepIdx > 0 && step !== 'premium' && (
           <Pressable onPress={back} style={styles.backButton}>
-            <Text style={styles.backText}>Back</Text>
+            <Text style={styles.backText}>{tr('onboarding.back')}</Text>
           </Pressable>
         )}
         {step === 'welcome' && (
           <Pressable onPress={next} style={styles.primaryButton}>
-            <Text style={styles.primaryText}>Get Started</Text>
+            <Text style={styles.primaryText}>{tr('onboarding.getStarted')}</Text>
           </Pressable>
         )}
         {['beliefs', 'goals', 'language', 'makeItYours', 'yourHome', 'reminders'].includes(step) && (
@@ -461,16 +456,16 @@ export default function Onboarding() {
             style={[styles.primaryButton, step === 'beliefs' && tracks.length === 0 && styles.disabled]}
             disabled={step === 'beliefs' && tracks.length === 0}
           >
-            <Text style={styles.primaryText}>Continue</Text>
+            <Text style={styles.primaryText}>{tr('onboarding.continue')}</Text>
           </Pressable>
         )}
         {step === 'notifications' && (
           <View style={styles.notifRow}>
             <Pressable onPress={() => finish(false)} style={styles.secondaryButton}>
-              <Text style={styles.secondaryText}>Not Now</Text>
+              <Text style={styles.secondaryText}>{tr('onboarding.notNow')}</Text>
             </Pressable>
             <Pressable onPress={() => finish(true)} style={styles.primaryButton}>
-              <Text style={styles.primaryText}>Allow</Text>
+              <Text style={styles.primaryText}>{tr('onboarding.allow')}</Text>
             </Pressable>
           </View>
         )}

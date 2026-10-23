@@ -19,6 +19,7 @@ import { useTheme } from '../../lib/themeContext';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase';
 import { clearAllLocalData } from '../../lib/storage';
 import { readImportedList, stopPlayback } from '../../lib/music';
+import { useStrings } from '../../lib/i18n';
 
 /**
  * Account — the app's account home (Settings → Account).
@@ -32,6 +33,7 @@ import { readImportedList, stopPlayback } from '../../lib/music';
  */
 export default function AccountScreen() {
   const { palette } = useTheme();
+  const { t } = useStrings();
   const styles = useMemo(() => createStyles(palette), [palette]);
   const configured = isSupabaseConfigured();
   const [session, setSession] = useState<Session | null>(null);
@@ -70,9 +72,9 @@ export default function AccountScreen() {
     try {
       await supabase.auth.signOut();
       setSession(null);
-      Alert.alert('Signed out', 'Your data stays on this device.');
+      Alert.alert(t('account.signedOutTitle'), t('account.signedOutBody'));
     } catch (e: any) {
-      Alert.alert('Sign-out failed', e?.message || 'Please try again.');
+      Alert.alert(t('account.signOutFailed'), e?.message || t('account.tryAgain'));
     } finally {
       setBusy(false);
     }
@@ -112,9 +114,8 @@ export default function AccountScreen() {
       router.replace('/');
     } catch (e: any) {
       Alert.alert(
-        'Could not delete account',
-        e?.message ||
-          'Something went wrong deleting your account. Please try again, or email contact@beatrackfam.info and we will delete it for you.'
+        t('account.deleteFailTitle'),
+        e?.message || t('account.deleteFailBody')
       );
     } finally {
       setBusy(false);
@@ -123,20 +124,20 @@ export default function AccountScreen() {
 
   const confirmDelete = () => {
     Alert.alert(
-      'Delete your account?',
-      'This permanently deletes your Hustle & Heart account and erases everything the app stored on this device — journal, favorites, streaks, settings. This cannot be undone.',
+      t('account.confirm1Title'),
+      t('account.confirm1Body'),
       [
-        { text: 'Keep my account', style: 'cancel' },
+        { text: t('account.keepAccount'), style: 'cancel' },
         {
-          text: 'Continue',
+          text: t('common.continue'),
           style: 'destructive',
           onPress: () => {
             Alert.alert(
-              'Are you absolutely sure?',
-              'Your account and all on-device data will be deleted forever.',
+              t('account.confirm2Title'),
+              t('account.confirm2Body'),
               [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete forever', style: 'destructive', onPress: deleteAccount },
+                { text: t('common.cancel'), style: 'cancel' },
+                { text: t('account.deleteForever'), style: 'destructive', onPress: deleteAccount },
               ]
             );
           },
@@ -149,49 +150,44 @@ export default function AccountScreen() {
     <Screen>
       <ScrollView contentContainerStyle={styles.body} showsVerticalScrollIndicator={false}>
         <Pressable onPress={() => router.back()} style={styles.backRow}>
-          <Text style={styles.back}>‹ Back</Text>
+          <Text style={styles.back}>{t('common.back')}</Text>
         </Pressable>
-        <Text style={styles.h1}>Account</Text>
+        <Text style={styles.h1}>{t('account.title')}</Text>
 
         {loading ? (
           <ActivityIndicator color={palette.textDim} style={styles.spinner} />
         ) : !configured ? (
           <>
             <Text style={styles.sub}>
-              Hustle & Heart works fully without an account — everything is
-              stored on your device. Optional sign-in for sync across devices
-              isn't enabled in this build yet.
+              {t('account.offlineSub')}
             </Text>
             <Glass style={styles.card}>
-              <Text style={styles.cardTitle}>You're using the app offline</Text>
+              <Text style={styles.cardTitle}>{t('account.offlineCardTitle')}</Text>
               <Text style={styles.cardBody}>
-                Your journal, favorites, and streaks live only on this
-                phone. Uninstalling the app removes them.
+                {t('account.offlineCardBody')}
               </Text>
             </Glass>
           </>
         ) : !session ? (
           <>
             <Text style={styles.sub}>
-              Sign in to sync your journal, favorites, and streaks across
-              devices. The app works fully without an account — this is
-              optional.
+              {t('account.signinSub')}
             </Text>
             <Pressable
               style={styles.primaryBtn}
               onPress={() => router.push('/settings/signin')}
             >
-              <Text style={styles.primaryBtnText}>Sign In</Text>
+              <Text style={styles.primaryBtnText}>{t('account.signInBtn')}</Text>
             </Pressable>
           </>
         ) : (
           <>
-            <Text style={styles.sub}>You're signed in.</Text>
+            <Text style={styles.sub}>{t('account.signedInSub')}</Text>
             <Glass style={styles.card}>
-              <Text style={styles.cardLabel}>EMAIL</Text>
-              <Text style={styles.cardTitle}>{email ?? 'Signed-in account'}</Text>
+              <Text style={styles.cardLabel}>{t('account.emailLabel')}</Text>
+              <Text style={styles.cardTitle}>{email ?? t('account.signedInAccount')}</Text>
               <Text style={styles.cardBody}>
-                Your journal, favorites, and streaks sync with this account.
+                {t('account.cardBody')}
               </Text>
             </Glass>
 
@@ -200,12 +196,12 @@ export default function AccountScreen() {
               onPress={signOut}
               disabled={busy}
             >
-              <Text style={styles.secondaryBtnText}>Sign Out</Text>
+              <Text style={styles.secondaryBtnText}>{t('account.signOutBtn')}</Text>
             </Pressable>
 
             {/* Delete Account — signed-in users only, by design. */}
             <View style={styles.dangerZone}>
-              <Text style={styles.dangerTitle}>Danger zone</Text>
+              <Text style={styles.dangerTitle}>{t('account.dangerZone')}</Text>
               <Pressable
                 style={[styles.dangerBtn, busy && styles.disabled]}
                 onPress={confirmDelete}
@@ -214,12 +210,11 @@ export default function AccountScreen() {
                 {busy ? (
                   <ActivityIndicator color={Colors.danger} />
                 ) : (
-                  <Text style={styles.dangerBtnText}>Delete Account</Text>
+                  <Text style={styles.dangerBtnText}>{t('account.deleteBtn')}</Text>
                 )}
               </Pressable>
               <Text style={styles.dangerNote}>
-                Permanently deletes your account and everything the app
-                stored on this device. This cannot be undone.
+                {t('account.dangerNote')}
               </Text>
             </View>
           </>
