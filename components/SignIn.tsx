@@ -141,20 +141,38 @@ export function SignIn({ onSuccess, onSkip }: Props) {
       //   old WEB client is NOT deleted: its ID + secret remain in
       //   Supabase's Google provider main settings as the provider
       //   anchor — it just no longer serves the app's sign-in flow.
+      // - Build 26: Google's gate finally opens (real iOS client,
+      //   build 25) and a token is issued, but Supabase rejects it
+      //   with "Nonces mismatch". The nonce contract: the provider
+      //   must receive the SHA-256 HASH of the nonce — that hash is
+      //   what lands in the ID token's nonce claim — while Supabase
+      //   receives the RAW nonce via signInWithIdToken and hashes it
+      //   itself before comparing. Builds 20–25 sent the raw nonce to
+      //   both sides, so Supabase compared hash(raw) against a claim
+      //   holding raw — a mismatch by construction. Build 26 sends
+      //   hashedNonce to Google and keeps the raw nonce for Supabase,
+      //   per Supabase's documented nonce pattern.
       // The Supabase-hosted browser flow (signInWithOAuth) is NOT used:
       // it needs a Web-type client + secret in the dashboard, while this
       // app is configured with the iOS client.
       const redirectUri = `${GOOGLE_REDIRECT_SCHEME}:/oauth2redirect`;
-      // A nonce binds the returned ID token to this request; Supabase
-      // requires the same raw nonce when the token carries one.
+      // Nonce contract (build 26 — see history above): Google receives
+      // the SHA-256 HASH of the nonce, so the hash lands in the ID
+      // token's nonce claim; Supabase receives the RAW nonce and
+      // hashes it itself before comparing. Sending the raw value to
+      // both sides guarantees a "Nonces mismatch" rejection.
       const nonce = Crypto.randomUUID();
+      const hashedNonce = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.SHA256,
+        nonce
+      );
       const request = new AuthSession.AuthRequest({
         clientId: GOOGLE_CLIENT_ID,
         redirectUri,
         scopes: ['openid', 'profile', 'email'],
         responseType: AuthSession.ResponseType.Code,
         usePKCE: true,
-        extraParams: { nonce },
+        extraParams: { nonce: hashedNonce },
       });
       const result = await request.promptAsync(googleDiscovery);
 
