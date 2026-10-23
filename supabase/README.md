@@ -55,7 +55,12 @@ One-time setup:
    → "Get API key" → create a key. No billing needed.
 2. **Add the secret** — Supabase dashboard → your project → Edge
    Functions → Secrets → add `GEMINI_API_KEY` with that key.
-3. **Deploy the function** — from a machine logged into the Supabase CLI:
+3. **Run the usage SQL once** — Supabase dashboard → SQL Editor →
+   paste and run `supabase/migration_buddy_usage.sql`. It creates the
+   `buddy_usage` table (per-user daily Pro-reply counter, RLS on, no
+   public policies — service-role access only). Skip it and nothing
+   breaks: the function fails open and simply doesn't count.
+4. **Deploy the function** — from a machine logged into the Supabase CLI:
 
    ```sh
    supabase functions deploy buddy-chat
@@ -68,3 +73,21 @@ giving up. The buddy is a signed-in feature — signed-out or offline,
 the app answers with its built-in scripted replies instead, and crisis
 language is always handled on-device first (resources show instantly,
 no network involved).
+
+Free daily limit & Haven Plus: Pro is the scarce resource, so each
+signed-in user gets **30 Pro replies per day** (`DAILY_PRO_LIMIT` in
+the function). At the cap, Haven tells the user once (warmly, in the
+chat) and keeps replying in lite mode (Flash) for the rest of the
+day — never a dead end. **Haven Plus subscribers are unlimited:**
+the app asserts its on-device entitlement with each request (a
+`plus` flag set only from `lib/storage.ts` `getPlan()`, which is set
+only by a verified StoreKit/Play purchase). Honest trust note: there
+is **no server-side entitlement record** in this project, so the
+flag is client-asserted, not proof. The containment is a hard
+server-side abuse ceiling — even claimed-Plus callers get at most
+**500 Pro replies/day** (`PLUS_DAILY_CEILING`, same usage table)
+before dropping to lite mode, so a forged flag can't drain the
+project's shared Gemini quota. (Future hardening, if ever needed:
+verify App Store / Play receipts server-side and record the
+entitlement in Supabase.) Crisis replies never count against any
+limit.

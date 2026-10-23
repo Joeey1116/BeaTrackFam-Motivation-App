@@ -11,9 +11,11 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '../lib/themeContext';
 import type { ThemePalette } from '../lib/themes';
 import { supabase } from '../lib/supabase';
+import { getPlan } from '../lib/storage';
 import { containsCrisisLanguage } from './MoodCheckIn';
 
 interface Message {
@@ -21,6 +23,25 @@ interface Message {
   text: string;
   fromUser: boolean;
   isCrisis?: boolean;
+  /** System-style notice bubble (e.g. the daily-limit heads-up). */
+  isNotice?: boolean;
+}
+
+/**
+ * Shown ONCE per day, right after the first lite-mode reply, when a
+ * free user reaches the buddy's daily deep-mode (Gemini Pro) limit.
+ * The function flags that reply with limitReached; Plus users never
+ * receive the flag, so they never see this. Warm, not a paywall —
+ * the conversation continues in lite mode either way.
+ */
+const LIMIT_NOTICE =
+  "Quick heads-up from me: my deep-thinking mode runs on a free daily limit, and we've hit today's. We're not done talking though — I'll keep replying in lite mode for the rest of today, and deep mode resets tomorrow. Haven Plus members skip the limit entirely. You are not alone. 🖤";
+
+/** Local calendar day (YYYY-MM-DD) — the notice's once-a-day key. */
+function localDayKey(): string {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 interface Props {
@@ -41,6 +62,15 @@ interface Props {
  * Crisis language is checked ON-DEVICE before any network call and
  * surfaces the resources immediately, regardless of the AI. The
  * function re-checks server-side as a backstop.
+ *
+ * Daily limit: deep mode (Gemini Pro) is capped per user per day
+ * server-side. When the function answers in lite mode because a free
+ * user hit the cap, it flags the reply (limitReached) and this screen
+ * appends the LIMIT_NOTICE once that day. Haven Plus subscribers are
+ * exempt — the app asserts its on-device entitlement with each
+ * request (the `plus` flag below, from lib/storage getPlan(), the
+ * same source the Music and Themes screens read), and Plus users
+ * never see the notice.
  */
 export function CompanionChat({ userName, onClose }: Props) {
   const { palette } = useTheme();
@@ -57,6 +87,10 @@ export function CompanionChat({ userName, onClose }: Props) {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+  // Session-level guard for the limit notice, on top of the
+  // AsyncStorage per-day flag — the notice shows at most once a day
+  // even if storage hiccups.
+  const limitNoticeCheckedRef = useRef(false);
 
   // Keep the newest content on screen — new bubbles and the typing
   // indicator alike.
@@ -117,20 +151,30 @@ export function CompanionChat({ userName, onClose }: Props) {
     }
 
     // Conversation history for the buddy — the function is stateless,
-    // so the recent thread rides along with every call.
-    const history = [...messages, userMsg].slice(-20).map((m) => ({
-      role: m.fromUser ? 'user' : 'assistant',
-      content: m.text,
-    }));
+    // so the recent thread rides along with every call. System notice
+    // bubbles stay out of the history — they're UI, not conversation.
+    const history = [...messages, userMsg]
+      .filter((m) => !m.isNotice)
+      .slice(-20)
+      .map((m) => ({
+        role: m.fromUser ? 'user' : 'assistant',
+        content: m.text,
+      }));
 
     setMessages((prev) => [...prev, userMsg]);
     setBusy(true);
 
     let replyText: string | null = null;
+    let limitReached = false;
     if (supabase) {
       try {
+        // Assert the on-device Haven Plus entitlement with the
+        // request: getPlan() is the app's single source for it (set
+        // only by a verified StoreKit/Play purchase or restore).
+        // Plus callers skip the free daily Pro cap server-side.
+        const plan = await getPlan().catch(() => 'haven' as const);
         const { data, error } = await supabase.functions.invoke('buddy-chat', {
-          body: { messages: history },
+          body: { messages: history, plus: plan === 'haven-plus' },
         });
         if (
           !error &&
@@ -139,6 +183,7 @@ export function CompanionChat({ userName, onClose }: Props) {
           data.reply.trim()
         ) {
           replyText = data.reply.trim();
+          limitReached = data.limitReached === true;
         }
       } catch {
         replyText = null;
@@ -152,7 +197,33 @@ export function CompanionChat({ userName, onClose }: Props) {
       text: replyText ?? getResponse(text, userName, messages.length),
       fromUser: false,
     };
-    setMessages((prev) => [...prev, reply]);
+    const toAppend: Message[] = [reply];
+
+    // Free user hit the daily deep-mode cap: say so ONCE today,
+    // warmly, right after the first lite-mode reply — then keep
+    // talking. The flag is already in AsyncStorage after the first
+    // show; the ref guards repeats within this session.
+    if (limitReached && !limitNoticeCheckedRef.current) {
+      limitNoticeCheckedRef.current = true;
+      const noticeKey = `haven-limit-notice-${localDayKey()}`;
+      let alreadyShown = false;
+      try {
+        alreadyShown = !!(await AsyncStorage.getItem(noticeKey));
+        if (!alreadyShown) await AsyncStorage.setItem(noticeKey, '1');
+      } catch {
+        alreadyShown = false;
+      }
+      if (!alreadyShown) {
+        toAppend.push({
+          id: (Date.now() + 2).toString(),
+          text: LIMIT_NOTICE,
+          fromUser: false,
+          isNotice: true,
+        });
+      }
+    }
+
+    setMessages((prev) => [...prev, ...toAppend]);
     setBusy(false);
   };
 
@@ -182,12 +253,14 @@ export function CompanionChat({ userName, onClose }: Props) {
               styles.bubble,
               item.fromUser ? styles.userBubble : styles.aiBubble,
               item.isCrisis && styles.crisisBubble,
+              item.isNotice && styles.noticeBubble,
             ]}
           >
             <Text
               style={[
                 styles.bubbleText,
                 item.fromUser ? styles.userText : styles.aiText,
+                item.isNotice && styles.noticeText,
               ]}
             >
               {item.text}
@@ -380,6 +453,23 @@ function createStyles(p: ThemePalette) {
   crisisBubble: {
     borderWidth: 1,
     borderColor: '#ff4d6d',
+  },
+  // System-style notice (daily-limit heads-up): full-width, outlined,
+  // no fill — clearly Haven pausing to explain, not a chat reply.
+  // Warm, not alarming: palette border, dimmed centered text.
+  noticeBubble: {
+    alignSelf: 'stretch',
+    maxWidth: '100%',
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: p.border,
+    borderBottomLeftRadius: 18,
+  },
+  noticeText: {
+    color: p.textDim,
+    textAlign: 'center',
+    fontSize: 13.5,
+    lineHeight: 20,
   },
   typingBubble: {
     flexDirection: 'row',

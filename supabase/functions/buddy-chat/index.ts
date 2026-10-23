@@ -6,7 +6,8 @@
  *
  *   Request:  POST { messages: [{ role: 'user' | 'assistant', content }] }
  *             with the caller's Supabase JWT in the Authorization header.
- *   Response: 200 { reply: string }
+ *   Response: 200 { reply: string, mode: 'pro' | 'lite',
+ *                  limitReached?: boolean }
  *             4xx/5xx { error: string } — clean messages only; the Gemini
  *             key and raw upstream payloads NEVER reach the client.
  *
@@ -17,6 +18,28 @@
  * answers 429 (free-tier quota — Pro's daily cap is small), retry ONCE
  * against FALLBACK_MODEL (Gemini 2.5 Flash) so the buddy degrades
  * gracefully instead of going silent.
+ *
+ * Per-user free daily limit: Pro is the scarce resource, so each
+ * signed-in user gets DAILY_PRO_LIMIT Pro replies per UTC day,
+ * counted in the public.buddy_usage table (see
+ * supabase/migration_buddy_usage.sql) via the service-role key. Over
+ * the cap, the function skips Pro and answers with Flash, returning
+ * mode: 'lite' + limitReached: true so the app can tell the user
+ * (once) that deep mode is done for today — the conversation itself
+ * never stops. Accounting FAILS OPEN: if the table or the count
+ * query errors (migration not run yet, etc.), the user is treated as
+ * under the limit and no counting happens, so pre-setup state can
+ * never break the buddy. Crisis replies never count against the
+ * limit — the backstop below returns before any accounting.
+ *
+ * Haven Plus: subscribers skip the free limit. The app sends
+ * { plus: true } in the request body, set ONLY from its on-device
+ * StoreKit/Play entitlement (lib/storage.ts getPlan() — there is no
+ * server-side entitlement record in this project, so the flag is
+ * client-asserted; treat it as a convenience signal, not proof).
+ * Plus callers are still counted, against PLUS_DAILY_CEILING as a
+ * hard abuse ceiling; above it they get lite mode with NO
+ * limitReached flag.
  *
  * Crisis safety lives in three layers:
  *   1. The app checks every outgoing message on-device and shows the
@@ -30,7 +53,9 @@
  *
  * Requires one secret (Supabase dashboard → Edge Functions → Secrets):
  *   GEMINI_API_KEY — free key from Google AI Studio (aistudio.google.com).
- * SUPABASE_URL / SUPABASE_ANON_KEY are injected automatically.
+ * SUPABASE_URL / SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY are
+ * injected automatically. The usage table is a one-time SQL step:
+ * run supabase/migration_buddy_usage.sql in the dashboard SQL Editor.
  *
  * Deploy:  supabase functions deploy buddy-chat
  */
@@ -41,6 +66,23 @@ import { createClient } from 'jsr:@supabase/supabase-js@2';
 // the call logic.
 const PRIMARY_MODEL = 'gemini-2.5-pro';
 const FALLBACK_MODEL = 'gemini-2.5-flash';
+
+// Free daily limit: how many Pro ("deep mode") replies each signed-in
+// user gets per UTC day before Haven switches to lite mode (Flash)
+// for the rest of the day. Tune it here — the app reads the effect
+// (mode / limitReached) from the response, never this number.
+const DAILY_PRO_LIMIT = 30;
+
+// Haven Plus subscribers skip the free limit entirely. Their claim
+// arrives as a client-sent `plus` flag (see handler) — there is NO
+// server-side entitlement record in this project, so the flag is
+// client-asserted and forgeable by a modified client. This hard
+// ceiling is the containment: even a claimed-Plus caller gets at most
+// this many Pro replies per UTC day (same buddy_usage accounting),
+// so a forged claim can't drain the project's shared Gemini quota.
+// Above it, Plus callers also drop to lite mode — but WITHOUT
+// limitReached, so the app never shows them the free-limit notice.
+const PLUS_DAILY_CEILING = 500;
 
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 const UPSTREAM_TIMEOUT_MS = 25_000;
@@ -154,6 +196,58 @@ function containsCrisisLanguage(text: string): boolean {
   return CRISIS_PHRASES.some((phrase) => lower.includes(phrase));
 }
 
+/** Current UTC day as 'YYYY-MM-DD' — the limit's reset boundary. */
+function todayUtc(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+type AdminClient = ReturnType<typeof createClient>;
+
+/**
+ * How many Pro replies this user has already had today. Returns null
+ * when accounting is unavailable (missing service-role key handled by
+ * the caller, table missing, query error) — callers treat null as
+ * "under the limit, don't count" (fail open).
+ */
+async function getProCount(
+  admin: AdminClient,
+  userId: string,
+  day: string
+): Promise<number | null> {
+  try {
+    const { data, error } = await admin
+      .from('buddy_usage')
+      .select('pro_count')
+      .eq('user_id', userId)
+      .eq('day', day)
+      .maybeSingle();
+    if (error) return null;
+    return typeof data?.pro_count === 'number' ? data.pro_count : 0;
+  } catch {
+    return null;
+  }
+}
+
+/** Best-effort increment after a successful Pro reply. Never throws. */
+async function recordProReply(
+  admin: AdminClient,
+  userId: string,
+  day: string,
+  current: number
+): Promise<void> {
+  try {
+    await admin
+      .from('buddy_usage')
+      .upsert(
+        { user_id: userId, day, pro_count: current + 1 },
+        { onConflict: 'user_id,day' }
+      );
+  } catch {
+    // Accounting is a soft guard, not a gate — a failed write must
+    // never take the reply down with it.
+  }
+}
+
 /** One Gemini call. Returns the reply text, or throws { status } on failure. */
 async function callGemini(
   model: string,
@@ -248,24 +342,73 @@ Deno.serve(async (req: Request) => {
   // Crisis backstop (layer 2): if the newest user turn carries crisis
   // language, answer deterministically with the resources — no LLM in
   // the loop, so nothing can be garbled, softened, or dropped.
+  // Crisis replies return BEFORE any usage accounting: they never
+  // count against the daily limit.
   const lastUser = [...messages].reverse().find((m) => m.role === 'user');
   if (lastUser && containsCrisisLanguage(lastUser.content)) {
     return json({ reply: CRISIS_REPLY });
   }
 
+  // ---- Daily-limit accounting (service role, FAILS OPEN) ----
+  // The plus flag is the client's assertion of its live on-device
+  // entitlement (StoreKit/Play via lib/storage.ts getPlan()); there
+  // is no server-side entitlement record to check against. Plus
+  // callers skip the free cap but are still counted against the
+  // abuse ceiling.
+  const isPlus = (body as { plus?: unknown })?.plus === true;
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  const admin = serviceRoleKey
+    ? createClient(supabaseUrl, serviceRoleKey)
+    : null;
+  const day = todayUtc();
+  const proCount = admin ? await getProCount(admin, user.id, day) : null;
+  // Accounting is live only when we have BOTH the admin client and a
+  // successful count read. Anything else (no key, migration not run,
+  // query error) fails open: under-limit, no counting.
+  const accounting = admin !== null && proCount !== null;
+  const cap = isPlus ? PLUS_DAILY_CEILING : DAILY_PRO_LIMIT;
+  const overCap = accounting && (proCount as number) >= cap;
+
+  // Lite-mode answer on Flash. `limitReached` is set ONLY for a free
+  // user stopped by the free cap — never for Plus (even over the
+  // abuse ceiling) and never for a 429 degrade — so the app's
+  // once-a-day free-limit notice can only ever reach free users who
+  // actually hit the free limit.
+  const answerLite = async (limitReached: boolean): Promise<Response> => {
+    try {
+      const reply = await callGemini(FALLBACK_MODEL, geminiKey, messages);
+      return limitReached
+        ? json({ reply, mode: 'lite', limitReached: true })
+        : json({ reply, mode: 'lite' });
+    } catch {
+      return json(
+        { error: 'Buddy is busy right now — try again in a moment' },
+        502
+      );
+    }
+  };
+
+  if (overCap) {
+    return answerLite(!isPlus);
+  }
+
   try {
     const reply = await callGemini(PRIMARY_MODEL, geminiKey, messages);
-    return json({ reply });
+    if (accounting) {
+      await recordProReply(
+        admin as AdminClient,
+        user.id,
+        day,
+        proCount as number
+      );
+    }
+    return json({ reply, mode: 'pro' });
   } catch (err) {
     // Quota/rate limit on the smart model (free tier) — one retry on
-    // the fast model before giving up.
+    // the fast model before giving up. This is the shared-quota
+    // safety net and applies to free and Plus callers alike.
     if ((err as { status?: number })?.status === 429) {
-      try {
-        const reply = await callGemini(FALLBACK_MODEL, geminiKey, messages);
-        return json({ reply });
-      } catch {
-        return json({ error: 'Buddy is busy right now — try again in a moment' }, 502);
-      }
+      return answerLite(false);
     }
     return json({ error: 'Buddy is unavailable right now' }, 502);
   }
