@@ -7,7 +7,7 @@
       },
       "package": "com.beatrackfaminc.motivation",
       "permissions": [],
-      "versionCode": 13,
+      "versionCode": 14,
       "blockedPermissions": [
         "com.google.android.gms.permission.AD_ID"
       ]
@@ -111,7 +111,7 @@
     ],
     "slug": "hustle-heart",
     "userInterfaceStyle": "dark",
-    "version": "1.0",
+    "version": "2.0",
     "web": {
       "bundler": "metro",
       "favicon": "./assets/favicon.png"
